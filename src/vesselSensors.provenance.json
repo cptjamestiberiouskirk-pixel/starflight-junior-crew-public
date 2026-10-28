@@ -1,0 +1,36 @@
+{
+  "repository": "https://github.com/cptjamestiberiouskirk-pixel/starflight-unity-port",
+  "commit": "cfaab977c245f9e8846ad1b4159eb4f1f464e8ae",
+  "records": 22,
+  "excludedVesselIds": [
+    0,
+    21
+  ],
+  "files": [
+    {
+      "path": "Starflight Game Data.json",
+      "sha256": "e1b9ec0c774d0d3078e82953b0c6964011f006fb92795109c1d2d63eaf6fa9f8"
+    },
+    {
+      "path": "GD_Vessel.cs",
+      "sha256": "7adb75b65fca0b42cc30e9f1e6cb6db74b6c1929589ef27ae4f65b33c2c8c125"
+    },
+    {
+      "path": "PD_AlienShip.cs",
+      "sha256": "b0a8bed1236c7993af74f732b5cb8fea150e8b2f82cf739135b47366b19a9ddb"
+    },
+    {
+      "path": "SensorsButton.cs",
+      "sha256": "108fc659bb3fdcce962715e23fed0ab45deef57a90a886c35503619f4ba5993f"
+    },
+    {
+      "path": "SensorsDisplay.cs",
+      "sha256": "48d8fda1dacae1d425b66732b9086493ac9250d7a2622bcd741e37b239addbda"
+    },
+    {
+      "path": "Encounter.cs",
+      "sha256": "9e8ccbd344ca07ecf0a0716b018a9caf91bc7017db5f0d547410047a334a1e78"
+    }
+  ],
+  "derivation": "Exact m_mass (tons), m_bioDensity != 0, m_mineralDensity != 0; unique element names with positive vessel volumes, Endurium first. Race/type mapping follows existing canonical fleet generator; exclude unmodeled Enterprise easter egg. Numeric data only; original media and combat parameters unchanged."
+}

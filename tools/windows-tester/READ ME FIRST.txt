@@ -1,0 +1,43 @@
+STARFLIGHT: JUNIOR CREW - WINDOWS TESTER
+
+1. Right-click the ZIP and choose Extract All. Wait for extraction to finish.
+2. Open the extracted Starflight Junior Crew folder.
+3. Double-click Launch Starflight Junior Crew.exe.
+4. The game opens in your default browser. Choose Start New Mission, or Import
+   Save if you have an exported .sfsave backup.
+
+No Python, Node installation, terminal commands, account, administrator access
+or GitHub access is needed. Keep the game and runtime folders beside the EXE.
+This package targets Windows 10/11, 64-bit Intel/AMD PCs with Edge or Chrome.
+
+PLAYING AND SAVING
+- Click inside the game once to enable browser audio.
+- Voices need internet access. Game artwork, music and sound effects are local.
+- Save slots stay in your browser. Use Export Save regularly for backups.
+- Keep the same browser and the same local address for future tester versions:
+  http://127.0.0.1:4188/starflight-junior-crew/
+- Keep only one tester version running. Exit the old server before launching a
+  newer package. Saves are in the browser, not in the extracted game folder.
+- You can move a mission from another address/browser with Export/Import Save.
+- The dancing astronaut starts after eight idle seconds in the concourse.
+
+STOPPING
+Closing the browser tab does not stop the local server. Open the hidden-icons
+area by the Windows clock, right-click the Starflight tester icon and choose
+Exit tester server. Double-click that icon to reopen the game.
+
+TROUBLESHOOTING
+- Extract the ZIP before running. Running the EXE inside a ZIP won't work.
+- If the browser does not open, use the tray icon's Open command or the address
+  above. The server runs only on this computer, not the local network.
+- The launcher is locally built and unsigned. Windows may show an unfamiliar-app
+  notice; this package does not alter Windows security settings.
+- If port 4188 is in use, exit the other tester instance and try again. The
+  launcher will not change ports automatically, to keep saves in one place.
+
+REPORTING A BUG
+Include BUILD-INFO.json's build name, your browser/Windows version, what you did,
+what happened, and a screenshot. Attach an exported .sfsave if useful. Send these
+to the person who gave you the package. There is no automatic report upload.
+
+This is a private testing copy. Keep the bundled third-party license notices.

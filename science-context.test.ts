@@ -1,0 +1,32 @@
+import assert from 'node:assert/strict';
+import {createAlienShip,type AlienGroup} from './alien';
+import {captureAlienScan,alienAnalysis,alienSensorText,scienceContext,visibleScienceReading} from './utils/science-sensors';
+export function runScienceContextTests(){
+ let passed=0;const check=(value:unknown,label:string)=>{assert(value,label);passed++;};
+ const first=createAlienShip('Veloxi','Scout','one',2,0),second=createAlienShip('Thrynn','Warship','two',3,0);
+ const group={id:'test-fleet',race:'Veloxi',ships:[first,second],hasSurrendered:false} as AlienGroup;
+ check(alienAnalysis(null,group,0,100).includes('Scan the selected alien vessel first'),'Analysis cannot reuse a planet reading or skip sensors');
+ const scan=captureAlienScan(group,0,{x:0,y:0},true,false);
+ check(!!scan&&scan.shipId==='one'&&scan.hullCondition===100,'Sensors sample the selected alien vessel');
+ const analysis=alienAnalysis(scan,group,0,100);
+ check(analysis.includes('Type:')&&analysis.includes('Size:')&&analysis.includes('Shields:')&&analysis.includes('Weapons Status: Armed'),'Analysis contains original encounter fields');
+ check(!analysis.includes('Gravity')&&!analysis.includes('Atmosphere'),'Combat analysis never returns planetary properties');
+ check(alienAnalysis(scan,group,1,100).includes('Scan the selected alien vessel first'),'Changing target requires a matching scan');
+ check(alienAnalysis(scan,{...group,id:'next-fleet'},0,100).includes('Scan the selected alien vessel first'),'A new encounter cannot inherit old scan authority');
+ first.hullIntegrity=first.maxHull/2;first.shields=0;
+ const damaged=captureAlienScan(group,0,{x:0,y:0},true,false);
+ check(damaged?.hullCondition===50&&scan?.hullCondition===100,'A rescan captures damage without mutating an earlier reading');
+ check(alienSensorText(damaged).includes('Energy:')&&alienSensorText(damaged).includes('Hull condition: 50%')&&alienSensorText(damaged).includes('original damage-based life-sign model'),'Original alien condition model is explicit and separate from hull-only percentage');
+ check(alienAnalysis(damaged,group,0,100).includes('depleted'),'Depleted shields are not reported as raised');
+ const surrendered=captureAlienScan({...group,hasSurrendered:true},1,{x:0,y:0},true,false);
+ check(alienAnalysis(surrendered,group,1,100).includes('Weapons Status: Disarmed'),'Surrendered fleets do not report armed weapons');
+ check(alienAnalysis(scan,group,0,0).includes('Unresolved'),'Unskilled analysis withholds detailed identification');
+ check(captureAlienScan(null,0,{x:0,y:0},true,false)===null&&captureAlienScan(group,99,{x:0,y:0},true,false)===null,'Missing targets cannot fall through to planet scans');
+ const orbit=scienceContext('In Orbit','star',2,null,0),encounter=scienceContext('Encounter','star',2,group,0);
+ check(visibleScienceReading({context:orbit,text:'PLANETARY ANALYSIS'},encounter)===null,'Orbit-to-combat transition hides a stale planetary panel');
+ check(visibleScienceReading({context:encounter,text:'ALIEN SCAN'},scienceContext('Encounter','star',2,group,1))===null,'Switching ships hides the previous target reading');
+ check(visibleScienceReading({context:orbit,text:'planet 2'},scienceContext('In Orbit','star',3,null,0))===null,'Switching planets hides the previous planet reading');
+ check(visibleScienceReading({context:encounter,text:'old timeline'},scienceContext('Encounter','star',2,group,0,1))===null,'Loading another checkpoint clears a reading even when the same fleet and ship IDs recur');
+ check(visibleScienceReading({context:orbit,text:'current'},orbit)==='current','Matching-context readings remain visible');
+ return {passed,failed:0,results:[]};
+}

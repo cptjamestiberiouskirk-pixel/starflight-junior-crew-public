@@ -1,0 +1,708 @@
+{
+  "renderer": "Blender 5.2.2 LTS",
+  "sourceBlendSha256": "51193b0d3e296d1e329d4a77819b2c0712907da9d7f8eea32019e6c97712b17d",
+  "approval": "artifacts/ship-configuration-library/revision-v2/human-form-approval.json",
+  "axis": "Z up, +Y forward; fitted to existing approved bay hardpoints",
+  "palette": {
+    "Deep navy ink": {
+      "color": [
+        0.024000000208616257,
+        0.03500000014901161,
+        0.054999999701976776
+      ],
+      "unlit": false
+    },
+    "Painted porcelain white": {
+      "color": [
+        0.8199999928474426,
+        0.9100000262260437,
+        0.9300000071525574
+      ],
+      "unlit": false
+    },
+    "Original blue grey collars": {
+      "color": [
+        0.15000000596046448,
+        0.20999999344348907,
+        0.3199999928474426
+      ],
+      "unlit": false
+    },
+    "Cool white shade": {
+      "color": [
+        0.5,
+        0.6299999952316284,
+        0.7300000190734863
+      ],
+      "unlit": false
+    },
+    "Satin steel edge": {
+      "color": [
+        0.5799999833106995,
+        0.699999988079071,
+        0.7799999713897705
+      ],
+      "unlit": false
+    },
+    "Recessed machined metal": {
+      "color": [
+        0.30000001192092896,
+        0.38999998569488525,
+        0.47999998927116394
+      ],
+      "unlit": false
+    },
+    "Recessed cyan status lens": {
+      "color": [
+        0.03999999910593033,
+        0.800000011920929,
+        0.8700000047683716
+      ],
+      "unlit": true
+    },
+    "Amber latch marking": {
+      "color": [
+        0.9300000071525574,
+        0.5600000023841858,
+        0.12999999523162842
+      ],
+      "unlit": true
+    },
+    "Muted vermilion safety cap": {
+      "color": [
+        0.75,
+        0.1599999964237213,
+        0.1599999964237213
+      ],
+      "unlit": false
+    }
+  },
+  "groups": [
+    {
+      "name": "laser-1",
+      "family": "laser",
+      "class": 1,
+      "index": -1,
+      "primaryCount": 2,
+      "sourceObjects": 44,
+      "bounds": [
+        [
+          -13.492399632568358,
+          -21.778769580078126,
+          0.65
+        ],
+        [
+          13.492399632568358,
+          -15.29974510498047,
+          1.2439499759674073
+        ]
+      ],
+      "triangles": 2032
+    },
+    {
+      "name": "laser-2",
+      "family": "laser",
+      "class": 2,
+      "index": -1,
+      "primaryCount": 2,
+      "sourceObjects": 54,
+      "bounds": [
+        [
+          -13.591300419921874,
+          -22.07976958007813,
+          0.65
+        ],
+        [
+          13.591300419921874,
+          -14.598629763793948,
+          1.2831500053405762
+        ]
+      ],
+      "triangles": 2248
+    },
+    {
+      "name": "laser-3",
+      "family": "laser",
+      "class": 3,
+      "index": -1,
+      "primaryCount": 4,
+      "sourceObjects": 84,
+      "bounds": [
+        [
+          -13.69019989501953,
+          -22.380769580078127,
+          0.65
+        ],
+        [
+          13.69019989501953,
+          -13.897515078735355,
+          1.322349967956543
+        ]
+      ],
+      "triangles": 3568
+    },
+    {
+      "name": "laser-4",
+      "family": "laser",
+      "class": 4,
+      "index": -1,
+      "primaryCount": 4,
+      "sourceObjects": 100,
+      "bounds": [
+        [
+          -13.789099370117185,
+          -22.681769580078125,
+          0.65
+        ],
+        [
+          13.789099370117185,
+          -13.189950000000003,
+          1.361549997329712
+        ]
+      ],
+      "triangles": 3952
+    },
+    {
+      "name": "laser-5",
+      "family": "laser",
+      "class": 5,
+      "index": -1,
+      "primaryCount": 4,
+      "sourceObjects": 114,
+      "bounds": [
+        [
+          -13.888000157470701,
+          -22.982769580078127,
+          0.65
+        ],
+        [
+          13.888000157470701,
+          -12.480234790039066,
+          1.400750026702881
+        ]
+      ],
+      "triangles": 9752
+    },
+    {
+      "name": "missile-1",
+      "family": "missile",
+      "class": 1,
+      "index": -1,
+      "primaryCount": 4,
+      "sourceObjects": 38,
+      "bounds": [
+        [
+          -9.366500262451172,
+          -21.873380664062502,
+          0.65
+        ],
+        [
+          9.366500262451172,
+          -15.32589973754883,
+          1.2922500133514405
+        ]
+      ],
+      "triangles": 1208
+    },
+    {
+      "name": "missile-2",
+      "family": "missile",
+      "class": 2,
+      "index": -1,
+      "primaryCount": 6,
+      "sourceObjects": 54,
+      "bounds": [
+        [
+          -9.603859790039062,
+          -22.41182680053711,
+          0.65
+        ],
+        [
+          9.603859790039062,
+          -15.32589973754883,
+          1.3132500267028808
+        ]
+      ],
+      "triangles": 1840
+    },
+    {
+      "name": "missile-3",
+      "family": "missile",
+      "class": 3,
+      "index": -1,
+      "primaryCount": 8,
+      "sourceObjects": 90,
+      "bounds": [
+        [
+          -9.90227989501953,
+          -22.69227293701172,
+          0.65
+        ],
+        [
+          9.90227989501953,
+          -15.32589973754883,
+          1.3342499732971191
+        ]
+      ],
+      "triangles": 3416
+    },
+    {
+      "name": "missile-4",
+      "family": "missile",
+      "class": 4,
+      "index": -1,
+      "primaryCount": 10,
+      "sourceObjects": 110,
+      "bounds": [
+        [
+          -10.26950026245117,
+          -22.972719073486328,
+          0.65
+        ],
+        [
+          10.26950026245117,
+          -15.32589973754883,
+          1.3552499866485597
+        ]
+      ],
+      "triangles": 4224
+    },
+    {
+      "name": "missile-5",
+      "family": "missile",
+      "class": 5,
+      "index": -1,
+      "primaryCount": 12,
+      "sourceObjects": 132,
+      "bounds": [
+        [
+          -10.570500262451171,
+          -23.25316520996094,
+          0.65
+        ],
+        [
+          10.570500262451171,
+          -15.33839110107422,
+          1.4725000000000001
+        ]
+      ],
+      "triangles": 10976
+    },
+    {
+      "name": "cargo-00",
+      "family": "cargo",
+      "class": 0,
+      "index": 0,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          -8.232041267822266,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          -6.167958595703126,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-01",
+      "family": "cargo",
+      "class": 0,
+      "index": 1,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          -5.432041488281252,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          -3.3679586521301283,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-02",
+      "family": "cargo",
+      "class": 0,
+      "index": 2,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          -2.6320412166442884,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          -0.5679587085571305,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-03",
+      "family": "cargo",
+      "class": 0,
+      "index": 3,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          0.16795871988045974,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          2.232041235015867,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-04",
+      "family": "cargo",
+      "class": 0,
+      "index": 4,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          2.9679585064697243,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          5.032041178588865,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-05",
+      "family": "cargo",
+      "class": 0,
+      "index": 5,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          5.767958614074706,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          7.832041614257811,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-06",
+      "family": "cargo",
+      "class": 0,
+      "index": 6,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          8.567958721679686,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          10.632041393798826,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-07",
+      "family": "cargo",
+      "class": 0,
+      "index": 7,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          -6.21452016464135,
+          11.367958501220702,
+          0.4
+        ],
+        [
+          -2.4560414086904223,
+          13.432041173339842,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-08",
+      "family": "cargo",
+      "class": 0,
+      "index": 8,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          -8.232041267822266,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          -6.167958595703126,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-09",
+      "family": "cargo",
+      "class": 0,
+      "index": 9,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          -5.432041488281252,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          -3.3679586521301283,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-10",
+      "family": "cargo",
+      "class": 0,
+      "index": 10,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          -2.6320412166442884,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          -0.5679587085571305,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-11",
+      "family": "cargo",
+      "class": 0,
+      "index": 11,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          0.16795871988045974,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          2.232041235015867,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-12",
+      "family": "cargo",
+      "class": 0,
+      "index": 12,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          2.9679585064697243,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          5.032041178588865,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-13",
+      "family": "cargo",
+      "class": 0,
+      "index": 13,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          5.767958614074706,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          7.832041614257811,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-14",
+      "family": "cargo",
+      "class": 0,
+      "index": 14,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          8.567958721679686,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          10.632041393798826,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    },
+    {
+      "name": "cargo-15",
+      "family": "cargo",
+      "class": 0,
+      "index": 15,
+      "primaryCount": 0,
+      "sourceObjects": 24,
+      "bounds": [
+        [
+          2.4560414086904223,
+          11.367958501220702,
+          0.4
+        ],
+        [
+          6.21452016464135,
+          13.432041173339842,
+          1.2312500000000002
+        ]
+      ],
+      "triangles": 2620
+    }
+  ],
+  "sha256": "77c44098bb708e4171c7498d3cd5bd44ab6b1e411de88e92b76d7dbef8d1ed5d",
+  "bytes": 4143768,
+  "sourceCountsVerified": true,
+  "allGroupsInsideApprovedBayHullEnvelope": true,
+  "armorCoverage": [
+    {
+      "class": 1,
+      "targetPercent": 20,
+      "actualPercent": 20.0,
+      "coveredPixels": 34912,
+      "eligiblePixels": 174560,
+      "mask": "coverage-1.png",
+      "regionPixels": {
+        "nose": 22069,
+        "engineering": 8393,
+        "wing": 4450
+      },
+      "sha256": "cc96d6737b8f3f232161ec5f2b24e81ee42dbedb94e73b6acdd19af108f95397"
+    },
+    {
+      "class": 2,
+      "targetPercent": 40,
+      "actualPercent": 40.0,
+      "coveredPixels": 69824,
+      "eligiblePixels": 174560,
+      "mask": "coverage-2.png",
+      "regionPixels": {
+        "nose": 22505,
+        "engineering": 23952,
+        "wing": 15640,
+        "spine": 7727
+      },
+      "sha256": "d57a256ef2ebbc7d74fbf0fbd12fa188300aba2308ac25e0bdfdccb6beb32c85"
+    },
+    {
+      "class": 3,
+      "targetPercent": 60,
+      "actualPercent": 60.0,
+      "coveredPixels": 104736,
+      "eligiblePixels": 174560,
+      "mask": "coverage-3.png",
+      "regionPixels": {
+        "nose": 22639,
+        "engineering": 32320,
+        "wing": 25458,
+        "spine": 24319
+      },
+      "sha256": "bc246b3a4531ef0eae9f1167e620dee2e2e60813eae28c002292d9706aa196d7"
+    },
+    {
+      "class": 4,
+      "targetPercent": 80,
+      "actualPercent": 80.0,
+      "coveredPixels": 139648,
+      "eligiblePixels": 174560,
+      "mask": "coverage-4.png",
+      "regionPixels": {
+        "nose": 34703,
+        "engineering": 35507,
+        "wing": 43697,
+        "spine": 25741
+      },
+      "sha256": "f3ac533e0668414b967fd22bcc3943a0275a6bba8cf901d9b89d7bb2436b9b41"
+    },
+    {
+      "class": 5,
+      "targetPercent": 100,
+      "actualPercent": 100.0,
+      "coveredPixels": 174560,
+      "eligiblePixels": 174560,
+      "mask": "coverage-5.png",
+      "regionPixels": {
+        "nose": 34737,
+        "engineering": 36515,
+        "wing": 77415,
+        "spine": 25893
+      },
+      "sha256": "f89b4f38804197616a125f2e539203cd80a7f3d6fb5b71c8d427b84294501358"
+    }
+  ]
+}

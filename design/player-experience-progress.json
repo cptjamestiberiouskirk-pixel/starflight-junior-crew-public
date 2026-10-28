@@ -1,0 +1,1286 @@
+{
+  "scope": "Player-experience and original-rule completion pass authorized 2026-10-22",
+  "constraints": [
+    "Original Starflight rules take precedence",
+    "Preserve existing gameplay structure and mission progression",
+    "Preserve save compatibility and recorded voice IDs/text",
+    "Use isolated synthetic browser profiles for testing",
+    "Private GitHub source and curated-evidence backup explicitly authorized; no public/site deployment"
+  ],
+  "baseline": {
+    "sourceDirectory": "artifacts/player-experience-baseline",
+    "checksPassed": 705,
+    "typecheck": "passed",
+    "productionBundle": "index-KCf-oxGi.js"
+  },
+  "findings": {
+    "C-01": {
+      "name": "Finished animated crew portraits",
+      "status": "Five original atlases plus fifty new identities; eleven portraits per race, unique until pool exhaustion, real blinking/states, persistent appearance and legacy migration verified"
+    },
+    "C-02": {
+      "name": "Spemin transport artwork",
+      "status": "Correct transport rendered, native draw verified"
+    },
+    "C-03": {
+      "name": "Flat Device protection",
+      "status": "Original attack math implemented; native Flat Device protection verified"
+    },
+    "C-04": {
+      "name": "Lifeform recording and survey redemption",
+      "status": "Recording, pause/save continuation and one-time survey redemption verified"
+    },
+    "C-05": {
+      "name": "Crystal Orb site recovery",
+      "status": "Veloxi handover reopens only Orb site; native recovery verified"
+    },
+    "C-06": {
+      "name": "Wildlife crew injury",
+      "status": "Assigned crew injury and original durability rules implemented; native injury verified"
+    },
+    "C-07": {
+      "name": "Surface refill lifecycle",
+      "status": "Native ascent retains depletion; break orbit refills ordinary resources and preserves fixed relic recovery"
+    },
+    "C-08": {
+      "name": "Translation bonuses",
+      "status": "Original integer translation formula, species exclusions and assigned-crew filtering tested"
+    },
+    "C-09": {
+      "name": "Copy/reset save slots",
+      "status": "Copy/reset, independent source preservation, stale destination protection, quota failure export and phone review passed in compiled Chrome"
+    },
+    "C-10": {
+      "name": "Artifact buying and evaluation interest design discrepancies",
+      "status": "Original depot stock, buyback and integer interest implemented; base hold, purchase/reload and launch/evaluation ordering passed"
+    },
+    "C-11": {
+      "name": "Incorrect inactive sun asset",
+      "status": "Wrong unused sun archived and retired; active fixed-radius animated sun preserved"
+    }
+  },
+  "experienceWork": [
+    {
+      "name": "Mining usability and laser",
+      "status": "Continuous tenth-unit mining, energy, target selection, approach, start/stop and phone controls verified"
+    },
+    {
+      "name": "Ground art",
+      "status": "Alpha-safe tint, world anchored elevation/tiles, exact tile seams and four species locomotion passed; native motion frames inspected"
+    },
+    {
+      "name": "Cinematics",
+      "status": "Four triangle placeholders replaced by configured hull; correct destination backgrounds verified across frozen/molten/liquid"
+    },
+    {
+      "name": "Explosions",
+      "status": "Finished canvas effect integrated for missile and previously missing laser kills; native flash/fire/smoke frames inspected"
+    },
+    {
+      "name": "Propulsion",
+      "status": "Detached trail removed; three painted hull nozzle mouths measured and shared across classes; actual renderer reviewed for five classes and four directions"
+    },
+    {
+      "name": "Fresh missions",
+      "status": "Three fresh native missions played. A mined/docked/sold then lost combat; B completed a colony loop then exposed the drone defect; C lost while testing near first contact. B resumed from its own public save, passed two original drone tests, recovered Black Egg and Crystal Orb, returned/refuelled, reached the Nexus and won. Victory survived return to title and reload; public export records gameWon/flaresStopped, 500500 MU, zero casualties and isDev false. Guided normal controls using chart knowledge and public save exports; not an unaided campaign or multiple fresh wins."
+    },
+    {
+      "name": "Veloxi drone original rules",
+      "status": "Six random numbers, YES for multiples of six, timing, clearance until hyperspace, every denial path, saved unfinished test, return to orbit and mechanical portrait implemented; native checks passed"
+    },
+    {
+      "name": "Original communications and Mechan 9",
+      "status": "Race-specific talk/fight bands, diminishing posture effects, original question answer deltas and timers, two reminders and impatience, equipment/reputation effects, ordered transmissions, permanent Mechan recognition and Heaven access implemented. 120 rule/save regressions and 12 compiled native scenarios passed, including phone controls, unfinished return reload and recognition isolation across mission slots."
+    },
+    {
+      "name": "Music playback and voice balance",
+      "status": "Neon Starfield Voyage retro electronic replacement integrated and technically verified; old lounge-like choice superseded. Six actual-recording scenarios plus title/port, pause, volume, ducking and natural loop checks pass. User auditory acceptance of new track pending."
+    },
+    {
+      "name": "Original conversation lifecycle",
+      "status": "Queued replies, original initial/turn/hail clocks, three-hail limit and mood penalties, per-encounter lore refusal, mission-wide ordered lore, closed/pending-link reloads, transmitter lifetime and persistent ship-log history are implemented. 11 compiled scenarios pass; Nomad 188's actual 28.64-second recording ends naturally, then the next link advances to 189. Manual close and title return still stop playback. Homeworld warnings and Orb handover pass with the delayed handshake."
+    }
+  ],
+  "finalReport": "artifacts/science-artwork-20261024/final-acceptance/REPORT.md",
+  "updatedAt": "2026-10-24T22:50:43.170450+00:00",
+  "externalDesignCheck": {
+    "status": "Completed three target comparisons with low anchor overlap; adaptations documented",
+    "report": "artifacts/science-console-redesign/design/comparison-summary.json",
+    "pixelPerfect": false
+  },
+  "latestTests": {
+    "automatedChecks": 4894,
+    "compiledBrowserScenarios": 185,
+    "sourceAudioHarnessChecks": 6,
+    "freshNativeVoyages": 2,
+    "earnedCampaignContinuations": 1,
+    "scope": "Exact final compiled build; historical galleries excluded"
+  },
+  "music": {
+    "status": "retro electronic replacement technically verified; user audition pending",
+    "provider": "Sonilo creator account",
+    "selection": {
+      "id": "retro-v1",
+      "title": "Neon Starfield Voyage",
+      "variation": 1,
+      "trackId": "8ef53ccc-596c-46e1-a2a5-0406ed60254a",
+      "description": "An upbeat retro-futuristic electronic space exploration cue driven by analog sequencers, FM bells, and vintage synth textures designed for seamless looping.",
+      "file": "assets/music/neon-starfield-voyage.m4a",
+      "bytes": 11637888,
+      "sha256": "f8977022f0ded705385a382238271c80271dc342c8781e607dd56bb9eda6a560"
+    },
+    "source": "Signed-in Sonilo creator account through Edge; one authorized new generation after user selected Retro electronic space adventure",
+    "brief": "design/SONILO_MUSIC_PROMPTS.md",
+    "review": "design/SONILO_MUSIC_REVIEW.md",
+    "manifest": "artifacts/sonilo-review/retro-replacement.json",
+    "actualTests": "artifacts/qa-sonilo-report.json",
+    "loop": {
+      "sourceStartSec": 12.5,
+      "sourceEndSec": 345,
+      "crossfadeSec": 2.5,
+      "initialSec": 332.5,
+      "repeatSec": 330
+    },
+    "duckDb": -11.05684,
+    "artisticAudition": false,
+    "limitations": [
+      "User approved the retro electronic direction; new track has no agent auditory review or user acceptance yet.",
+      "HTMLAudio fallback loops the original fade-out without the authored Web Audio crossfade.",
+      "Desktop default 48 kHz PCM preparation can transiently hold about 266 MB; mobile memory pressure untested."
+    ],
+    "runtimeProfile": "artifacts/feedback-source-audio.json",
+    "userAccepted": false,
+    "titleAndPortFix": {
+      "status": "verified",
+      "report": "artifacts/qa-title-port-music-report.json",
+      "scenes": [
+        "Title",
+        "Starport",
+        "Docking Bay"
+      ],
+      "dedicatedCues": [
+        "Combat",
+        "Victory",
+        "Memorial"
+      ]
+    }
+  },
+  "acceptanceAudit": "artifacts/player-experience-acceptance.json",
+  "remainingAudit": [
+    "Broader original-game parity and untested campaign/planet combinations remain report boundaries.",
+    "Agent auditory listening unavailable; retro replacement awaits user audition. HTMLAudio retains source fade and mobile memory pressure is untested.",
+    "12UI comparison settled with low selector overlap; no pixel-perfect certification."
+  ],
+  "status": "final-authorized-local-acceptance-passed",
+  "planetaryScanning": {
+    "status": "implemented and verified",
+    "unitChecks": 27,
+    "compiledScenarios": 7,
+    "saveField": "optional planetaryScan",
+    "manual": "https://www.mocagh.org/ea/advpak-starflight-manual.pdf",
+    "report": "artifacts/qa-planet-scans-report.json",
+    "freshMission": "player-closeout-d"
+  },
+  "privateRepository": {
+    "url": "https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew",
+    "visibility": "PRIVATE",
+    "publishing": "Prior backup retained; this continuation performs no commit, push or deployment"
+  },
+  "feedbackRepairs": {
+    "status": "implemented and technically verified",
+    "report": "artifacts/qa-feedback-report.json",
+    "motion": "artifacts/qa-feedback-motion-report.json"
+  },
+  "freshMissionCloseout": {
+    "report": "artifacts/crew-diversity/playthroughs/fresh-gameplay-report.json",
+    "current": [
+      "crew-map-mission-a",
+      "crew-map-mission-b"
+    ],
+    "totalRecorded": 11,
+    "historicalGuidedVictories": 1,
+    "voyageProductionBundle": {
+      "entry": "assets/index-Br7uyeAG.js",
+      "sha256": "e0cae85384ea73f8f7abe57d10a0a8da4958a4dc46d49f85ca119cb5d412fc98"
+    },
+    "finalResponsiveVerification": {
+      "entry": "assets/index-D_l_pyQ4.js",
+      "sha256": "937ceb0c29497044e0b2b08fa63d2cef34e2a96f28519da653392bde4dc9bc70"
+    }
+  },
+  "delivery": "Local only; no commit, push, publication or deployment",
+  "bayLaunch": {
+    "status": "approved painted bay and current installed ship equipment verified",
+    "report": "artifacts/qa-bay-scale-after-report.json",
+    "productionBundle": {
+      "entry": "assets/index-DAnSybmv.js",
+      "sha256": "3941d6482b396f5a7f106afe33030d31e57b3da4adc84cc7956f1f42e1f8026c"
+    },
+    "replacement": {
+      "status": "approved painted bay with approved configuration fittings integrated and verified",
+      "reason": "User rejected the flat-sprite bay animation after scale correction",
+      "package": "artifacts/docking-bay-rebuild/review-manifest.json",
+      "movie": "artifacts/docking-bay-rebuild/docking-bay-review.mp4",
+      "runtimeIntegrated": true,
+      "geometryFrames": 192,
+      "reviewPlaybackProfiles": 2,
+      "approval": "artifacts/docking-bay-rebuild/human-approval.json",
+      "runtimeManifest": "artifacts/ship-library-integration.json",
+      "compiledScenarios": 18,
+      "feedbackCompiledScenarios": 4,
+      "feedbackSourceHarnessChecks": 1,
+      "sound": "assets/audio/docking-bay-mirelo.wav",
+      "paintedApproval": "artifacts/docking-bay-rebuild/art-direction-v2/human-approval.json"
+    }
+  },
+  "productionBundle": {
+    "entry": "assets/index-D1PR-s-y.js",
+    "sha256": "49e6e8022cbf5dbbf817946eb3e68071c53ed4e04b32e4d4819900baef5008f7"
+  },
+  "shipConfigurationLibrary": {
+    "timestamp": "2026-10-23T16:09:23.953672+00:00",
+    "status": "approved and locally integrated; verification passed",
+    "review": "artifacts/ship-configuration-library/revision-v2/review-results.json",
+    "approval": "artifacts/ship-configuration-library/revision-v2/human-form-approval.json",
+    "readme": "design/SHIP_CONFIGURATION_COMPLETION.md",
+    "plannedFullImages": 3672,
+    "reviewFullShipImages": 22,
+    "fullProductionImagesExported": 3672,
+    "runtimeIntegrated": true,
+    "renderer": "Blender 5.2.2 LTS",
+    "manifest": "artifacts/ship-library-integration.json",
+    "productionBundle": {
+      "entry": "assets/index-BEq-6_mE.js",
+      "sha256": "ae685a4cf44b718d0432eb3bbee3d305b8e30ad965cffaefdb9727b14857ceab"
+    },
+    "introducedInBundle": {
+      "entry": "assets/index-Bqgtdg0W.js",
+      "sha256": "32a0ec31f1a3f57c1e01c477d1430a4dd22de8b686b0fcc7756bb5d16e4b655f"
+    },
+    "runtimeManifest": "artifacts/player-feedback-round2/integration.json",
+    "armorPlacementFix": "Source hull transforms now applied before live armor projection",
+    "rendererProvenance": "Existing approved Blender-authored assets retained; new Blender work prohibited"
+  },
+  "historicalLatestTests": {
+    "checks": 1187,
+    "typecheck": "passed",
+    "build": "passed",
+    "pagesAssets": "120 source images SHA-256 verified; compiled local resources and selected audio verified",
+    "nativeReport": "artifacts/qa-player-experience-report.json",
+    "nativeScenarios": 21,
+    "compiledScenarios": 19,
+    "developmentRendererChecks": 2,
+    "encounterScenarios": 15,
+    "originalCommunicationsScenarios": 12,
+    "conversationLifecycleScenarios": 11,
+    "musicNativeScenarios": 6,
+    "musicCompiledScenarios": 2,
+    "musicSourceHarnessScenarios": 4,
+    "galleryScenes": 115,
+    "assetInventory": "120 decoded; no missing literal runtime keys",
+    "voices": "972 standalone crew recordings and 548 expected spoken alien recordings exist; 6 sampled files decoded with actual Chrome AudioContext; 4 procedural/UI alien IDs and 8 nickname fragments are intentional exceptions",
+    "finalCombinedRun": "Bay-scale follow-up: all 1,187 unit assertions plus typecheck, build and resources pass; two affected compiled desktop/phone launch scenarios rerun. Other 75 compiled scenarios, 12 harness checks, 115 gallery scenes and fresh missions remain the prior completed-pass evidence.",
+    "actualSoniloScenarios": 6,
+    "actualSoniloCompiledScenarios": 1,
+    "actualSoniloHarnessScenarios": 5,
+    "compiledBrowserScenarios": 77,
+    "sourceRendererAndAudioHarnessChecks": 12,
+    "planetaryScenarios": 7,
+    "titlePortScenarios": 2,
+    "currentFeedbackBuild": {
+      "compiledRerun": 2,
+      "harnessRerun": 0,
+      "priorCompiled": 75,
+      "priorHarness": 12,
+      "priorGallery": 115
+    },
+    "bayLaunchScenarios": 2,
+    "goalLedger": "artifacts/goal-closeout.json",
+    "currentProductionBundle": {
+      "entry": "assets/index-CudueglO.js",
+      "sha256": "a2e7869fa0b45a8100411991438675d416b71b199d3e9a7985434b1f22bd51c7"
+    },
+    "bayScaleFollowup": "artifacts/bay-scale-followup.json"
+  },
+  "validationHistory": [
+    {
+      "checks": 1844,
+      "typecheck": "passed",
+      "build": "passed",
+      "compiledBrowserScenarios": 50,
+      "sourceRendererAndAudioHarnessChecks": 1,
+      "galleryScenes": 0,
+      "tests": {
+        "shipLibrary": {
+          "report": "artifacts/ship-configuration-library/runtime/qa-ship-library.json",
+          "compiled": 28,
+          "sourceHarness": 0,
+          "cases": [
+            "compiled-ship-c00-a0-l0-m0",
+            "compiled-ship-c01-a0-l0-m0",
+            "compiled-ship-c08-a0-l0-m0",
+            "compiled-ship-c16-a0-l0-m0",
+            "compiled-ship-c00-a1-l0-m0",
+            "compiled-ship-c00-a2-l0-m0",
+            "compiled-ship-c00-a3-l0-m0",
+            "compiled-ship-c00-a4-l0-m0",
+            "compiled-ship-c00-a5-l0-m0",
+            "compiled-ship-c00-a0-l1-m0",
+            "compiled-ship-c00-a0-l2-m0",
+            "compiled-ship-c00-a0-l3-m0",
+            "compiled-ship-c00-a0-l4-m0",
+            "compiled-ship-c00-a0-l5-m0",
+            "compiled-ship-c00-a0-l0-m1",
+            "compiled-ship-c00-a0-l0-m2",
+            "compiled-ship-c00-a0-l0-m3",
+            "compiled-ship-c00-a0-l0-m4",
+            "compiled-ship-c00-a0-l0-m5",
+            "compiled-ship-c05-a2-l1-m0",
+            "compiled-ship-c12-a4-l3-m2",
+            "compiled-ship-c16-a5-l5-m5",
+            "compiled-shipyard-purchases-and-public-save-roundtrip",
+            "compiled-fitted-Star System",
+            "compiled-fitted-Hyperspace",
+            "compiled-fitted-In Orbit",
+            "compiled-phone-fitted-shipyard",
+            "compiled-laser-beams-start-at-authored-emitters"
+          ]
+        },
+        "bayRuntime": {
+          "report": "artifacts/docking-bay-rebuild/runtime/qa-game-runtime.json",
+          "compiled": 18,
+          "sourceHarness": 0,
+          "cases": [
+            "compiled-3d-natural-desktop",
+            "new-save-resume-and-skip-desktop",
+            "legacy-save-launch-desktop",
+            "native-sfx-volume-mute-and-low-quality",
+            "actual-recorded-launch-voice-ducks-mirelo",
+            "compiled-config-tier-0",
+            "compiled-config-tier-1",
+            "compiled-config-tier-2",
+            "compiled-config-tier-3",
+            "compiled-config-tier-4",
+            "compiled-config-tier-5",
+            "compiled-config-mixed-no-laser",
+            "compiled-config-mixed-no-missiles",
+            "compiled-config-mixed-bare-armor",
+            "compiled-3d-natural-phone",
+            "new-save-resume-and-skip-phone",
+            "legacy-save-launch-phone",
+            "no-webgl-configured-cpu-3d-fallback"
+          ]
+        },
+        "feedbackRegression": {
+          "report": "artifacts/docking-bay-rebuild/runtime/qa-feedback-regression.json",
+          "compiled": 4,
+          "sourceHarness": 1,
+          "cases": [
+            "native-projected-globe-continuous-subtexel-motion",
+            "compiled-readable-system-hyperspace-and-orbit-hulls",
+            "compiled-landed-hull-and-finished-metal-hardware",
+            "compiled-mining-sustains-without-repeated-crew-and-stops",
+            "native-mining-master-volume-mute-and-visibility"
+          ]
+        }
+      },
+      "resourceVerification": "All 3672 source/dist configuration hashes plus original images, approved bay/audio and fitted GLB/maps passed",
+      "currentProductionBundle": {
+        "entry": "assets/index-Bqgtdg0W.js",
+        "sha256": "32a0ec31f1a3f57c1e01c477d1430a4dd22de8b686b0fcc7756bb5d16e4b655f"
+      },
+      "historicalFullPass": "artifacts/goal-closeout.json"
+    },
+    {
+      "label": "Crew/map pre-responsive follow-up",
+      "productionBundle": {
+        "entry": "assets/index-Br7uyeAG.js",
+        "sha256": "e0cae85384ea73f8f7abe57d10a0a8da4958a4dc46d49f85ca119cb5d412fc98"
+      },
+      "checks": 2137,
+      "compiledBrowserScenarios": 44,
+      "archive": "artifacts/crew-diversity/pre-rover-responsive/artifacts/crew-diversity/integration.json"
+    },
+    {
+      "label": "Prior crew/map pass",
+      "productionBundle": {
+        "entry": "assets/index-D_l_pyQ4.js",
+        "sha256": "937ceb0c29497044e0b2b08fa63d2cef34e2a96f28519da653392bde4dc9bc70"
+      },
+      "checks": 2137,
+      "compiledBrowserScenarios": 47,
+      "archive": "artifacts/science-console-redesign/baseline/artifacts/crew-diversity/integration.json"
+    },
+    {
+      "timestamp": "2026-10-24T01:53:44.804732+00:00",
+      "phase": "scienceFlightFollowup",
+      "manifest": "artifacts/science-console-redesign/integration.json",
+      "historical": true
+    },
+    {
+      "timestamp": "2026-10-24T22:50:43.170450+00:00",
+      "scope": "superseded currentAcceptance",
+      "evidence": {
+        "timestamp": "2026-10-24T18:45:10.115737+00:00",
+        "status": "current-build-tested-scope-passed; Science-artwork-incomplete",
+        "productionBundle": {
+          "entry": "assets/index-BjsZAEW9.js",
+          "sha256": "cdadce8cc46003bb810e2ae610958626eafb28f344c50ff3adc7211da357763e"
+        },
+        "sourceAssertions": 4825,
+        "compiledCases": 167,
+        "sourceAudioHarnessCases": 6,
+        "freshVoyages": 2,
+        "earnedCampaignContinuations": 1,
+        "checks": [
+          {
+            "report": "qa-round2.json",
+            "compiledCases": 18,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-bay-integration.json",
+            "compiledCases": 4,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-drydock.json",
+            "compiledCases": 2,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-maintenance.json",
+            "compiledCases": 8,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-cross-systems.json",
+            "compiledCases": 3,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "engineering/qa-science-maps.json",
+            "compiledCases": 3,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-encounters-report.json",
+            "compiledCases": 15,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "final-regression/qa-personnel.json",
+            "compiledCases": 15,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "final-regression/regression/qa-workspace.json",
+            "compiledCases": 12,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "final-regression/regression/qa-flight.json",
+            "compiledCases": 15,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "final-regression/regression/navigation/qa-map-navigation.json",
+            "compiledCases": 6,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "final-regression/regression/crew/qa-crew-diversity.json",
+            "compiledCases": 15,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "motion-final.json",
+            "compiledCases": 2,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-audio.json",
+            "compiledCases": 0,
+            "sourceHarnessCases": 1
+          },
+          {
+            "report": "qa-sonilo-report.json",
+            "compiledCases": 1,
+            "sourceHarnessCases": 5
+          },
+          {
+            "report": "qa-lifeforms.json",
+            "compiledCases": 20,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-weather.json",
+            "compiledCases": 11,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "qa-telemetry.json",
+            "compiledCases": 10,
+            "sourceHarnessCases": 0
+          },
+          {
+            "report": "playback/qa-playback.json",
+            "compiledCases": 4,
+            "sourceHarnessCases": 0
+          }
+        ],
+        "sourceHashes": {
+          "App.tsx": "d3fe8f89c7ac2dbb3d81e46468735eb717eaa1f20f91ac00ba2305985f0aba0c",
+          "components/PlanetarySensors.tsx": "fd340091991d1608a3201ac289f460dc9b93b56a868ce2d77cab8ebae50e0cf2",
+          "utils/tactical-armor.ts": "38d4c7cb8a6734edc5c178b969e35c1b31f3350fc2d1e604d1b23fa2576af65a",
+          "utils/armor-style.ts": "2a627587f3b1e03436e8a3a583f2f13e41c3daa9134748176bdff3caf241a05d",
+          "utils/ship-art.ts": "2ec52201aa69f8d2a75914e651e394d0749ed201e5a399f0e8bcc6655026ec7e",
+          "utils/surface-weather.ts": "5f887aa0e1fb440af6128508747dac7c1da14c6da938a0a2bf38f4c6077ad106",
+          "utils/wildlife.ts": "75c6bdde7222a97f4511724a6d98d40343a7f659ce59449983c6e9be7c168d11",
+          "utils/bay-flight.ts": "585e718fe7f7e359c5a8b5c098c8edcb4476ea78790f0737a907ea92878c930a",
+          "utils/bay-renderer.ts": "0f4cb6e6ebdf48029983e61cd3c519e59641cd9b3808307bc32c1d151d9cbbb3",
+          "utils/bay-cpu-renderer.ts": "b3997cc9033a9b0edcb89559bc42c687507ded8d0b01d688faaa37faeb84e9a4",
+          "utils/software-ship-raster.ts": "07068e3e600ce4128f9b1143ef03a39d800ebfa2e8abddaca343df64479a62f8",
+          "utils/science-sensors.ts": "112a9b91ed69d69b8b3ba9ba5bfd58bf595f24804d4a56bc36b1cbf8c6b239eb",
+          "utils/vessel-sensors.ts": "8e093573ecf2fad8da702ef35c036ae4a78c04aa5ca0bfe48f5c5b305f3eb69c",
+          "src/vesselSensors.json": "83fc00f024e8281ec9b07732a28a864d6d279e48494f432d2a56317c0b304990",
+          "scripts/test.mjs": "7bf91721e1a2aed057ea8e2894bae9daec37d5f5449f91e9eb04ebdcebee91c1",
+          "vite.config.ts": "4d24cd9f1b5a0cc95f378e21aaa259882173bb9b3652a1eeba93957895a50942"
+        },
+        "createdGameMedia": [],
+        "retiredGameMedia": [],
+        "scienceArtwork": {
+          "timestamp": "2026-10-24T16:47:55.443086+00:00",
+          "status": "requires-external-wallet-funding-or-correct-funded-CLI-account",
+          "approvalCapUsd": 2.02,
+          "observedError": {
+            "httpStatus": 402,
+            "code": "insufficient_funds",
+            "message": "The free generation allowance is used up and the prepaid wallet needs more balance.",
+            "requiredMicros": 30000,
+            "availableMicros": 0
+          },
+          "candidatesGenerated": 0,
+          "sourceHintsAuthorized": false,
+          "safeWorkflow": "Image-only improve, no repo flag; readings-image-kit has repo:null",
+          "sourceHintRetry": "Rejected by automatic approval review; safer image-only retry approved and reached service",
+          "next": "Verify appropriate12UI CLI account/wallet before resuming the existing image-only run. Do not dispatch additional generation while unfunded or exceed2.02USD; do not hand-approximate the blocked12UI design."
+        },
+        "limits": [
+          "Two genuine new missions; campaign uses a genuine earned Black Egg checkpoint, not a fresh campaign from scratch",
+          "Headless muted disposable profiles; videos contain no sound. Technical audio checks do not establish listening quality",
+          "Software bay fallback remains slower than GPU; frame-gap evidence retained",
+          "No human aesthetic acceptance or exhaustive route/device certification",
+          "No new paid generation, Blender, commits, pushes, publication, owner save changes or source disclosure"
+        ],
+        "reviewedCompiledBayContactSheets": [
+          "motion-review-launch-gpu.png",
+          "motion-review-launch-cpu.png",
+          "motion-review-dock-gpu.png",
+          "motion-review-dock-cpu.png"
+        ],
+        "currentBayPacing": [
+          {
+            "name": "native-launch-GPU",
+            "p95": 6.400000000000546,
+            "maximumGap": 48.5,
+            "frames": 1296
+          },
+          {
+            "name": "native-dock-GPU",
+            "p95": 6.400000000000091,
+            "maximumGap": 42,
+            "frames": 1299
+          },
+          {
+            "name": "native-launch-CPU",
+            "p95": 48.5,
+            "maximumGap": 109.30000000000018,
+            "frames": 334
+          },
+          {
+            "name": "native-dock-CPU",
+            "p95": 48.5,
+            "maximumGap": 60.20000000000073,
+            "frames": 482
+          }
+        ]
+      }
+    }
+  ],
+  "scienceMapFollowup": {
+    "status": "passed",
+    "manifest": "artifacts/science-map-followup/integration.json",
+    "report": "design/SCIENCE_MAP_FOLLOWUP.md",
+    "optionalSaveField": "PlanetSurfaceState.survey",
+    "originalRuleBoundary": "Orbital location overlays and uncertainty radii are remake extensions; original five-field analysis unchanged",
+    "historical": true
+  },
+  "crewAndMapFollowup": {
+    "status": "passed",
+    "manifest": "artifacts/crew-diversity/integration.json",
+    "report": "design/CREW_AND_MAP_FOLLOWUP.md",
+    "productionBundle": {
+      "entry": "assets/index-D_l_pyQ4.js",
+      "sha256": "937ceb0c29497044e0b2b08fa63d2cef34e2a96f28519da653392bde4dc9bc70"
+    },
+    "automatedChecks": 2137,
+    "compiledBrowserScenarios": 47,
+    "genderSelector": "Not added; original recruitment rules preserved",
+    "originalAssetsDeleted": [],
+    "freshGameplay": {
+      "report": "artifacts/crew-diversity/playthroughs/fresh-gameplay-report.json",
+      "missions": 2,
+      "fullVoyageBuild": {
+        "entry": "assets/index-Br7uyeAG.js",
+        "sha256": "e0cae85384ea73f8f7abe57d10a0a8da4958a4dc46d49f85ca119cb5d412fc98"
+      },
+      "responsiveOnlyFinalBuild": {
+        "entry": "assets/index-D_l_pyQ4.js",
+        "sha256": "937ceb0c29497044e0b2b08fa63d2cef34e2a96f28519da653392bde4dc9bc70"
+      }
+    },
+    "historical": true
+  },
+  "scienceFlightFollowup": {
+    "status": "passed",
+    "manifest": "artifacts/science-console-redesign/integration.json",
+    "report": "design/SCIENCE_FLIGHT_FOLLOWUP.md",
+    "productionBundle": {
+      "entry": "assets/index-CGpcHf8n.js",
+      "sha256": "11e8b9c9f98e443e4fb6f06448f83d9c97ffedb13f572826b66f2d3cc5180652"
+    },
+    "freshGameplay": "artifacts/science-console-redesign/playthroughs/fresh-voyages-report.json",
+    "designComparison": "artifacts/science-console-redesign/design/comparison-summary.json",
+    "limits": [
+      "The original eleven-finding completion, 115-scene full gallery and single guided campaign victory remain historical. This follow-up does not claim every original-game feature or a new victory.",
+      "The orbital location overlay is a remake extension: twelve repeatable sampled regions plus known records, not an omniscient whole-planet census. Science skill affects detection and positional certainty.",
+      "Existing authored installations, ruins and gated artifacts are classified; no separate planetary Precursor ship entity exists in this build, so none is invented or mislabeled.",
+      "Engine-class system speed follows the local Unity reference D8 remake decision; original 1986 system flight used a shared cap. Mass acceleration uses the original-derived integer formula. Existing engine-health effects are retained; hyperspace/combat pacing is unchanged.",
+      "12UI comparisons completed below the 60 percent selector threshold: 23.4 percent Survey, 29.2 percent Readings, 20.6 percent Analysis. Functional integration and responsive inspection passed; pixel-perfect target fidelity and human artistic acceptance are not claimed.",
+      "Fresh voyages use automated native browser controls with known chart guidance and read-only public exports. No imported starting fixtures, developer state writes or user-profile storage. Playwright videos have no audio; human listening and final musical-style acceptance remain outside this pass."
+    ],
+    "historical": true
+  },
+  "playerFeedbackRound2": {
+    "status": "passed",
+    "manifest": "artifacts/player-feedback-round2/integration.json",
+    "report": "design/PLAYER_FEEDBACK_ROUND2.md",
+    "toolPreference": "No Blender; Meshy, Mirelo, Sonilo, ElevenLabs or custom AI work",
+    "limits": [
+      "The original eleven-finding completion, full 115-scene gallery and single guided victory remain historical; no new campaign victory or complete feature-parity claim.",
+      "Two complete fresh voyages ran on archived index-ClRn7lhE.js before final camera, terrain-grain, translucent-globe and offline-speech refinements. Both earned checkpoints and all 100 scoped compiled cases were checked on the current bundle.",
+      "Native automated browser controls and known chart guidance were used. Personal Edge saves were untouched. Test output was muted; generated audio artistic character and final musical mix require human listening. Videos contain no audio.",
+      "Armor percentages are exact cumulative masks over the approved 174560-pixel eligible painted hull skin; no independent volumetric surface-area certification is claimed.",
+      "12UI comparison completed at 23.7 percent DOM anchor overlap, below its 60 percent threshold. No pixel-perfect design acceptance is claimed. New candidate generation was unavailable without further service allowance; existing approved design assets were retained.",
+      "The terrain remains the original generated world. Orbital survey localization is the existing skill-dependent sampled remake extension, not an omniscient planet census. No separate planetary Precursor ship entity was invented.",
+      "Frame pacing is measured on this Windows host; startup/resource stalls remain possible. CPU no-WebGL bay mode has simpler shading and a 24fps letterboxed painted background.",
+      "Existing approved models remain in use. No further Blender work is permitted; new asset work is restricted to Meshy, Mirelo, Sonilo, ElevenLabs or custom AI work."
+    ],
+    "historical": true
+  },
+  "personnelFollowup": {
+    "status": "passed",
+    "manifest": "artifacts/personnel-followup/integration.json",
+    "report": "design/PERSONNEL_FOLLOWUP.md",
+    "limits": [
+      "64 scoped compiled native Chrome scenarios and 3932 unit assertions passed on the current bundle. The previous 100-scenario pass and two full flight voyages remain archived historical evidence.",
+      "The new actual gameplay session starts at Start New Mission and recruits, trains and assigns three officers through ordinary controls. It is a starport personnel session, not another flight voyage or campaign victory.",
+      "Assignment recordings are the existing five species-specific crew lines. Actual fetch, decode and positive-gain playback were verified with physical output muted. Artistic listening was not performed. Voices volume, banter controls and existing serious-scene suppression are respected; the original remote recording service remains required.",
+      "The idle dance was reproduced before changes after 20 seconds; this follow-up changes its delay to eight seconds and prevents unrelated key presses resetting it. Existing dance artwork is retained.",
+      "Atmospheric visuals use actual density, weather and composition. Airless planets gain no fake atmosphere. The rim now renders outside the planet clip, with zoom-aware minimum thickness; cloud movement and original terrain remain intact.",
+      "Existing game artwork and styling were retained. 12UI skill guidance was consulted; no new hosted design, target conversion, comparison or pixel-perfect certification is claimed.",
+      "All changes remain local. No new generated media, paid service calls, Blender work, commits, pushes or publishing. Personal browser saves were untouched."
+    ]
+  },
+  "lifeformRecordingFollowup": {
+    "timestamp": "2026-10-24T16:21:30.776225+00:00",
+    "status": "targeted-fix-and-regression-passed; broader-acceptance-pending",
+    "productionBundle": {
+      "entry": "assets/index-DCGr253O.js",
+      "sha256": "ec354187b523435693b4ab374e10acf76fb1a129ac4684cdb9b9d6ba06c8a262"
+    },
+    "tests": {
+      "sourceAssertionsPassed": 4035,
+      "newRecordingAssertions": 32,
+      "compiledGameplayCases": 20,
+      "compiledCrossSystemCases": 3,
+      "compiledFeedbackRegressionCases": 18,
+      "typecheck": "passed",
+      "build": "passed",
+      "resources": "passed"
+    },
+    "reports": [
+      "artifacts\\lifeform-recording-20261024\\qa-lifeforms.json",
+      "artifacts\\lifeform-recording-20261024\\regression\\qa-cross-systems\\qa-cross-systems.json",
+      "artifacts\\lifeform-recording-20261024\\regression\\qa-round2\\qa-round2.json"
+    ],
+    "changedSources": {
+      "App.tsx": "80516876315666f293f5bf7fb8d4175ba572adddf647b34f60bd15cdc912515f",
+      "utils/wildlife.ts": "75c6bdde7222a97f4511724a6d98d40343a7f659ce59449983c6e9be7c168d11",
+      "lifeform-recording.test.ts": "b8e50aa04a54bec35430dba40bb729fce577cf0327c2be5d2e87f0dedb1b5182",
+      "scripts/test.mjs": "6e7a4694a52b1054a04a772a69a2e535ce8334c3e79c5028cb4b2b4389c62cea"
+    },
+    "reproduction": "before-reproduction/qa-lifeforms.json: ordinary Record lifeform action consumed200/999 energy, fleeing target escaped, rover remained at x0, no record/reward",
+    "createdAssets": [],
+    "retiredAssets": [],
+    "preservation": [
+      "three seconds",
+      "2.5km range",
+      "200/999 percent-charge scan energy plus ordinary travel energy",
+      "2.4km/s rover speed",
+      "1.6km/s fleeing wildlife speed",
+      "attacks and stunner behavior",
+      "original record reward and duplicate prevention",
+      "legacy SurfaceRecording schema",
+      "recorded voices and original media"
+    ],
+    "testBoundaries": [
+      "Native compiled Chrome with public controls and disposable synthetic save imports; not a complete fresh voyage or campaign replay",
+      "Headless --mute-audio, independent browser profiles, zero production-volume or owner-save changes",
+      "A failed adversarial test used an incorrect Weapon menu label; preserved in first-adversarial-probe and corrected without game changes"
+    ],
+    "remaining": [
+      "Whole-map ground weather",
+      "Science Readings/Analysis/Ship status artwork through12UI workflow",
+      "Live equipped bay camera occlusion and final fresh/campaign acceptance"
+    ]
+  },
+  "groundWeatherFollowup": {
+    "timestamp": "2026-10-24T16:46:36.606664+00:00",
+    "status": "ground-weather-fix-and-targeted-regression-passed; full-acceptance-pending",
+    "productionBundle": {
+      "entry": "assets/index-CPag3sa0.js",
+      "sha256": "96580ab7844c484c8a66ce00a967d29183d35b68fc57b395d15718bead5cc5ef"
+    },
+    "sourceAssertions": 4111,
+    "newWeatherAssertions": 76,
+    "nativeWeatherCases": 11,
+    "nativeLifeformRegressionCases": 20,
+    "nativeSpacePacingCases": 2,
+    "typecheck": "passed",
+    "build": "passed",
+    "resourceVerification": "passed",
+    "changedSources": {
+      "App.tsx": "2169ecb30ec51a69bd2e6506d2ebcad3f6297b5f4043fc2371930bd267a10a7b",
+      "utils/surface-weather.ts": "5f887aa0e1fb440af6128508747dac7c1da14c6da938a0a2bf38f4c6077ad106",
+      "surface-weather.test.ts": "1bbbd6c91f5431eed89c55c5d331e7a84976e7750dde52517381b17048efcdde",
+      "scripts/test.mjs": "7f2ab47198c74590be352afe61f81daa31b5ea0b037ce137fa346056473ffd23"
+    },
+    "reports": [
+      "artifacts/ground-weather-20261024/qa-weather.json",
+      "artifacts/ground-weather-20261024/regression/lifeforms/qa-lifeforms.json",
+      "artifacts/ground-weather-20261024/regression/motion/motion-final.json"
+    ],
+    "findings": [
+      "Snow retired by60-particle FIFO before reaching lower map",
+      "Weather simulation used fixed base-canvas dimensions instead of responsive ground viewport",
+      "Initial padded-edge pool left phone/wide gaps under constant-random adversarial tests; fixed with complete rows and viewport wrapping"
+    ],
+    "createdGameAssets": [],
+    "retiredGameAssets": [],
+    "preserved": [
+      "weather selection rules",
+      "planet temperatures/composition",
+      "storm hazards and fuel/injury rules",
+      "lifeform recording fix and saves",
+      "artwork and recorded media"
+    ],
+    "limitations": [
+      "Headless Chrome measurements are diagnostic, not certification of physical display performance",
+      "No new full fresh voyage or campaign replay on this intermediate build",
+      "Science artwork and live bay camera remain incomplete"
+    ]
+  },
+  "historicalTopLevelStatus": {
+    "timestamp": null,
+    "status": "passed for scoped local personnel/log/atmosphere follow-up",
+    "note": "Earlier batches below are historical; currentAcceptance is authoritative for the present pass"
+  },
+  "currentAcceptance": {
+    "timestamp": "2026-10-24T22:50:20.316644+00:00",
+    "status": "final-authorized-local-acceptance-passed",
+    "productionBundle": {
+      "entry": "assets/index-D1PR-s-y.js",
+      "sha256": "49e6e8022cbf5dbbf817946eb3e68071c53ed4e04b32e4d4819900baef5008f7"
+    },
+    "sourceAssertions": 4894,
+    "compiledCases": 185,
+    "sourceAudioHarnessCases": 6,
+    "freshVoyages": 2,
+    "earnedCampaignContinuations": 1,
+    "checks": [
+      {
+        "report": "qa-round2.json",
+        "compiledCases": 18,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-bay-integration.json",
+        "compiledCases": 4,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-drydock.json",
+        "compiledCases": 2,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-maintenance.json",
+        "compiledCases": 8,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-cross-systems.json",
+        "compiledCases": 3,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "engineering/qa-science-maps.json",
+        "compiledCases": 3,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-encounters-report.json",
+        "compiledCases": 15,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "final-regression/qa-personnel.json",
+        "compiledCases": 15,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "final-regression/regression/qa-workspace.json",
+        "compiledCases": 12,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "final-regression/regression/qa-flight.json",
+        "compiledCases": 15,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "final-regression/regression/navigation/qa-map-navigation.json",
+        "compiledCases": 6,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "final-regression/regression/crew/qa-crew-diversity.json",
+        "compiledCases": 15,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "motion-final.json",
+        "compiledCases": 2,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-audio.json",
+        "compiledCases": 0,
+        "sourceHarnessCases": 1
+      },
+      {
+        "report": "qa-sonilo-report.json",
+        "compiledCases": 1,
+        "sourceHarnessCases": 5
+      },
+      {
+        "report": "qa-lifeforms.json",
+        "compiledCases": 20,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-weather.json",
+        "compiledCases": 11,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-telemetry.json",
+        "compiledCases": 10,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "playback/qa-playback.json",
+        "compiledCases": 4,
+        "sourceHarnessCases": 0
+      },
+      {
+        "report": "qa-artwork.json",
+        "compiledCases": 18,
+        "sourceHarnessCases": 0
+      }
+    ],
+    "sourceHashes": {
+      "App.tsx": "93976a58c9bab1628bb6fd4899bcb1083f7ede448fe3aca6aa13782772caf5de",
+      "components/PlanetarySensors.tsx": "dab81b4710374f6e5d6d2f3b415e0be6cdc6de652325b9771a4c2fd6d83f3c39",
+      "components/ScienceCompositionArt.tsx": "5a1620ac809927c71be2a16bf0e9a13f2dfb6a6ef5b1435cc4b989a1512fd2b3",
+      "components/ScienceFieldArt.tsx": "43e4c7f217fada11fab6d6c61d03e5bb7e9c2a10251b145062a98dadf55fb97a",
+      "components/ScienceShipArt.tsx": "6e19c706f1d4fa20f0d0a719ef6d811ec3babf4640337ab91be0fa9c07a87c81",
+      "utils/science-illustrations.ts": "ce6ef26908aad5d30de6d51dbd67aa76ddbd102e7a97ad447457f6a14ba8f027",
+      "science-illustrations.test.ts": "5483c44e732195991acef3489566405951bd87c95bd38101cb107c1e4b0a6cb2",
+      "styles.css": "4f945b68c0a9d48c0183e1f811c3b5258ebcd27f9574e030138a79b6f4c69456",
+      "utils/tactical-armor.ts": "38d4c7cb8a6734edc5c178b969e35c1b31f3350fc2d1e604d1b23fa2576af65a",
+      "utils/armor-style.ts": "2a627587f3b1e03436e8a3a583f2f13e41c3daa9134748176bdff3caf241a05d",
+      "utils/ship-art.ts": "2ec52201aa69f8d2a75914e651e394d0749ed201e5a399f0e8bcc6655026ec7e",
+      "utils/surface-weather.ts": "5f887aa0e1fb440af6128508747dac7c1da14c6da938a0a2bf38f4c6077ad106",
+      "utils/wildlife.ts": "75c6bdde7222a97f4511724a6d98d40343a7f659ce59449983c6e9be7c168d11",
+      "utils/bay-flight.ts": "585e718fe7f7e359c5a8b5c098c8edcb4476ea78790f0737a907ea92878c930a",
+      "utils/bay-renderer.ts": "0f4cb6e6ebdf48029983e61cd3c519e59641cd9b3808307bc32c1d151d9cbbb3",
+      "utils/bay-cpu-renderer.ts": "b3997cc9033a9b0edcb89559bc42c687507ded8d0b01d688faaa37faeb84e9a4",
+      "utils/software-ship-raster.ts": "07068e3e600ce4128f9b1143ef03a39d800ebfa2e8abddaca343df64479a62f8",
+      "utils/science-sensors.ts": "112a9b91ed69d69b8b3ba9ba5bfd58bf595f24804d4a56bc36b1cbf8c6b239eb",
+      "utils/vessel-sensors.ts": "8e093573ecf2fad8da702ef35c036ae4a78c04aa5ca0bfe48f5c5b305f3eb69c",
+      "src/vesselSensors.json": "83fc00f024e8281ec9b07732a28a864d6d279e48494f432d2a56317c0b304990",
+      "scripts/test.mjs": "417f9033a21ee1260d84015623619bafccc4fc02455e2fddbe87b0d7d54fbb7b",
+      "vite.config.ts": "4d24cd9f1b5a0cc95f378e21aaa259882173bb9b3652a1eeba93957895a50942"
+    },
+    "createdGameMedia": [
+      "assets/ui/science/cards/panel-starfield.png",
+      "assets/ui/science/cards/atmosphere-sample.png",
+      "assets/ui/science/cards/hydrosphere-sample.png",
+      "assets/ui/science/cards/mineral-sample.png",
+      "assets/ui/science/cards/mass-icon.png",
+      "assets/ui/science/cards/bio-icon.png",
+      "assets/ui/science/cards/mineral-icon.png",
+      "assets/ui/science/cards/atmosphere-icon.png",
+      "assets/ui/science/cards/hydrosphere-icon.png",
+      "assets/ui/science/cards/lithosphere-icon.png",
+      "assets/ui/science/cards/object-icon.png",
+      "assets/ui/science/cards/surface-icon.png",
+      "assets/ui/science/cards/gravity-icon.png",
+      "assets/ui/science/cards/density-icon.png",
+      "assets/ui/science/cards/temperature-icon.png",
+      "assets/ui/science/cards/weather-icon.png"
+    ],
+    "retiredGameMedia": [],
+    "scienceArtwork": {
+      "status": "integrated-and-matching-state-closeout-settled",
+      "spend": {
+        "states": [
+          {
+            "state": "readings",
+            "chargedMicros": 120000,
+            "listPriceMicros": 120000
+          },
+          {
+            "state": "analysis",
+            "chargedMicros": 120000,
+            "listPriceMicros": 120000
+          },
+          {
+            "state": "ship-status",
+            "chargedMicros": 120000,
+            "listPriceMicros": 120000
+          }
+        ],
+        "totalChargedUsd": 0.36,
+        "approvedCapUsd": 2.02,
+        "allThreeKitsSettled": true,
+        "sourceHintsUsed": false,
+        "billingScope": "Run-filtered settled charges at query time; final wallet delta checked separately",
+        "preflightCeilingUsd": 2.013,
+        "finalReadOnlyCheck": "2026-10-24T22:45:53.480435+00:00",
+        "finalWalletAvailableUsd": 9.64,
+        "finalWalletReservedUsd": 0.0,
+        "finalWalletDebtUsd": 0.0,
+        "lifetimeCapturedUsd": 0.36,
+        "observedWindowChargedUsd": 0.36
+      },
+      "closeouts": [
+        {
+          "state": "readings",
+          "repo": null,
+          "targetUnchanged": true,
+          "stages": {
+            "capture": "settled",
+            "draft": "skipped",
+            "pick": "skipped",
+            "convert": "settled",
+            "plan": "settled"
+          }
+        },
+        {
+          "state": "analysis",
+          "repo": null,
+          "targetUnchanged": true,
+          "stages": {
+            "capture": "settled",
+            "draft": "skipped",
+            "pick": "skipped",
+            "convert": "settled",
+            "plan": "settled"
+          }
+        },
+        {
+          "state": "ship-status",
+          "repo": null,
+          "targetUnchanged": true,
+          "stages": {
+            "capture": "settled",
+            "draft": "skipped",
+            "pick": "skipped",
+            "convert": "settled",
+            "plan": "settled"
+          }
+        }
+      ]
+    },
+    "limits": [
+      "Two genuine new missions; campaign uses a genuine earned Black Egg checkpoint, not a fresh campaign from scratch",
+      "Headless muted disposable profiles; videos contain no sound. Technical audio checks do not establish listening quality",
+      "Software bay fallback remains slower than GPU; frame-gap evidence retained",
+      "No human aesthetic acceptance or exhaustive route/device certification",
+      "Only approved image-only12UI design work was paid; no Blender, commits, pushes, publication, owner save changes or source disclosure"
+    ],
+    "currentBayPacing": [
+      {
+        "name": "native-launch-GPU",
+        "p95": 6.399999999999636,
+        "maximumGap": 54.40000000000009,
+        "frames": 1295
+      },
+      {
+        "name": "native-dock-GPU",
+        "p95": 6.400000000000546,
+        "maximumGap": 72.69999999999982,
+        "frames": 1291
+      },
+      {
+        "name": "native-launch-CPU",
+        "p95": 60.600000000000364,
+        "maximumGap": 115,
+        "frames": 249
+      },
+      {
+        "name": "native-dock-CPU",
+        "p95": 54.899999999999636,
+        "maximumGap": 72.70000000000005,
+        "frames": 381
+      }
+    ],
+    "reviewedCompiledBayContactSheets": [
+      "motion-review-launch-gpu.png",
+      "motion-review-launch-cpu.png",
+      "motion-review-dock-gpu.png",
+      "motion-review-dock-cpu.png"
+    ],
+    "newIllustrationAssets": [
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/clean-0-8d32e29cc746.png",
+        "runtime": "assets/ui/science/cards/panel-starfield.png",
+        "sha256": "8d32e29cc746bb64632ad3abcd123edf83a8716da9c7713c086cff99e6ca4882",
+        "built": "dist/assets/panel-starfield-CelzVchO.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/crop-31-3dbe4e42a41c.png",
+        "runtime": "assets/ui/science/cards/atmosphere-sample.png",
+        "sha256": "3dbe4e42a41ccf9d7a602a97e5f4d6eee1fb8229b86a7f9975550ca0fbc9bcd9",
+        "built": "dist/assets/atmosphere-sample-CLPyxjAU.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/crop-33-ba92f2578f28.png",
+        "runtime": "assets/ui/science/cards/hydrosphere-sample.png",
+        "sha256": "ba92f2578f288fcbf361b46248f2485c86cd1db3645806df5ea6dcccc65eab49",
+        "built": "dist/assets/hydrosphere-sample-DC_oFFT_.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/crop-35-076f497e8327.png",
+        "runtime": "assets/ui/science/cards/mineral-sample.png",
+        "sha256": "076f497e8327844b9e8f66b168caf4cc4a86c74a27d7d30798d8246a396ac65c",
+        "built": "dist/assets/mineral-sample-CaOw2vMH.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/cutout-21-b3742a8b5c50.png",
+        "runtime": "assets/ui/science/cards/mass-icon.png",
+        "sha256": "b3742a8b5c502c7f26f66ca211cf56f5a0b1e6598c1305b8fb26e3c185dbdcc8",
+        "built": "dist/assets/mass-icon-CAHXXyZV.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/cutout-24-dfbd10709069.png",
+        "runtime": "assets/ui/science/cards/bio-icon.png",
+        "sha256": "dfbd10709069f4c9d65505ee22fdae3160cd249372159b43477b51b0610e2daa",
+        "built": "dist/assets/bio-icon-D10N1t_n.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/cutout-27-88e1e49b9453.png",
+        "runtime": "assets/ui/science/cards/mineral-icon.png",
+        "sha256": "88e1e49b9453a0ab649df3d96577dceed2d610a135a5790ec821603ea939f177",
+        "built": "dist/assets/mineral-icon-DygojMaV.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/cutout-36-810fc63dfb73.png",
+        "runtime": "assets/ui/science/cards/atmosphere-icon.png",
+        "sha256": "810fc63dfb733fcad128943396b534a79bdc3dee1b9156e600db111da2fefca1",
+        "built": "dist/assets/atmosphere-icon-Cc4cFcHZ.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/cutout-39-555ef94f446e.png",
+        "runtime": "assets/ui/science/cards/hydrosphere-icon.png",
+        "sha256": "555ef94f446eb6c35c73ab2cb308d494a0e6449c701faa36662e2d06a6154933",
+        "built": "dist/assets/hydrosphere-icon-Cs4T_taN.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/readings-image-kit/target/winner.layerdoc.json.assets/cutout-42-a56b1b7502cc.png",
+        "runtime": "assets/ui/science/cards/lithosphere-icon.png",
+        "sha256": "a56b1b7502ccc63041387065864d3ccd5a670e54894103af4649f55c5eefd843",
+        "built": "dist/assets/lithosphere-icon-ytDg8VQz.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/analysis-image-kit/target/winner.layerdoc.json.assets/cutout-30-aa8a1893e2d0.png",
+        "runtime": "assets/ui/science/cards/object-icon.png",
+        "sha256": "aa8a1893e2d00b80564b336b473f1247c2924fc41dc6928058f7e8a3b5a6bda2",
+        "built": "dist/assets/object-icon-BJq8QEU8.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/analysis-image-kit/target/winner.layerdoc.json.assets/cutout-33-bbc4ada098d9.png",
+        "runtime": "assets/ui/science/cards/surface-icon.png",
+        "sha256": "bbc4ada098d93f817ac9314fa5aca1090c563e0c453b5fa9c5724d8d4e80723a",
+        "built": "dist/assets/surface-icon-B5PGUvRI.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/analysis-image-kit/target/winner.layerdoc.json.assets/cutout-36-a9ae6d1e42a7.png",
+        "runtime": "assets/ui/science/cards/gravity-icon.png",
+        "sha256": "a9ae6d1e42a761baa86821f93589ff8310f47377454218052098f4d5f3863b13",
+        "built": "dist/assets/gravity-icon-voMGkP2x.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/analysis-image-kit/target/winner.layerdoc.json.assets/cutout-39-d0919da920c0.png",
+        "runtime": "assets/ui/science/cards/density-icon.png",
+        "sha256": "d0919da920c092f6520e8d56a46e49ef80e98f0e67af511d7c505923f5f05f7f",
+        "built": "dist/assets/density-icon-DKoBu0Df.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/analysis-image-kit/target/winner.layerdoc.json.assets/cutout-42-64eb9b574ded.png",
+        "runtime": "assets/ui/science/cards/temperature-icon.png",
+        "sha256": "64eb9b574ded5ef702ba6efe58867a6ce1eca60b0bfde5f14cb17e18a5cecce8",
+        "built": "dist/assets/temperature-icon-B9STa6vq.png"
+      },
+      {
+        "source": "artifacts/science-artwork-20261024/analysis-image-kit/target/winner.layerdoc.json.assets/cutout-45-dc919d9b132a.png",
+        "runtime": "assets/ui/science/cards/weather-icon.png",
+        "sha256": "dc919d9b132a81f6622022671fa20d161ead1e1f9aa943a6c82b797357c417eb",
+        "built": "dist/assets/weather-icon-DFAIOM5-.png"
+      }
+    ],
+    "directory": "artifacts/science-artwork-20261024/final-acceptance",
+    "report": "artifacts/science-artwork-20261024/final-acceptance/REPORT.md"
+  },
+  "workflowGoalStatus": "complete",
+  "workflowBlocker": null,
+  "pending": [],
+  "completionScope": "Authorized local player-experience pass; future optional dialogue generation, human aesthetic/listening approval and exhaustive device/route certification excluded",
+  "previousTopLevelMetricsBeforeScienceCloseout": {
+    "latestTests": {
+      "automatedChecks": 3932,
+      "compiledBrowserScenarios": 64,
+      "sourceRendererAndAudioHarnessChecks": 0,
+      "freshPersonnelSessions": 1,
+      "newFullFlightVoyages": 0
+    },
+    "finalReport": "design/PERSONNEL_FOLLOWUP.md"
+  },
+  "automatedChecks": 4894,
+  "compiledBrowserScenarios": 185,
+  "sourceRendererAndAudioHarnessChecks": 6,
+  "boundaries": [
+    "Two genuine new missions; campaign uses a genuine earned Black Egg checkpoint, not a fresh campaign from scratch",
+    "Headless muted disposable profiles; videos contain no sound. Technical audio checks do not establish listening quality",
+    "Software bay fallback remains slower than GPU; frame-gap evidence retained",
+    "No human aesthetic acceptance or exhaustive route/device certification",
+    "Only approved image-only12UI design work was paid; no Blender, commits, pushes, publication, owner save changes or source disclosure"
+  ],
+  "userAcceptance": {
+    "timestamp": "2026-10-24T22:57:16.505410+00:00",
+    "instruction": "assume I accept everything and continue working",
+    "scope": "Accept current presented build/artwork and continue authorized local roadmap; not a new paid-generation quote approval",
+    "build": "assets/index-D1PR-s-y.js",
+    "nextCompleted": "Dialogue model review, live recording inventory, stale music/scanner documentation corrected",
+    "evidence": "design/DIALOGUE_ROADMAP.md"
+  },
+  "roadmapContinuation": {
+    "status": "current-queued-evaluation-complete",
+    "report": "design/DIALOGUE_ROADMAP.md",
+    "paidGenerationSubmitted": false,
+    "runtimeBundleUnchanged": true
+  },
+  "goalCloseout": {
+    "timestamp": "2026-10-24T22:58:27.482382+00:00",
+    "status": "complete",
+    "continuationAutomation": "PAUSED",
+    "expiredMorningReportAutomation": "PAUSED",
+    "postAcceptanceRoadmapReview": "complete; design/DIALOGUE_ROADMAP.md",
+    "currentBundleUnchanged": true
+  },
+  "extendedAcceptance": {
+    "timestamp": "2026-10-25T00:08:05.488394+00:00",
+    "status": "extended-renderer-input-scope-passed; original-fidelity-followups-open",
+    "report": "artifacts/extended-acceptance-20261024/REPORT.md",
+    "verification": "artifacts/extended-acceptance-20261024/verification.json",
+    "productionBundle": {
+      "entry": "assets/index-BfrI0ZUF.js",
+      "sha256": "48d27caef98c1245c4d545d1e37bc7833f3b5d5549a34f24f6c7264f1924d17a"
+    },
+    "sourceAssertions": 5013,
+    "currentBuildCompiledCases": 113,
+    "earlierPerformanceBuildEvidence": [
+      {
+        "report": "playback/qa-playback.json",
+        "productionBundle": {
+          "entry": "assets/index-CJZSctbf.js",
+          "sha256": "fe75a27df82e5d15d8e30bb9d3c9337468e5627541d50a6e82a87e28d6ce7e77"
+        },
+        "cases": 4,
+        "scope": "Compiled native Chrome; isolated synthetic fixtures and public controls/save imports, distinct from fresh gameplay"
+      },
+      {
+        "report": "compatibility-firefox/qa-artwork.json",
+        "productionBundle": {
+          "entry": "assets/index-CJZSctbf.js",
+          "sha256": "fe75a27df82e5d15d8e30bb9d3c9337468e5627541d50a6e82a87e28d6ce7e77"
+        },
+        "cases": 18,
+        "scope": "Compiled native Firefox157; per-profile zero audio, isolated synthetic fixtures and public controls/save imports, distinct from fresh gameplay"
+      },
+      {
+        "report": "campaign/fresh-campaign-report.json",
+        "productionBundle": {
+          "entry": "assets/index-CJZSctbf.js",
+          "sha256": "fe75a27df82e5d15d8e30bb9d3c9337468e5627541d50a6e82a87e28d6ce7e77"
+        },
+        "cases": 1,
+        "scope": "Actual Edge campaign from Start New Mission, native controls only; known chart guidance, no imported starting saves, injected state, seeded randomness or developer tools"
+      }
+    ],
+    "originalFidelityFollowups": "artifacts/extended-acceptance-20261024/ORIGINAL_PARITY_AUDIT.md",
+    "liveJobs": [],
+    "automations": "Both previous automations remain PAUSED",
+    "limits": [
+      "Fresh full campaign,18 native Firefox science cases and four full bay playback cases ran on the earlier performance-only bundle; the final input/focus bundle has113 affected native cases. Do not combine these into a one-build whole-game claim.",
+      "Campaign used known chart guidance and resumed its own genuinely earned disposable saves after three driver corrections; no imported starting fixture or fabricated progress. Video is segmented, not a continuous start-to-win recording.",
+      "Tests physically muted; technical audio behavior is not listening certification.",
+      "Physical mobile, screen-reader speech, multi-hour soak and exhaustive original-game parity remain outside this tested scope.",
+      "Sixteen mineral prices, feature-linked surface fuel placement and exact encounter engine acceleration are original-fidelity follow-ups; no balance or save-schema changes made."
+    ]
+  },
+  "originalRuleGoal20261025": {
+    "status": "authorized-scope-passed",
+    "report": "artifacts/rule-fidelity-20261025/resumed-1/FINAL_REPORT.md",
+    "verification": "artifacts/rule-fidelity-20261025/resumed-1/verification.json",
+    "productionBundle": {
+      "entry": "assets/index-B2Epor13.js",
+      "sha256": "bb0a42e5f21b6186096c3b3db27113dee3f7c6eee971be8a29e54cd10a6ecc52"
+    },
+    "sourceAssertions": 7905,
+    "compiledNativeCases": 130,
+    "actualFreshVoyages": 2,
+    "earnedCampaign": true,
+    "limits": [
+      "The campaign began genuinely fresh on earlier rule builds; the final B2 build continues its own earned nine-voyage checkpoint through additional earned mining, relic clearances and persistent victory. The uninterrupted two-hour soak and two new fresh voyages run on B2. The separate20-minute GC diagnostic retains its earlier DnVI build binding.",
+      "Raw Semgrep parser gaps and one costly App script-string-rule timeout remain recorded. Equivalent analysis copies and targeted AST review supplement these bounded scans; zero findings is not exhaustive security certification.",
+      "All audio was physically muted. Signal/volume/loop tests do not establish human listening quality.",
+      "Touch emulation and accessibility-tree/keyboard checks are not physical-device or screen-reader speech certification.",
+      "No complete original-universe population or original machine-timing parity is claimed."
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "admitted after independent offline full transcode and reopen",
+  "reviewSha256": "2fe5198247f4df805e0c01bdb71a74333bbc00b5e7b0d51d0a17f698e3ccedfa",
+  "assets": [
+    {
+      "source": {
+        "purpose": "docking",
+        "file": "docking.mp4",
+        "bytes": 2677082,
+        "sha256": "1c2a83099e94c0d94fa5e4d6663bd1a07be01ccad82999f15a01aa258cb71253",
+        "downloadName": "ElevenLabs_video_runway-gen-4-5_Use attached im_2026-10-24T02_24_51.mp4"
+      },
+      "height": 720,
+      "fullNativeRenderSucceeded": true,
+      "purpose": "docking",
+      "outputReopened": true,
+      "output": "docking.mp4",
+      "sha256": "e8e3adbf0a2cadf6b5c3c97a8d4f4fe36336e8b1ccb6d35f1a368a31bacf1f99",
+      "videoOnly": true,
+      "bytes": 2408482,
+      "width": 1280,
+      "duration": 5.1166333
+    },
+    {
+      "source": {
+        "purpose": "undocking",
+        "file": "undocking.mp4",
+        "bytes": 2986766,
+        "sha256": "f0ba9bbe87668534c4019a8d2a7c36e7c5e6a4a6ece81865de60b313c69a87e7",
+        "downloadName": "ElevenLabs_video_runway-gen-4-5_Use attached sh_2026-10-24T04_20_50.mp4"
+      },
+      "height": 720,
+      "fullNativeRenderSucceeded": true,
+      "purpose": "undocking",
+      "outputReopened": true,
+      "output": "undocking.mp4",
+      "sha256": "9da86428e4694bfa9a5a64c2e91a59c733859487104018621f0822f9fcbab5cf",
+      "videoOnly": true,
+      "bytes": 2477424,
+      "width": 1280,
+      "duration": 5.1166333
+    }
+  ],
+  "userAccepted": true,
+  "technicalQualityLimitationsRetained": true,
+  "notExploitImmunityOrRightsCertification": true
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+.npm-cache/
+.env
+.env.*
+!.env.example
+*.log
+artifacts/
+# Original generation candidates are preserved locally; the game uses assets/images.
+6886860557711997147/

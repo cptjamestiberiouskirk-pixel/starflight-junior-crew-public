@@ -1,0 +1,388 @@
+@import '@fontsource/rajdhani/latin-500.css';
+@import '@fontsource/rajdhani/latin-600.css';
+@import '@fontsource/rajdhani/latin-700.css';
+@import '@fontsource/orbitron/latin-600.css';
+@import '@fontsource/orbitron/latin-800.css';
+@import '@fontsource/orbitron/latin-900.css';
+@import '@fontsource/chakra-petch/latin-500.css';
+@import '@fontsource/chakra-petch/latin-700.css';
+
+@import 'tailwindcss' source(none);
+@source './App.tsx';
+@source './utils';
+@source './components';
+
+/* Preserve the exported interface's default border and focus-ring appearance. */
+@theme {
+  --default-ring-width: 3px;
+  --default-ring-color: #3b82f6;
+}
+@layer base {
+  *, ::before, ::after, ::backdrop, ::file-selector-button {
+    border-color: #e5e7eb;
+  }
+  button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #030712;
+}
+
+button, input, select, textarea { font: inherit; }
+
+.crew-portrait-sprite {
+  position: absolute;
+  inset: 0;
+  background-color: #071223;
+  background-size: 300% 200%;
+  background-repeat: no-repeat;
+}
+.crew-portrait-idle { animation: crew-portrait-blink 5.4s step-end infinite; }
+.mining-console { background:#001626; border:1px solid #008ca8; border-radius:12px; padding:12px 16px; color:#dffcff; font-family:Rajdhani,sans-serif; }
+.mining-heading { display:flex; align-items:center; justify-content:space-between; font-size:13px; letter-spacing:.1em; color:#64f5ff; margin-bottom:6px; }
+.mining-heading button { font-size:12px; letter-spacing:0; color:#b4d4e3; padding:4px 8px; }
+.mining-layout { display:grid; grid-template-columns:minmax(0,3fr) minmax(150px,1fr); gap:16px; }
+.mining-source { display:flex; align-items:center; gap:10px; min-height:44px; }
+.mining-source strong { display:block; font-size:20px; line-height:1.1; }
+.mining-label { display:block; color:#8abfce; font-size:10px; letter-spacing:.1em; }
+.mining-distance { margin-left:auto; text-align:right; font-size:17px; font-weight:700; }
+.mining-distance small { display:block; color:#8abfce; font-size:11px; font-weight:400; }
+.mining-actions { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.mining-actions button { min-height:38px; padding:7px 20px; border-radius:24px; font-size:14px; font-weight:700; }
+.mining-start { color:#002439; background:linear-gradient(#67ffff,#00dbe8); box-shadow:0 0 12px #005369; flex:1; }
+.mining-stop { background:linear-gradient(90deg,#002236,#07364b); border:1px solid #27617a; flex:1; }
+.mining-approach { border:1px solid #d3aa4e; color:#ffdc83; }
+.mining-console button:disabled { opacity:.4; cursor:default; box-shadow:none; }
+.mining-console button:focus-visible { outline:2px solid #fff1a0; outline-offset:3px; }
+.mining-console kbd { font-size:10px; border:1px solid currentColor; border-radius:4px; padding:0 4px; margin-left:4px; opacity:.65; }
+.mining-readouts { display:flex; gap:8px; }
+.mining-hold,.mining-extracted { background:#001525; border:1px solid #005675; border-radius:8px; padding:6px 10px; font-size:11px; }
+.mining-hold { flex:1; }.mining-hold span { display:flex; justify-content:space-between; }
+.mining-hold meter { display:block; width:100%; height:10px; appearance:none; background:#002437; border:1px solid #005675; border-radius:8px; }
+.mining-hold meter::-webkit-meter-bar { background:#002437; border:0; border-radius:8px; }
+.mining-hold meter::-webkit-meter-optimum-value { background:linear-gradient(90deg,#0b9caf,#54ffff); border-radius:8px; }
+.mining-hold meter::-moz-meter-bar { background:linear-gradient(90deg,#0b9caf,#54ffff); border-radius:8px; }
+.mining-extracted { min-width:90px; background:#002033; }.mining-extracted span { display:block; color:#8abfce; font-size:9px; }
+.mining-extracted strong { font-size:17px; }
+.mining-status { background:#002034; border:1px solid #00506c; border-radius:7px; padding:6px 8px; margin-top:8px; font-size:11px; min-height:29px; }
+.mining-targets { border-left:1px solid #14506a; padding-left:12px; }
+.mining-targets button { display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%; padding:6px 8px; margin-top:4px; border-radius:7px; font-size:12px; text-align:left; border:1px solid #17415b; background:#002437; }
+.mining-targets button[aria-pressed=true] { border-color:#36d7e5; background:#06475a; }.mining-targets small { display:block; color:#8abfce; font-size:10px; }
+@media(max-width:650px) { .mining-console {padding:8px;} .mining-layout {grid-template-columns:1fr;gap:8px;} .mining-targets {display:flex;gap:4px;border-left:0;padding:0;overflow-x:auto;} .mining-targets>.mining-label{display:none;} .mining-targets button {min-width:130px;margin:0;} .mining-source strong{font-size:17px;} .mining-source img{width:32px;height:32px;} }
+@keyframes crew-portrait-blink {
+  0%, 92%, 100% { background-position: 0% 0%; }
+  94%, 96% { background-position: 0% 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crew-portrait-idle { animation: none; }
+}
+/* Candidate C exported LayerDoc tokens and layout, fitted to the science console.
+   Existing Rajdhani/Orbitron fonts and original planetary map art are retained. */
+.planetary-sensors{color:#b1e2ed;background:#000f17;border:1px solid #00cde2;border-radius:12px;padding:14px;font:14px Rajdhani,sans-serif;min-width:0}
+.planet-sensor-heading{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #00516a;padding-bottom:8px;margin-bottom:12px;gap:8px}
+.planet-sensor-heading small,.planet-sensor-metrics>small{font-size:10px;letter-spacing:.14em;color:#00d7ed;display:block}.planet-sensor-heading h3{font:bold 16px Orbitron,sans-serif;color:#00d7ed;margin-top:2px}.planet-sensor-heading>span{font-weight:bold;letter-spacing:.1em;color:#ffb900;white-space:nowrap}
+.planet-sensor-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}
+.planet-body-card{display:flex;align-items:center;gap:14px;border:1px solid #00cde2;border-radius:12px;background:rgba(0,15,23,.3);padding:12px;min-width:0}
+.planet-sensor-globe{position:relative;width:110px;height:110px;flex:none;border-radius:50%;overflow:hidden;border:1px solid #007b99;box-shadow:0 0 18px #004354}.planet-sensor-globe img{width:100%;height:100%;object-fit:cover}.planet-sensor-globe>span{position:absolute;left:0;right:0;border-top:2px solid #00d7ed;box-shadow:0 0 10px #00cde2}
+.planet-sensor-metrics{min-width:0;flex:1}.planet-sensor-metrics>strong{font-size:18px;color:#e3faff}.planet-sensor-metrics dl>div{border-top:1px solid #004354;padding-top:5px;margin-top:5px}.planet-sensor-metrics dt{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#00cce0}.planet-sensor-metrics dd{font-size:16px;font-weight:bold;color:#efab00;overflow-wrap:anywhere}.planet-sensor-metrics meter{display:block;width:100%;height:8px}.planet-sensor-metrics meter::-webkit-meter-bar{background:#00231f;border:1px solid #008d66}.planet-sensor-metrics meter::-webkit-meter-optimum-value{background:#00c581}.planet-sensor-metrics dl>div:last-child meter::-webkit-meter-bar{background:#111026;border-color:#512083}.planet-sensor-metrics dl>div:last-child meter::-webkit-meter-optimum-value{background:#9815c8}
+.planet-compositions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;min-width:0}.planet-composition{border:1px solid #00cde2;border-radius:12px;background:rgba(0,22,32,.5);padding:12px 8px;overflow-wrap:anywhere}.planet-composition h4{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#00d3ea;margin-bottom:12px}.planet-composition li{font-size:14px;line-height:1.5}.planet-composition p{font-size:12px;color:#7693a2}
+.planet-scan-controls{display:flex;align-items:stretch;gap:8px;margin-top:12px;flex-wrap:wrap}.planet-scan-progress{display:flex;align-items:center;gap:8px;flex:1;min-width:220px;padding:8px 10px;border:1px solid #e99c00;background:rgba(25,15,0,.65);border-radius:11px;color:#ffb000}.planet-scan-progress strong{font-size:11px;white-space:nowrap}.planet-scan-progress progress{min-width:35px;flex:1;width:100%;height:10px;accent-color:#d99108}.planet-scan-progress progress::-webkit-progress-bar{background:#302105;border:1px solid #785001;border-radius:8px}.planet-scan-progress progress::-webkit-progress-value{background:#d99108;border-radius:7px}
+.planet-scan-controls button{padding:8px 14px;min-height:40px;border:1px solid #00cde2;border-radius:11px;background:#002436;color:#a0dfed;font-weight:bold}.planet-scan-controls button:disabled{border-color:#54788d;color:#7693a2;background:rgba(15,30,40,.4);cursor:default}.planetary-sensors button:focus-visible{outline:2px solid #ffc000;outline-offset:3px}.planet-scan-help{font-size:12px;color:#a6dce8;padding:8px 0;min-height:32px}
+.planet-analysis{border:1px solid #00cde2;border-radius:12px;background:rgba(0,18,28,.4);padding:10px 12px}.planet-analysis h4{color:#00d7ed;font-size:11px;letter-spacing:.08em;border-bottom:1px solid #00516a;padding-bottom:7px}.planet-analysis h4 span{display:block;color:#a6dce8;font-size:12px;letter-spacing:0;font-weight:normal;margin-top:2px}.planet-analysis dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 18px}.planet-analysis dl>div{border-bottom:1px solid #004b61;padding:7px 0;min-width:0}.planet-analysis dt{font-size:11px;color:#00d7ed}.planet-analysis dd{font-size:14px;overflow-wrap:anywhere}.planet-analysis dd.uncertain{color:#ffc000}.planet-scan-footnote{font-size:11px;color:#7693a2;margin-top:8px}
+@media(max-width:700px){.planetary-sensors{padding:10px}.planet-sensor-layout{grid-template-columns:1fr}.planet-sensor-globe{width:90px;height:90px}.planet-analysis dl{grid-template-columns:repeat(2,minmax(0,1fr))}.planet-scan-controls button{flex:1}.planet-composition{padding:9px 7px}.planet-composition h4{font-size:10px;margin-bottom:6px}.planet-sensor-heading h3{font-size:13px}}
+
+/* Actual configured hull, with functional zones sharing live telemetry state. */
+.ship-diagnostics{min-width:0;border:1px solid #14657a;border-radius:16px;padding:14px;background:#061321;align-self:start}.ship-diagnostics header{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;color:#6de3ef;font-size:11px;letter-spacing:.06em}.ship-diagnostics header span{color:#9fb8c8;font-size:11px;letter-spacing:0}.ship-diagnostics svg{display:block;width:100%;height:auto;max-height:260px;margin:12px 0}.diagnostic-key{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.diagnostic-key button{border:1px solid;border-radius:8px;padding:7px;text-align:left;font-size:12px;background:#091b2d;min-height:44px}.diagnostic-key button[aria-pressed=true]{background:#173449;outline:1px solid currentColor;outline-offset:2px}.diagnostic-key small{display:block;font-size:10px}.ship-diagnostics p{font-size:12px;line-height:1.5;margin-top:12px}.ship-diagnostics .diagnostic-note{font-size:11px;color:#a1b5c4}.ship-diagnostics button:focus-visible{outline:2px solid white;outline-offset:3px}
+
+.survey-legend{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;font-size:12px;line-height:1.5;color:#b8cad6;padding:8px 0}.survey-legend>span{display:inline-flex;align-items:center;gap:5px}.survey-legend b{font-size:17px}.survey-legend i{display:inline-block;width:12px;height:12px;border:1px solid #8da5b4;border-radius:2px}
+
+/* Science follow-up: candidate A LayerDoc hierarchy, actual planetary facts. */
+.planetary-sensors{background:#000f17;padding:16px;border-color:#00b8cd;color:#b4e3ed;isolation:isolate}.planet-sensor-heading{margin-bottom:16px;padding-bottom:12px}.planet-sensor-heading h3{font-size:18px}.planet-body-card,.planet-composition,.planet-analysis{background:#00131b;border-color:#007f93}.planet-sensor-layout{gap:14px}.planet-sensor-globe{width:120px;height:120px}.planet-sensor-metrics dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.planet-sensor-metrics dl>div{border-top:0;border-left:1px solid #125060;padding-left:10px;align-self:start}.planet-sensor-metrics>strong{display:block;border-bottom:1px solid #125060;padding-bottom:10px;margin-bottom:8px}.planet-scan-controls{margin:16px 0 0}.planet-scan-controls button{display:inline-flex;align-items:center;justify-content:center;gap:8px}.scan-action-icon{width:20px;height:20px;object-fit:contain}.planet-analysis{margin-top:0;padding:14px}.planet-analysis h4{padding-bottom:10px;margin-bottom:8px}.planet-analysis dl>div{padding:10px 0}.planet-analysis dd{line-height:1.5}.planet-scan-footnote{position:static;background:#000f17;border:0;margin:12px 0 18px;padding:0;line-height:1.6;color:#9db8c8}
+.survey-panel{min-width:0;margin-top:12px}.survey-panel>header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:start;margin-bottom:12px}.survey-panel h4{color:#60e4ef;font-size:12px;letter-spacing:.08em;font-weight:bold}.survey-panel p{line-height:1.5;font-size:12px;color:#a9c2d1;margin-top:5px}.survey-panel button{font-family:inherit;font-size:12px;line-height:1.3;min-height:42px;padding:8px 12px;border:1px solid #16889d;border-radius:9px;background:#00212d;color:#b7e5ed;font-weight:bold;cursor:pointer}.survey-panel button:focus-visible,.survey-global-details summary:focus-visible{outline:2px solid #ffd454;outline-offset:3px}.survey-panel button:hover:not(:disabled){background:#104352}.survey-panel button:disabled{opacity:.45;cursor:default}.survey-panel button img{display:inline-block;width:20px;height:20px;object-fit:contain;margin-right:7px;vertical-align:middle}.survey-workspace{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(270px,1fr);gap:14px;align-items:start}.survey-map-card,.survey-contacts{min-width:0;border:1px solid #008fa1;border-radius:14px;background:#00131b;padding:12px}.survey-map-card canvas{display:block;width:100%;height:auto;aspect-ratio:2/1;border:1px solid #296679;border-radius:9px;margin-top:10px}.survey-map-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:7px}.survey-map-controls>div{display:flex;gap:6px}.survey-map-controls span{font-size:11px;color:#c8d8df}.survey-panel button[aria-pressed=true]{background:#115064;color:#edfeff;border-color:#38e2ef}.survey-map-note{padding-top:8px;border-top:1px solid #195064}.survey-contacts h4{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.survey-contacts h4>span{color:#ffcb35;font-size:18px}.survey-filters{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}.survey-filters button{padding:6px 8px;font-size:11px}.survey-filters button[aria-pressed=false]{opacity:.55}.survey-contacts ol{list-style:none;max-height:330px;overflow-y:auto;scrollbar-gutter:stable}.survey-contacts li{display:flex;gap:10px;align-items:center;justify-content:space-between;border-top:1px solid #194252;padding:10px 0}.survey-contacts li>div{min-width:0;flex:1}.survey-contacts li b{font-size:13px;display:block;overflow-wrap:anywhere}.survey-contacts li small{display:block;color:#e0f1f5;font-size:11px;margin-top:4px}.survey-contacts li span{font-size:11px;display:block;color:#a2bac8;line-height:1.5}.survey-contacts li button{font-size:11px;padding:6px 8px;max-width:100px;background:#e1a20b;color:#07101e;border-color:#ffc941;flex:none}.survey-contacts li button img{width:14px;height:14px;margin-right:4px}.survey-empty{padding:16px 0;min-height:100px}.survey-contacts nav{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid #194252;padding-top:10px;margin-top:8px;font-size:12px;color:#d4e7f1}.survey-global-details{font-size:12px;border-top:1px solid #225164;padding-top:10px;min-width:0}.survey-global-details summary{cursor:pointer;color:#75e6f1;min-height:44px;display:list-item;align-content:center}.survey-global-details .survey-workspace{grid-template-columns:1fr}.survey-global-details .survey-contacts ol{max-height:180px}
+@media(max-width:1000px){.planet-sensor-layout{grid-template-columns:1fr}.survey-workspace{grid-template-columns:1fr}.planet-sensor-globe{width:110px;height:110px}.survey-contacts ol{max-height:260px}}
+@media(max-width:600px){.planetary-sensors{padding:10px}.planet-sensor-heading h3{font-size:14px}.planet-body-card{align-items:start;gap:10px;padding:10px}.planet-sensor-globe{width:72px;height:72px}.planet-sensor-metrics>strong{font-size:16px}.planet-sensor-metrics dl{grid-template-columns:1fr;gap:4px}.planet-sensor-metrics dl>div{border-left:0;border-top:1px solid #125060;padding:5px 0;display:grid;grid-template-columns:1fr 1fr;column-gap:8px}.planet-sensor-metrics meter{grid-column:1/-1}.planet-sensor-metrics dd{font-size:14px}.planet-analysis dl{grid-template-columns:1fr 1fr;gap:8px}.planet-scan-progress{min-width:0;flex-basis:100%}.survey-panel>header>button{width:100%}.survey-map-card,.survey-contacts{padding:9px}.survey-map-controls>div{width:100%;display:grid;grid-template-columns:1fr 1fr}.survey-panel .survey-legend{font-size:11px;gap:6px 10px}.survey-contacts li{align-items:start}.survey-panel button{min-height:44px}.survey-map-controls span{overflow-wrap:anywhere}.diagnostic-key{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* A bounded console must scroll independently of the flight canvas. */
+.bridge-console-panel{max-height:65dvh;min-height:0;overflow-y:auto;scrollbar-gutter:stable;overscroll-behavior-y:contain;scrollbar-width:auto;scrollbar-color:#278ba0 #071223}
+.bridge-console-panel>*{flex-shrink:0}.bridge-console-panel:focus-visible,.surface-map-dialog:focus-visible{outline:2px solid #ffdf61;outline-offset:-3px}
+.planet-sensor-heading{flex-wrap:wrap}.planet-survey-jump{min-height:36px;border:1px solid #16889d;border-radius:8px;padding:6px 10px;color:#b7e5ed;background:#00212d;font-weight:bold;font-size:12px;cursor:pointer}
+.planet-survey-jump:focus-visible{outline:2px solid #ffdf61;outline-offset:2px}
+.surface-map-dialog{max-height:calc(100dvh - 32px);min-height:0;overflow-y:auto;scrollbar-gutter:stable;overscroll-behavior-y:contain;scrollbar-width:auto;scrollbar-color:#278ba0 #071223}
+.surface-map-dialog>*{flex-shrink:0}.surface-map-local-canvas{max-width:68dvh;align-self:center}
+
+.starmap-dialog{max-height:calc(100dvh - 32px);overflow-y:auto;scrollbar-gutter:stable}.starmap-dialog>*{flex-shrink:0}
+.starmap-chart{max-width:64dvh;align-self:center}.starmap-telemetry{height:124px;min-height:124px;overflow-y:auto;scrollbar-gutter:stable}.starmap-telemetry>div{min-height:100%;box-sizing:border-box}
+@media(max-width:650px){.starmap-telemetry{height:180px;min-height:180px}}
+
+/* 12UI candidate B: navy starfield, cyan task tabs, restrained amber accents.
+   Actual original planet art and a data-driven map replace its example chart. */
+[data-science-focus="true"]{overflow:hidden!important;flex-direction:column!important}
+[data-science-focus="true"] .flight-scene{display:none}
+[data-science-focus="true"] .flight-main{flex:1!important;min-height:0;overflow:hidden}
+[data-science-focus="true"] .flight-sidebar{display:none}
+[data-science-focus="true"] .bridge-console-panel{flex:1;max-height:none;height:100%;overflow:hidden;padding:10px;gap:8px;background:#00101c url('./assets/ui/science/science-starfield.webp') center/cover}
+[data-science-focus="true"] .bridge-console-panel>.science-console-content{flex:1;flex-shrink:1;min-height:0;gap:0}
+[data-science-focus="true"] .bridge-station-header{flex:none;min-height:42px}
+[data-science-focus="true"] .bridge-station-header>div{min-width:0}
+.science-workspace.planetary-sensors{display:flex;flex:1;flex-direction:column;min-height:0;height:100%;margin:0;padding:10px 14px 12px;border:1px solid #164b62;border-radius:10px;background:rgba(0,16,28,.25);font:15px Rajdhani,sans-serif;color:#b7dfec}
+.science-workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none;padding-bottom:9px;border-bottom:1px solid #164158}
+.science-workspace-heading>div:first-child{display:flex;align-items:center;gap:12px;min-width:0}
+.science-workspace-heading img{width:46px;height:46px;object-fit:cover;border-radius:50%;border:1px solid #437384;flex:none}
+.science-workspace-heading small{font-size:11px;letter-spacing:.11em;color:#5bdfee}
+.science-workspace-heading h3{font-size:19px;line-height:1.2;font-weight:700;color:#d4edf6}
+.science-workspace-heading p{font-size:13px;color:#9fc4d6;line-height:1.3}
+.science-main-actions{display:flex;gap:8px;flex:none}
+.science-workspace button{font:600 14px Rajdhani,sans-serif;color:#c6eaf3;border:1px solid #1b526b;border-radius:7px;background:#042233;padding:7px 13px;min-height:40px;cursor:pointer}
+.science-workspace button:hover:not(:disabled){border-color:#4bddf3;background:#08374c}
+.science-workspace button:focus-visible{outline:2px solid #ffd37a;outline-offset:2px}
+.science-workspace button:disabled{opacity:.46;cursor:default}
+.science-main-actions button:first-child{border-color:#45dbe7;color:#80eff5}
+.science-workspace-progress{display:flex;align-items:center;gap:12px;min-height:27px;flex:none;font-size:12px;color:#a5c6d7}
+.science-workspace-progress progress{height:5px;width:140px;max-width:30%;accent-color:#3ee0c4}
+.science-view-tabs{display:flex;flex:none;border-bottom:1px solid #18465c;margin-bottom:10px;gap:3px}
+.science-view-tabs button{background:transparent;border:0;border-bottom:3px solid transparent;border-radius:7px 7px 0 0;padding:7px 18px;min-height:40px}
+.science-view-tabs [aria-selected="true"]{background:#052c3e;border-bottom-color:#32e1cb;color:#e3f8ff}
+.science-tab-content{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.survey-map-workspace{display:flex;flex-direction:column;min-height:0;margin:0;gap:8px}
+.science-tab-content>.survey-map-workspace{height:100%;flex:1}
+.survey-map-workspace>header{margin:0;gap:8px;flex:none;display:flex;justify-content:space-between;align-items:center}
+.survey-map-workspace>header p{margin:0;font-size:12px;line-height:1.3;color:#9fbfce}
+.survey-map-workspace>header>span{font-size:12px;color:#84d4e2;white-space:nowrap}
+.survey-map-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:16px;flex:1;min-height:0}
+.survey-symbol-key{border:1px solid #1b4a60;border-radius:9px;background:rgba(0,18,31,.8);padding:10px;align-self:start;min-width:0}
+.survey-map-workspace .survey-symbol-key button{display:flex;align-items:center;gap:9px;width:100%;padding:7px 5px;border:0;background:transparent;text-align:left;min-height:36px;line-height:1.2}
+.survey-symbol-key b{font:24px/1 Rajdhani,sans-serif;width:24px;text-align:center;flex:none}
+.survey-symbol-key button span{flex:1;font-size:14px;color:#d0e5ef}
+.survey-symbol-key small{font-size:11px;color:#76b2c8}
+.survey-symbol-key [aria-pressed="false"]{opacity:.4}
+.survey-symbol-key p{border-top:1px solid #194256;padding-top:10px!important;font-size:11px!important;line-height:1.5!important}
+.survey-map-area{display:flex;flex-direction:column;min-height:0;min-width:0}
+.survey-map-toolbar{display:flex;justify-content:space-between;gap:6px;flex:none;margin-bottom:4px}
+.survey-map-toolbar>div{display:flex;gap:4px}
+.survey-map-workspace .survey-map-toolbar button{font-size:12px;min-height:32px;padding:5px 9px}
+.survey-map-workspace button[aria-pressed="true"]{border-color:#33c8dc;background:#093a4d}
+.survey-canvas-fit{min-height:0;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.survey-canvas-fit canvas{display:block;width:100%;max-height:100%;height:auto;object-fit:contain;aspect-ratio:2/1;outline-offset:-2px}
+.survey-map-workspace .survey-selected-contact{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #1b5267;background:rgba(0,18,31,.85);border-radius:9px;padding:10px 14px;min-height:70px;flex:none}
+.survey-selected-contact>div:first-child{min-width:0}
+.survey-selected-contact b{display:block;font-size:16px;line-height:1.2}
+.survey-selected-contact small{display:block;font-size:12px;color:#99bdce;line-height:1.4}
+.survey-contact-actions{display:flex;gap:7px;flex:none}
+.survey-map-workspace .survey-contact-actions button{font-size:12px;padding:6px 10px;min-height:36px}
+.survey-contact-page{flex:1;min-height:0;display:flex;flex-direction:column}
+.survey-contact-page ol{list-style:none;flex:1;min-height:0;display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:4px}
+.survey-map-workspace .survey-contact-page li>button{display:flex;align-items:center;gap:12px;width:100%;height:100%;min-height:0;text-align:left;padding:4px 10px}
+.survey-contact-page li b{font-size:22px}
+.survey-contact-page li small{display:block;font-size:12px;color:#9dbed0}
+.survey-contact-page nav{display:flex;justify-content:space-between;align-items:center;margin-top:5px;flex:none}
+.survey-map-workspace .survey-contact-page nav button{min-height:32px;padding:4px 10px;font-size:12px}
+.science-reading-view,.science-analysis-view{display:flex;flex-direction:column;gap:14px;min-height:0;flex:1}
+.science-metrics,.science-analysis-view dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.science-metrics>div,.science-analysis-view dl>div{border:1px solid #1a4e63;background:rgba(1,24,39,.9);border-radius:9px;padding:14px;min-width:0}
+.science-workspace dt{font-size:13px;color:#78c5db;line-height:1.4}
+.science-workspace dd{font-size:21px;font-weight:700;color:#e3f4f8;line-height:1.35;overflow-wrap:anywhere}
+.science-workspace dd.uncertain{color:#ffd277}
+.science-composition-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;flex:1;min-height:0}
+.science-composition-cards article{border:1px solid #1a4e63;background:rgba(1,24,39,.9);border-radius:9px;padding:15px;min-height:0}
+.science-workspace h4{font-size:12px;letter-spacing:.09em;color:#63d6e7;margin-bottom:12px}
+.science-composition-cards li{font-size:17px;line-height:1.5}
+.science-reading-note,.science-analysis-view>p{font-size:12px;line-height:1.4;color:#9fbecd;flex:none;margin:0}
+.science-analysis-view h4{margin-bottom:0}
+.science-analysis-view dl{grid-template-rows:repeat(2,minmax(0,1fr));flex:1;min-height:0}
+.science-analysis-view dl>div{display:flex;flex-direction:column;justify-content:center}
+.survey-global-details>.survey-map-workspace,.survey-global-details .survey-map-workspace{height:510px;max-height:75dvh}
+@media(max-width:760px){
+ [data-science-focus="true"] .bridge-console-panel{padding:6px;gap:5px}
+ .science-workspace.planetary-sensors{padding:8px;gap:0}
+ .science-workspace-heading{gap:7px;flex-wrap:wrap;padding-bottom:6px}
+ .science-workspace-heading img{width:34px;height:34px}
+ .science-workspace-heading>div:first-child{gap:8px}
+ .science-workspace-heading h3{font-size:15px}.science-workspace-heading small{font-size:10px}.science-workspace-heading p{font-size:12px}
+ .science-main-actions{width:100%;gap:5px}.science-main-actions button{flex:1;padding:6px;font-size:13px;min-height:38px}
+ .science-view-tabs{gap:0;margin-bottom:7px}.science-view-tabs button{flex:1;font-size:13px;padding:7px 3px;min-height:38px}
+ .science-workspace-progress{font-size:11px;gap:8px;min-height:27px}.science-workspace-progress progress{width:65px;flex:none}
+ .survey-map-workspace>header{align-items:start}.survey-map-workspace>header p{font-size:11px}.survey-map-workspace>header>span{font-size:10px}
+ .survey-map-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:6px}
+ .survey-symbol-key{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:3px 5px;gap:0 5px;align-self:stretch}
+ .survey-symbol-key p{display:none}.survey-map-workspace .survey-symbol-key button{min-height:31px;padding:3px;gap:4px}
+ .survey-symbol-key b{width:18px;font-size:21px}.survey-symbol-key button span{font-size:11px}.survey-symbol-key small{font-size:10px}
+ .survey-map-workspace .survey-map-toolbar button{font-size:11px;min-height:32px;padding:4px 6px}
+ .survey-map-workspace .survey-selected-contact{padding:7px 9px;display:block;min-height:92px}
+ .survey-selected-contact b{font-size:14px}.survey-selected-contact small{font-size:11px;line-height:1.2}
+ .survey-contact-actions{margin-top:6px}.survey-map-workspace .survey-contact-actions button{flex:1;min-height:32px;font-size:12px}
+ .science-metrics,.science-analysis-view dl{gap:7px}.science-metrics>div,.science-analysis-view dl>div{padding:9px}
+ .science-workspace dt{font-size:11px}.science-workspace dd{font-size:16px}
+ .science-composition-cards{gap:7px;grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr))}
+ .science-composition-cards article{padding:8px 10px;display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:center}
+ .science-composition-cards h4{font-size:10px;margin:0}.science-composition-cards li{font-size:13px;line-height:1.3}
+ .science-reading-view,.science-analysis-view{gap:8px}.science-analysis-view dl{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr))}
+ .science-reading-note,.science-analysis-view>p{font-size:11px}
+}
+@media(min-width:761px) and (max-height:720px){.science-workspace-heading img{width:36px;height:36px}.science-workspace-heading h3{font-size:17px}.science-workspace-heading{padding-bottom:5px}.science-main-actions button{min-height:36px}.science-metrics>div,.science-analysis-view dl>div{padding:9px}.science-workspace dd{font-size:18px}.science-composition-cards article{padding:10px}.science-composition-cards li{font-size:15px}.survey-symbol-key{padding:5px}.survey-symbol-key button span{font-size:13px}.survey-symbol-key p{font-size:10px!important}.survey-map-workspace .survey-selected-contact{padding:7px 10px;min-height:62px}}
+
+/* Short viewports use one task at a time instead of overflowing stacked panels. */
+.survey-map-workspace .survey-map-toolbar{flex:none;margin:0}
+.survey-map-workspace .survey-selected-contact{height:84px;min-height:84px}
+.survey-selected-contact>div:first-child{flex:1;overflow:hidden}
+.survey-selected-contact b,.survey-selected-contact small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.survey-mobile-legend-button{display:none}
+@media(max-width:1100px){
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]{flex-wrap:nowrap;min-height:46px;padding:5px 10px;gap:8px}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:first-of-type{min-width:0;flex:1;flex-wrap:nowrap}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:first-of-type>span:not(:first-of-type),
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:first-of-type>div,
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:last-of-type>span,
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:last-of-type>button:first-of-type{display:none}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:first-of-type>span:first-of-type{font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:last-of-type{gap:5px;flex:none}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud] button{padding:5px 7px;min-height:36px}
+}
+@media(min-width:761px) and (max-height:720px){
+ .survey-symbol-key p{display:none}.survey-map-workspace .survey-symbol-key button{min-height:28px;padding:4px}
+ .survey-map-workspace .survey-selected-contact{height:76px;min-height:76px}
+}
+@media(max-width:760px){
+ [data-science-focus="true"] .bridge-station-header>div>span,[data-science-focus="true"] .bridge-station-header>div>svg{display:none}
+ [data-science-focus="true"] .bridge-station-header{gap:5px;min-height:52px}
+ [data-science-focus="true"] .bridge-station-header>button{font-size:11px;padding:6px;min-height:40px;max-width:82px}
+ [data-science-focus="true"] .bridge-station-header>div>div{padding:3px 5px;gap:5px}
+ .survey-map-layout{display:flex;gap:0}.survey-map-area{flex:1}
+ .survey-map-layout>.survey-symbol-key{display:none}
+ .survey-map-layout[data-legend-open="true"]>.survey-map-area{display:none}
+ .survey-map-layout[data-legend-open="true"]>.survey-symbol-key{display:grid;flex:1;grid-template-columns:1fr;grid-template-rows:repeat(5,minmax(0,1fr));min-height:0;align-self:stretch}
+ .survey-map-layout[data-legend-open="true"] .survey-symbol-key button{min-height:0;padding:2px 6px}
+ .survey-map-layout[data-legend-open="true"] .survey-symbol-key span{font-size:13px}
+ .survey-map-layout[data-legend-open="true"] .survey-symbol-key b{font-size:22px}
+ .survey-map-workspace .survey-mobile-legend-button{display:block}
+ .survey-map-workspace .survey-map-toolbar{gap:4px}.survey-map-toolbar>div{gap:3px}
+ .survey-map-workspace .survey-map-toolbar button{font-size:11px;padding:4px 5px;min-height:34px}
+ .survey-map-workspace>header>p{display:none}.survey-map-workspace>header{justify-content:flex-end}
+ .survey-map-workspace .survey-selected-contact{height:86px;min-height:86px;padding:7px}
+ .survey-selected-contact small{font-size:10px}
+ .survey-contact-actions{margin-top:4px}.survey-map-workspace .survey-contact-actions button{min-height:32px}
+ .science-workspace-heading h3{font-size:14px}
+ .science-workspace-heading small{font-size:9px}
+ .science-workspace-heading p{font-size:11px}
+ .science-main-actions button{padding:5px;font-size:12px;min-height:40px}
+}
+
+.survey-symbol-key b img{width:24px;height:24px;object-fit:contain}
+@media(max-width:760px) and (max-height:650px){
+ .science-workspace-heading img,.science-workspace-heading small{display:none}
+ .survey-map-workspace>header{display:none}
+}
+
+/* Hover must remain visually distinct from the selected Science task. */
+.science-workspace .science-view-tabs button[aria-selected="false"]:hover:not(:disabled){background:#082a3a;border-bottom-color:transparent}
+
+/*12UI Science candidateD: extracted instrument emblems and plate, with actual
+  reported materials substituted for its generic sample art. Text has its own
+  opaque plate; no opacity scrim is placed over the scene. */
+.science-illustrated-readings .science-metrics>div{position:relative;padding-left:65px;background:#062237;overflow:hidden;min-height:82px}
+.science-metric-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:40px;height:40px;object-fit:contain}
+.science-illustrated-readings .science-composition-cards article{position:relative;overflow:hidden;padding:0;background:#061b2c;isolation:isolate}
+.science-card-copy{position:relative;z-index:2;align-self:start;max-width:90%;width:max-content;min-width:140px;background:#041b2a;border:1px solid #16435a;border-top:0;border-left:0;border-radius:0 0 10px 0;padding:14px 16px 13px;box-shadow:4px 6px 16px #020e1655}
+.science-card-copy h4{display:flex;align-items:center;gap:8px;margin:0 0 8px;letter-spacing:.06em}
+.science-card-copy h4 img{width:28px;height:28px;object-fit:contain}
+.science-card-copy ul{list-style:none;margin:0;padding:0}.science-card-copy li{overflow-wrap:anywhere}
+.science-composition-art{position:absolute;inset:0;margin:0;overflow:hidden;pointer-events:none;color:var(--sample-accent);background:#051827}
+.science-sample-scene{width:100%;height:100%;object-fit:cover;object-position:center bottom;display:block}
+.science-sample-tint{position:absolute;inset:0;background:var(--sample-accent);mix-blend-mode:color;opacity:.9}
+.science-material-metal-sample .science-sample-scene{filter:grayscale(1) contrast(1.15)}
+.science-material-gas-sample .science-sample-scene,.science-material-compound-sample .science-sample-scene{filter:grayscale(.8)}
+.science-molecule{position:absolute;width:65%;height:48%;right:1%;bottom:14%;filter:drop-shadow(0 5px 8px #00101e);overflow:visible}
+.science-sample-signatures{position:absolute;display:flex;flex-wrap:wrap;gap:5px;bottom:32px;left:12px;right:10px;justify-content:flex-end}
+.science-sample-signatures>span{background:#041b2a;border:1px solid currentColor;border-radius:5px;padding:3px 7px;font:700 13px Chakra Petch,sans-serif;color:var(--sample-accent)}
+.science-sample-caption{position:absolute;bottom:0;left:0;right:0;padding:5px 10px;background:#041b2a;color:#9abfce;font-size:10px;letter-spacing:.07em;z-index:2}
+.science-specimen-seal{position:absolute;right:8%;bottom:23%;width:44%;aspect-ratio:1;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;transform:rotate(-12deg);box-shadow:0 0 20px #082c3c,inset 0 0 20px #082c3c;background:#071b2aa6}
+.science-specimen-seal>span{font:bold clamp(20px,3vw,40px) Chakra Petch,sans-serif;transform:rotate(12deg);text-shadow:0 2px 8px #000}
+.science-specimen-seal>i{position:absolute;inset:8%;border:1px solid currentColor;border-radius:15% 55%;opacity:.35;transform:rotate(20deg)}
+.science-specimen-seal>i:nth-of-type(2){transform:rotate(80deg)}.science-specimen-seal>i:nth-of-type(3){transform:rotate(140deg)}
+.science-sample-unknown,.science-dry-sample{position:absolute;inset:20% 0 0;display:grid;place-items:center;font:200 84px Chakra Petch,sans-serif;color:#5a8193}
+.science-vacuum-orbit{position:absolute;width:65%;height:25%;right:5%;bottom:22%;border:1px solid #55788b;border-radius:50%;transform:rotate(-25deg)}
+@media(max-width:760px){
+ .science-illustrated-readings .science-metrics>div{padding:8px;min-height:64px}.science-metric-icon{width:20px;height:20px;top:7px;right:5px;left:auto;transform:none;opacity:.5}
+ .science-illustrated-readings .science-metrics dt{padding-right:16px}.science-illustrated-readings .science-composition-cards article{display:block;padding:0;min-height:0}
+ .science-card-copy{max-width:70%;min-width:105px;padding:6px 9px;border-radius:0 0 8px 0}
+ .science-card-copy h4{font-size:10px;gap:5px;margin-bottom:3px}.science-card-copy h4 img{width:19px;height:19px}.science-card-copy li{font-size:13px;line-height:1.3}
+ .science-sample-caption{display:none}.science-molecule{width:36%;height:78%;right:0;bottom:3%}.science-sample-signatures{left:58%;right:5px;bottom:5px;gap:3px}.science-sample-signatures>span{font-size:10px;padding:1px 4px}
+ .science-specimen-seal{width:23%;right:5%;bottom:13%}.science-specimen-seal>span{font-size:19px}.science-sample-scene{object-position:center 58%}
+ .science-sample-unknown,.science-dry-sample{inset:0 0 0 65%;font-size:45px}
+}
+
+.science-illustrated-analysis .science-analysis-card{position:relative;isolation:isolate;overflow:hidden;justify-content:flex-start;padding:12px;background:#051b2d}
+.science-analysis-card>dt,.science-analysis-card>dd{z-index:2;position:relative;background:#041b2a;max-width:88%;width:max-content;min-width:60%;padding:6px 9px;margin:0;overflow-wrap:anywhere;border:1px solid #1c4a60}
+.science-analysis-card>dt{display:flex;align-items:center;gap:7px;border-radius:7px 7px 0 0;border-bottom:0;min-height:34px}
+.science-analysis-card>dt img{width:23px;height:23px;object-fit:contain;flex:none}
+.science-analysis-card>dd{border-top:0;border-radius:0 0 7px 7px;padding-top:0;padding-bottom:8px}
+.science-field-art{position:absolute;inset:0;display:block;overflow:hidden;pointer-events:none;color:#7ebbd4;background:#061b2b}
+.science-field-landscape{width:100%;height:100%;object-fit:cover;object-position:50% 60%}
+.science-instrument-planet{position:absolute;width:68%;aspect-ratio:1;right:-6%;bottom:-22%;border-radius:50%;overflow:hidden;box-shadow:0 0 20px #22739766;border:1px solid #2b728a;background:#061421}
+.science-instrument-planet>img{width:100%;height:100%;object-fit:cover}
+.science-instrument-planet>i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 32% 25%,transparent 30%,#000a 90%);box-shadow:inset 0 0 10px #003343}
+.science-gravity-grid{position:absolute;inset:4% 0 0;width:100%;height:100%;color:#57bce3}
+.science-atmosphere-limb{position:absolute;width:69%;aspect-ratio:1;right:-6.5%;bottom:-22.5%;border-radius:50%;border:6px solid #95d8ed66;box-shadow:0 0 17px #6fccf499,inset 0 0 12px #73bff0}
+.science-atmosphere-thin{border-width:2px;box-shadow:0 0 7px #6fccf466}.science-atmosphere-dense{border-width:9px}
+.science-thermal-instrument{position:absolute;height:82%;width:40%;right:5%;bottom:0;color:#e8c37f;filter:drop-shadow(0 3px 5px #00121f)}
+.science-thermal-cold .science-thermal-instrument{color:#80cbea}.science-thermal-hot .science-thermal-instrument{color:#f5a875}
+.science-weather-clouds{position:absolute;width:80%;height:65%;right:0;bottom:0;object-fit:cover;filter:grayscale(.65);border-radius:60% 0 0 0;opacity:.65;mix-blend-mode:screen}
+.science-weather-storm{height:90%;width:100%;opacity:.9;filter:grayscale(.9) contrast(1.4)}
+.science-weather-flash{position:absolute;width:25%;right:15%;bottom:5%;filter:drop-shadow(0 0 7px #87dfff)}
+.science-field-unresolved{display:grid;place-items:center;padding-left:40%;padding-top:10%;font:200 70px Chakra Petch,sans-serif;background:repeating-linear-gradient(135deg,#061b2b,#061b2b 13px,#0a2535 14px,#061b2b 15px);color:#517488}
+.science-specimen-seal>span{max-width:90%;overflow-wrap:anywhere;text-align:center;font-size:clamp(14px,2.2vw,30px)}
+@media(max-width:760px){
+ .science-illustrated-analysis .science-analysis-card{padding:6px}
+ .science-analysis-card>dt,.science-analysis-card>dd{max-width:98%;min-width:70%;padding-left:5px;padding-right:5px}
+ .science-analysis-card>dt{gap:4px;min-height:25px;font-size:10px}.science-analysis-card>dt img{width:16px;height:16px}
+ .science-analysis-card>dd{font-size:14px;line-height:1.25;padding-bottom:5px}.science-field-unresolved{font-size:45px;padding-top:25%}
+ .science-instrument-planet{width:80%;bottom:-22%}.science-atmosphere-limb{width:81%;bottom:-22.5%}
+}
+
+.science-workspace[data-science-view="Readings"],.science-workspace[data-science-view="Analysis"],.science-workspace[data-science-view="Ship status"]{background:#04141f url('./assets/ui/science/cards/panel-starfield.png') center/cover}
+.science-illustrated-status .science-analysis-card{position:relative;isolation:isolate;overflow:hidden;justify-content:flex-start;background:#051b2d;padding:12px}
+.science-ship-art{position:absolute;inset:0;overflow:hidden;background:#061b2b;pointer-events:none;display:block;color:#57c6e6}
+.science-configured-hull{position:absolute;display:block;right:-5%;bottom:-12%;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 9px #2c7a9c66)}
+.science-ship-art-armor .science-configured-hull{width:125%;height:125%;right:-20%;bottom:-20%}
+.science-shield-envelope{position:absolute;inset:0;width:100%;height:100%;color:#65828e;opacity:.35}
+.science-shield-energized{color:#6dddfa;opacity:1;filter:drop-shadow(0 0 6px #45badc)}
+.science-sensor-reticle{position:absolute;inset:0;width:100%;height:100%;color:#5dc5de}.science-sensor-offline{color:#667b85;opacity:.4}
+.science-hull-alert{position:absolute;inset:0;background:radial-gradient(ellipse at 65% 65%,transparent 25%,#df615f66 80%);border-bottom:3px solid #fa8b75}
+.science-status-caption{position:absolute;left:10px;right:10px;bottom:7px;z-index:2;width:max-content;max-width:calc(100% - 20px);padding:3px 7px;border:1px solid #28536a;border-radius:4px;background:#041b2a;color:#bad8e2;font-size:11px}
+@media(max-width:760px){
+ .science-illustrated-status .science-analysis-card{padding:6px}
+ .science-illustrated-status .science-analysis-card>dt{min-height:24px}
+ .science-status-caption{left:6px;right:6px;bottom:5px;font-size:10px;padding:2px 4px;max-width:calc(100% - 12px)}
+ .science-configured-hull{bottom:-8%;right:-8%;width:115%;height:100%}
+}
+
+/* Keep the complete hull inside the diagnostic frame; the Armor card is an
+  intentional close-up of the same equipped artwork. */
+.science-ship-art-hull .science-configured-hull,.science-ship-art-shields .science-configured-hull{right:0;bottom:0;width:100%;height:78%}
+.science-weather-clouds{inset:0;width:100%;height:100%;border-radius:0;mask-image:radial-gradient(ellipse at 75% 85%,#000 10%,transparent 77%);opacity:.55}
+.science-weather-storm{opacity:.9;mask-image:radial-gradient(ellipse at 65% 80%,#000 25%,transparent 90%)}
+
+.science-composition-switches{display:none}
+@media(max-width:760px) and (max-height:650px){
+ .science-composition-switches{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;flex:none}
+ .science-composition-switches>button{min-width:0;min-height:32px;padding:4px 2px;font-size:12px;line-height:1.2;border:1px solid #286177;border-radius:6px;background:#062236;color:#c3e4ee}
+ .science-composition-switches>button[aria-pressed="true"]{background:#13536b;border-color:#6ed6e6;color:white}
+ .science-composition-switches>button:focus-visible{outline:2px solid #ffd277;outline-offset:1px}
+ .science-illustrated-readings .science-composition-cards{display:block;position:relative}
+ .science-illustrated-readings .science-composition-cards article{height:100%;width:100%;display:none}
+ .science-illustrated-readings .science-composition-cards article[data-composition-selected="true"]{display:block}
+ .science-illustrated-readings .science-card-copy{max-width:72%;padding:6px 9px}
+ .science-illustrated-readings .science-molecule{height:80%;width:46%;right:0;bottom:0}
+ .science-illustrated-readings .science-specimen-seal{width:32%;right:4%;bottom:10%}
+ .science-illustrated-analysis .science-analysis-card,.science-illustrated-status .science-analysis-card{padding:4px}
+ .science-analysis-card>dt{min-height:18px;padding:2px 5px;font-size:11px;line-height:1.2;gap:0}
+ .science-analysis-card>dt img{display:none}
+ .science-analysis-card>dd{padding:0 5px 3px;font-size:13px;line-height:1.2}
+ .science-illustrated-status .science-analysis-card>dt{min-height:18px}
+ .science-status-caption{font-size:9px;bottom:3px;padding:1px 3px}
+}
+
+.science-ship-art-hull .science-configured-hull,.science-ship-art-shields .science-configured-hull{height:68%}

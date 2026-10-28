@@ -1,0 +1,42 @@
+{
+  "name": "starflight-junior-crew",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "postinstall": "node scripts/guard-picomatch.mjs",
+    "predev": "node scripts/guard-picomatch.mjs",
+    "prebuild": "node scripts/guard-picomatch.mjs",
+    "pretest": "node scripts/guard-picomatch.mjs",
+    "prepreview": "node scripts/guard-picomatch.mjs",
+    "check:security": "node scripts/guard-picomatch.mjs && node tools/security/dependency-guard.test.mjs && node tools/security/source-size.test.mjs && node tools/windows-tester/server-limits.test.mjs",
+    "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/test.mjs",
+    "build": "vite build",
+    "check:build": "node scripts/check-build.mjs",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort"
+  },
+  "dependencies": {
+    "@fontsource/chakra-petch": "5.3.0",
+    "@fontsource/orbitron": "5.3.0",
+    "@fontsource/rajdhani": "5.3.0",
+    "lucide-react": "1.61.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "^24.0.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vite": "8.3.5"
+  }
+}

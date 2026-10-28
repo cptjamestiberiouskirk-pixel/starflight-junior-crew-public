@@ -1,0 +1,4419 @@
+{
+  "provenance": {
+    "source": "artifacts/player-feedback-round2/baseline/surface.ts",
+    "sha256": "136a6be5be730887d9a64489a9aafcd85a06039d72aaa7640f6faece536be616",
+    "scope": "Frozen before-height-extraction original terrain; 45 coordinates, 810 classification outputs"
+  },
+  "samples": [
+    {
+      "seed": 0,
+      "lon": -180,
+      "lat": -90,
+      "height": 0.6127541531398892,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": -180,
+      "lat": 0,
+      "height": 0.33641496501863,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": -180,
+      "lat": 90,
+      "height": 0.4658920896258205,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": -75,
+      "lat": -90,
+      "height": 0.4340284626092762,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": -75,
+      "lat": 0,
+      "height": 0.801415364285931,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": -75,
+      "lat": 90,
+      "height": 0.3486224320158362,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 0,
+      "lat": -90,
+      "height": 0.6152543390914798,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 0,
+      "lat": 0,
+      "height": 0.3803486159536988,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 0,
+      "lat": 90,
+      "height": 0.5493950085993856,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 64,
+      "lat": -90,
+      "height": 0.8046561048109085,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Mountains"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 64,
+      "lat": 0,
+      "height": 0.3218578264471144,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 64,
+      "lat": 90,
+      "height": 0.49501920600570737,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 180,
+      "lat": -90,
+      "height": 0.6127541531398892,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 180,
+      "lat": 0,
+      "height": 0.33641496501863,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 0,
+      "lon": 180,
+      "lat": 90,
+      "height": 0.4658920896258205,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": -180,
+      "lat": -90,
+      "height": 0.4175439542420208,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": -180,
+      "lat": 0,
+      "height": 0.43377286324277514,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": -180,
+      "lat": 90,
+      "height": 0.32788711086101824,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": -75,
+      "lat": -90,
+      "height": 0.6865062978863716,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": -75,
+      "lat": 0,
+      "height": 0.5070036442484707,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": -75,
+      "lat": 90,
+      "height": 0.369903715942055,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 0,
+      "lat": -90,
+      "height": 0.5533246889617294,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 0,
+      "lat": 0,
+      "height": 0.36353643221780657,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 0,
+      "lat": 90,
+      "height": 0.2766744398325682,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 64,
+      "lat": -90,
+      "height": 0.45706280349381273,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 64,
+      "lat": 0,
+      "height": 0.5489337852336467,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 64,
+      "lat": 90,
+      "height": 0.6007233802806586,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 180,
+      "lat": -90,
+      "height": 0.4175439542420208,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 180,
+      "lat": 0,
+      "height": 0.43377286324277514,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": 123456,
+      "lon": 180,
+      "lat": 90,
+      "height": 0.32788711086101824,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": -180,
+      "lat": -90,
+      "height": 0.7032523592785002,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": -180,
+      "lat": 0,
+      "height": 0.6550534308049828,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": -180,
+      "lat": 90,
+      "height": 0.49978967936337,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": -75,
+      "lat": -90,
+      "height": 0.672364128055051,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": -75,
+      "lat": 0,
+      "height": 0.5387492326833307,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": -75,
+      "lat": 90,
+      "height": 0.3680135222431272,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 0,
+      "lat": -90,
+      "height": 0.5162920982483775,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 0,
+      "lat": 0,
+      "height": 0.7350773423258216,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 0,
+      "lat": 90,
+      "height": 0.7435940566007047,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 64,
+      "lat": -90,
+      "height": 0.6546666561935097,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 64,
+      "lat": 0,
+      "height": 0.5237199910990894,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 64,
+      "lat": 90,
+      "height": 0.5062548454221338,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 180,
+      "lat": -90,
+      "height": 0.7032523592785002,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 180,
+      "lat": 0,
+      "height": 0.6550534308049828,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    },
+    {
+      "seed": -103493,
+      "lon": 180,
+      "lat": 90,
+      "height": 0.49978967936337,
+      "expected": [
+        {
+          "type": "Rock",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Rock",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Rock",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Frozen",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Frozen",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Frozen",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Liquid",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Liquid",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Liquid",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Molten",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Molten",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Molten",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Crystal",
+          "water": 0,
+          "elevation": "Highland"
+        },
+        {
+          "type": "Crystal",
+          "water": 40,
+          "elevation": "Lowland"
+        },
+        {
+          "type": "Crystal",
+          "water": 100,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 0,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 40,
+          "elevation": "Liquid"
+        },
+        {
+          "type": "Gas Giant",
+          "water": 100,
+          "elevation": "Liquid"
+        }
+      ]
+    }
+  ]
+}

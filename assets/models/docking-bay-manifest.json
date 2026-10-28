@@ -1,0 +1,574 @@
+{
+  "sourceApproval": "artifacts/docking-bay-rebuild/art-direction-v2/human-approval.json",
+  "sourceBlendSha256": "3e58f718cc81bb193df0d8e9593b16775386ffffef8f4b69c5feb3ca94f18fd0",
+  "productionBlendSha256": "611c7ced83462f829b5e025be2938da2fe050ad81d884f4e7c1df79de5d75bc7",
+  "glbSha256": "485d573cfafce828852b75945cfe2fa1fab06d2ea6b4782cca5c3d8c506275ca",
+  "bytes": 6980032,
+  "triangles": 98772,
+  "axis": "Z up, +Y forward; deliberate runtime convention",
+  "palette": {
+    "Amber fixtures": {
+      "color": [
+        0.949999988079071,
+        0.23999999463558197,
+        0.02500000037252903
+      ],
+      "unlit": true,
+      "strength": 2.299999952316284
+    },
+    "Architectural olive \u2022 Blue-black framing": {
+      "color": [
+        0.012000000104308128,
+        0.024000000208616257,
+        0.019999999552965164
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Architectural olive \u2022 Blue-grey structure": {
+      "color": [
+        0.10000000149011612,
+        0.12999999523162842,
+        0.10499999672174454
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Architectural olive \u2022 Hull \u2022 inset panels": {
+      "color": [
+        0.2199999988079071,
+        0.2800000011920929,
+        0.23000000417232513
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Architectural olive \u2022 Painted structural teal": {
+      "color": [
+        0.07000000029802322,
+        0.10000000149011612,
+        0.08500000089406967
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Blue-black framing": {
+      "color": [
+        0.012000000104308128,
+        0.02500000037252903,
+        0.0430000014603138
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Blue-grey structure": {
+      "color": [
+        0.07500000298023224,
+        0.12999999523162842,
+        0.18000000715255737
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Cockpit blue-black": {
+      "color": [
+        0.012000000104308128,
+        0.05000000074505806,
+        0.0949999988079071
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Deck \u2022 desaturated teal": {
+      "color": [
+        0.054999999701976776,
+        0.07800000160932541,
+        0.09000000357627869
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Drive glow": {
+      "color": [
+        0.10000000149011612,
+        0.6000000238418579,
+        1.0
+      ],
+      "unlit": true,
+      "strength": 3.0
+    },
+    "Engine mouths": {
+      "color": [
+        0.004000000189989805,
+        0.01600000075995922,
+        0.02800000086426735
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Hull \u2022 inset panels": {
+      "color": [
+        0.3499999940395355,
+        0.47999998927116394,
+        0.5299999713897705
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Hull \u2022 warm chalk": {
+      "color": [
+        0.7200000286102295,
+        0.800000011920929,
+        0.8199999928474426
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Illustrated distant nebula": {
+      "color": [
+        0.009,
+        0.022,
+        0.038
+      ],
+      "unlit": true,
+      "strength": 1.0,
+      "proceduralNebula": true
+    },
+    "Ink": {
+      "color": [
+        0.0020000000949949026,
+        0.004000000189989805,
+        0.00800000037997961
+      ],
+      "unlit": true,
+      "strength": 1.0
+    },
+    "Painted \u2022 olive wall plates": {
+      "color": [
+        1,
+        1,
+        1
+      ],
+      "unlit": false,
+      "strength": 1.2000000476837158,
+      "texture": "hangar-painted-atlas.png"
+    },
+    "Painted \u2022 reinforced door": {
+      "color": [
+        1,
+        1,
+        1
+      ],
+      "unlit": false,
+      "strength": 1.2000000476837158,
+      "texture": "hangar-painted-atlas.png"
+    },
+    "Painted \u2022 service machinery": {
+      "color": [
+        1,
+        1,
+        1
+      ],
+      "unlit": false,
+      "strength": 1.2000000476837158,
+      "texture": "hangar-painted-atlas.png"
+    },
+    "Painted \u2022 worn deck plates": {
+      "color": [
+        1,
+        1,
+        1
+      ],
+      "unlit": false,
+      "strength": 1.2000000476837158,
+      "texture": "hangar-painted-deck.png"
+    },
+    "Port navigation light": {
+      "color": [
+        0.7200000286102295,
+        0.029999999329447746,
+        0.017999999225139618
+      ],
+      "unlit": true,
+      "strength": 2.0
+    },
+    "Safety ochre": {
+      "color": [
+        0.800000011920929,
+        0.4000000059604645,
+        0.04500000178813934
+      ],
+      "unlit": false,
+      "strength": 1.0
+    },
+    "Soft cyan light": {
+      "color": [
+        0.07999999821186066,
+        0.47999998927116394,
+        0.75
+      ],
+      "unlit": true,
+      "strength": 2.200000047683716
+    },
+    "Starboard navigation light": {
+      "color": [
+        0.029999999329447746,
+        0.6200000047683716,
+        0.20000000298023224
+      ],
+      "unlit": true,
+      "strength": 2.0
+    }
+  },
+  "lights": [
+    {
+      "name": "Ceiling soft key",
+      "position": [
+        0.0,
+        -12.0,
+        30.0
+      ],
+      "target": [
+        0.0,
+        -4.5721845626831055,
+        11.430465698242188
+      ],
+      "color": [
+        1.0,
+        0.8999999761581421,
+        0.6899999976158142
+      ],
+      "energy": 72000.0,
+      "size": 35.0,
+      "shadow": true
+    },
+    {
+      "name": "Warm hangar bounce",
+      "position": [
+        28.0,
+        45.0,
+        24.0
+      ],
+      "target": [
+        17.884838104248047,
+        28.743492126464844,
+        18.21990966796875
+      ],
+      "color": [
+        1.0,
+        0.6399999856948853,
+        0.3100000023841858
+      ],
+      "energy": 65000.0,
+      "size": 30.0,
+      "shadow": true
+    },
+    {
+      "name": "Cool port fill",
+      "position": [
+        -29.0,
+        -25.0,
+        19.0
+      ],
+      "target": [
+        -14.990501403808594,
+        -11.956674575805664,
+        13.202963829040527
+      ],
+      "color": [
+        0.6000000238418579,
+        0.7200000286102295,
+        0.7900000214576721
+      ],
+      "energy": 28000.0,
+      "size": 34.0,
+      "shadow": true
+    },
+    {
+      "name": "Space rim",
+      "position": [
+        0.0,
+        104.0,
+        35.0
+      ],
+      "target": [
+        2.117616531904787e-06,
+        84.64173889160156,
+        29.974294662475586
+      ],
+      "color": [
+        0.36000001430511475,
+        0.6200000047683716,
+        1.0
+      ],
+      "energy": 85000.0,
+      "size": 50.0,
+      "shadow": true
+    },
+    {
+      "name": "Amber wall spill",
+      "position": [
+        -33.599998474121094,
+        -51.0,
+        13.800000190734863
+      ],
+      "target": [
+        -18.620067596435547,
+        -51.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.001",
+      "position": [
+        -33.599998474121094,
+        -27.0,
+        13.800000190734863
+      ],
+      "target": [
+        -18.620067596435547,
+        -27.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.002",
+      "position": [
+        -33.599998474121094,
+        -3.0,
+        13.800000190734863
+      ],
+      "target": [
+        -18.620067596435547,
+        -3.000000238418579,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.003",
+      "position": [
+        -33.599998474121094,
+        21.0,
+        13.800000190734863
+      ],
+      "target": [
+        -18.620067596435547,
+        21.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.004",
+      "position": [
+        -33.599998474121094,
+        45.0,
+        13.800000190734863
+      ],
+      "target": [
+        -18.620067596435547,
+        45.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.005",
+      "position": [
+        -33.599998474121094,
+        69.0,
+        13.800000190734863
+      ],
+      "target": [
+        -18.620067596435547,
+        69.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.006",
+      "position": [
+        33.599998474121094,
+        -51.0,
+        13.800000190734863
+      ],
+      "target": [
+        18.620067596435547,
+        -51.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.007",
+      "position": [
+        33.599998474121094,
+        -27.0,
+        13.800000190734863
+      ],
+      "target": [
+        18.620067596435547,
+        -27.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.008",
+      "position": [
+        33.599998474121094,
+        -3.0,
+        13.800000190734863
+      ],
+      "target": [
+        18.620067596435547,
+        -3.000000238418579,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.009",
+      "position": [
+        33.599998474121094,
+        21.0,
+        13.800000190734863
+      ],
+      "target": [
+        18.620067596435547,
+        21.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.010",
+      "position": [
+        33.599998474121094,
+        45.0,
+        13.800000190734863
+      ],
+      "target": [
+        18.620067596435547,
+        45.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    },
+    {
+      "name": "Amber wall spill.011",
+      "position": [
+        33.599998474121094,
+        69.0,
+        13.800000190734863
+      ],
+      "target": [
+        18.620067596435547,
+        69.0,
+        0.5485219955444336
+      ],
+      "color": [
+        1.0,
+        0.46000000834465027,
+        0.11999999731779099
+      ],
+      "energy": 3800.0,
+      "size": 8.0,
+      "shadow": false
+    }
+  ],
+  "duration": 8,
+  "textures": {
+    "hangar-painted-atlas.png": {
+      "sha256": "864231119741cfb877cb5a214065badf603f40b97b7f571362646fd5c989ee1a",
+      "bytes": 2142197
+    },
+    "hangar-painted-deck.png": {
+      "sha256": "ac4d522f382119e69f54c8e3cd75a68d0ba8ba092ec376e692da5d5b437f96b8",
+      "bytes": 1776322
+    }
+  },
+  "proceduralAdapter": "Local Blender source and image_gen artwork; no Meshy task IDs, pricing or spend fabricated. Toon lighting is dynamic; no baked lightmap requirement for this cinematic.",
+  "reviewedGeometryPreserved": true
+}

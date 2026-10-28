@@ -1,0 +1,105 @@
+{
+  "title": "Starflight: Junior Crew",
+  "hook": "Junior crew explores deep space",
+  "game_overview": "A faithful 1986 space exploration RPG remake told as an animated workplace comedy aboard Interstel's most junior starship.",
+  "artstyle": "cartoon",
+  "voice_audio": {
+    "repository_url": "https://github.com/cptjamestiberiouskirk-pixel/starflight-dispatch-voices",
+    "branch": "main",
+    "alien_recording_url_template": "https://raw.githubusercontent.com/cptjamestiberiouskirk-pixel/starflight-dispatch-voices/main/aliens/<id>.mp3",
+    "crew_recording_url_template": "https://raw.githubusercontent.com/cptjamestiberiouskirk-pixel/starflight-dispatch-voices/main/crew/<hash>.mp3",
+    "crew_filename_scheme": "FNV-1a 32-bit hash of the exact banter text encoded as UTF-8, formatted as 8 lowercase hexadecimal digits",
+    "playback_module": "voice.ts",
+    "future_model_review": "design/DIALOGUE_ROADMAP.md"
+  },
+  "genre": "rpg",
+  "winning_condition": "Discover the cause of the stellar flares, recover the Crystal Orb and a Black Egg through the existing fixed artifact sites, survive the Crystal Planet, arm the Egg at its control Nexus, and escape by ascending before detonation. A successful Nexus detonation halts the flare network and awards the existing 500,000 MU victory bonus. The Cone provides guidance; no new quest prerequisite or mission framework is added.",
+  "losing_condition": "Ship structural hull reaches zero integrity during navigation or fatal environmental collision.",
+  "player_mode": "single_player",
+  "supported_orientations": [
+    "landscape",
+    "wide"
+  ],
+  "input_methods": [
+    "keyboard",
+    "mouse",
+    "touch",
+    "dpad"
+  ],
+  "score_options": {
+    "score_type": "points",
+    "score_order": "higher_is_better"
+  },
+  "low_end_device_support": true,
+  "mobile_playable": true,
+  "tv_playable": true,
+  "language": [
+    "en"
+  ],
+  "content_descriptors": [],
+  "controls": [
+    {
+      "input": "Arrow Keys / Numpad / Home-PgUp-End-PgDn / WASD",
+      "action": "Walk astronaut in Starport ring / Steer starship in Arth system (hold to thrust, release to stop)"
+    },
+    {
+      "input": "Up / Down Arrow Keys",
+      "action": "Navigate bridge console buttons and room menu items"
+    },
+    {
+      "input": "Enter / Space / Click",
+      "action": "Confirm action, enter Starport room, trigger console command, or initiate planetary orbit/docking"
+    },
+    {
+      "input": "Escape",
+      "action": "Open Pause menu with Save Slots A-E (Switch, Copy, Reset, Resume) or return to bridge"
+    },
+    {
+      "input": "Virtual D-Pad & Action Buttons",
+      "action": "Mobile touch navigation and interaction overlay"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Stardate Clock, Calendar & Time Mechanics",
+      "content": "1. Temporal Progression: Real-time simulation runs only when undocked from the Starport. Exactly 1 star hour elapses every 10 seconds of active play (24 star hours = 1 star day = 240 seconds). 2. Arth Calendar: 10 months per year, 30 days per month (300 days per year), formatted strictly as DD-MM-YYYY starting at '01-01-4620'. Real-world dates are strictly forbidden. Time stands completely still while docked at Starport.",
+      "summary": "10-second star hour clock and 300-day Arth year system."
+    },
+    {
+      "title": "Banking, Economy & Trade Depot Systems",
+      "content": "1. Interstel Banking: 12% annual interest compounded and paid upon crew boarding for launch and upon planetary evaluation resolution. Detailed dated ledger records every credit/debit transaction. 2. Trade Depot Operations: Sells Endurium (initial 1,000 M.U./m\u00b3 with fluctuating market price announced in bulletins), essential minerals, and rare artifacts. Buys player-harvested minerals, alien artifacts, and captured bio-specimens. Buying/selling automatically clamps to available funds and cargo pod volume. Mineral buyback price has a realistic corporate broker spread; Endurium sells back at full prevailing market value. Artifact analysis costs 500 M.U. on first identification.",
+      "summary": "12% annualized interest, Endurium price fluctuations, and mineral trade spreads."
+    },
+    {
+      "title": "Planetary Evaluation & Distress Towing Mechanics",
+      "content": "1. Log Planet Command (Command Station in Orbit): Allows captain to log planetary telemetry and formally recommend the world for colonization with a custom designation (up to 15 chars). Suitable worlds (temperate, breathable, low weather/gravity) award substantial colony finder bonuses; unsuitable worlds trigger escalating corporate incompetence fines. Pending colony verdicts queue in Operations Evaluation and strictly block launch until acknowledged. 2. Lifeform Survey Bounties: Recorded biological data is cataloged by class, order and species and redeemed once upon returning to Starport. Captured specimens retain separate manual Trade Depot sales. 3. Communications Distress Protocol: Emergency subspace transponder summons Interstel salvage tug from anywhere in space (except during active combat or while docked), towing the vessel back to Starport Arth for an un-capped recovery fine starting at 15,000 M.U. plus quadratic distance scaling from coordinate (125, 100).",
+      "summary": "Colony recommendation verification, lifeform bounties, and emergency recovery fines."
+    },
+    {
+      "title": "Corporate Operations Bulletins & Story Progression",
+      "content": "Operations notices provide a chronological terminal feed of Interstel corporate directives, mandatory compliance memos, local survey coordinates, Endurium commodity price adjustments, and mounting reports of catastrophic stellar flares threatening civilized systems. Paginated with More, Previous, Next, and Quit.",
+      "summary": "Passive-aggressive workplace memos harboring vital galactic intelligence."
+    }
+  ],
+  "player_experience_implementation": {
+    "report": "design/PLAYER_EXPERIENCE_REPORT.md",
+    "rules": "Original source behavior governs the audited mechanics. Save additions are optional and legacy saves retain their existing mission progress.",
+    "recording": "Three-second nearby lifeform recording consumes rover energy, pauses briefly on wildlife attack, saves unfinished progress and redeems novelty-based data once at Starport. Captured specimens retain their separate manual trade flow.",
+    "surfaceLifecycle": "Leaving the surface alone retains depletion. Breaking orbit refills ordinary resources while preserving fixed recovered relics, survey/lore progress, special dropped relics and persistent wrecks. The Veloxi Orb handover reopens its surviving original site.",
+    "drone": "Six numbers from 1 to 99; accept multiples of six and reject others. Fifteen seconds per answer, half-second first delay, one-second gaps, three-second permission message. Wrong answer, timeout, lost link or player attack denies clearance. Permission lasts until hyperspace departure.",
+    "music": "The local retro electronic Sonilo recording Neon Starfield Voyage is integrated for title, starport and normal exploration. It supersedes the rejected Lower Deck Voyage; both source files remain preserved. Web Audio uses an authored crossfade loop with volume, pause/resume, dialogue ducking and platform mute. Final native/source technical playback checks passed; musical appeal and listening quality are separate from technical measurements.",
+    "communications": "Original personality thresholds separate hostile talk from combat. Original phrase controls, delayed hails and replies, unanswered-hail limits, answer mood changes, timed questions, reminders, impatience, ordered transmissions and equipment/reputation effects are active. Lore advances by race and topic across meetings; Old Empire/Ancients refusal locks last for the encounter. Prior transcripts remain in the ship log. Final automatic transmissions finish their recording; manual close and leaving stop playback. Mechan recognition requires assigned living humans before the first unlock, persists in optional save data, and permits later Heaven entry. Retaliation and surrender rules remain authoritative."
+  },
+  "planetary_scanning": {
+    "entry": "In orbit: Science > Sensors, then Analysis",
+    "sensorReading": [
+      "Mass in original tons",
+      "Relative biological and mineral density",
+      "Atmosphere, hydrosphere, lithosphere composition"
+    ],
+    "analysis": "Original independent per-field Science skill certainty; a completed fresh reading and assigned conscious Science Officer required",
+    "persistence": "Optional save data preserves progress and certainty; departure invalidates reading",
+    "presentation": "Three-second sweep and responsive panel; existing planet art preserved",
+    "limitations": "Not full original Science-command parity; original manual and recovered code are the source"
+  }
+}

@@ -1,0 +1,457 @@
+{
+  "count": 50,
+  "newPerRace": 10,
+  "totalPerRaceIncludingOriginal": 11,
+  "layout": {
+    "columns": 3,
+    "rows": 2,
+    "cellPixels": 256,
+    "frames": [
+      "ready",
+      "reserved-ready",
+      "reserved-ready",
+      "blink",
+      "alert",
+      "injured"
+    ]
+  },
+  "images": [
+    {
+      "id": "human-01",
+      "race": "Human",
+      "path": "assets/crew/human-01.webp",
+      "sha256": "0287b41498a2aeaadec1f378d0f22c0c80baa68849f88ad9848bf952e32c2e90",
+      "bytes": 60836
+    },
+    {
+      "id": "human-02",
+      "race": "Human",
+      "path": "assets/crew/human-02.webp",
+      "sha256": "e15cfe9a09aadf2996df1d04bf9c1a15ac4916f0470d0fb4c02e55776092b8aa",
+      "bytes": 72858
+    },
+    {
+      "id": "human-03",
+      "race": "Human",
+      "path": "assets/crew/human-03.webp",
+      "sha256": "052f0ee294929fbe43060c5f9cfc97898ccb123e4fe529e3beb773ad1beb3cdc",
+      "bytes": 65894
+    },
+    {
+      "id": "human-04",
+      "race": "Human",
+      "path": "assets/crew/human-04.webp",
+      "sha256": "7a57b7b18b387fb8a9918550cf526b45c1710d0550637cee2d26d8088026258d",
+      "bytes": 69262
+    },
+    {
+      "id": "human-05",
+      "race": "Human",
+      "path": "assets/crew/human-05.webp",
+      "sha256": "ec726ad895c8cffcc7845487a9c9724d50c8d077501d945c7c6958c5fe40aa6b",
+      "bytes": 64172
+    },
+    {
+      "id": "human-06",
+      "race": "Human",
+      "path": "assets/crew/human-06.webp",
+      "sha256": "3d73a3be8ec264d04f9971bbd702f78b5d2c30c0524a1de11941d62d125b0bc3",
+      "bytes": 66560
+    },
+    {
+      "id": "human-07",
+      "race": "Human",
+      "path": "assets/crew/human-07.webp",
+      "sha256": "e9f4244621ea7a10abf4ec1527cc9fe4f96bd70c17149c7998ed32ad6088ef93",
+      "bytes": 71752
+    },
+    {
+      "id": "human-08",
+      "race": "Human",
+      "path": "assets/crew/human-08.webp",
+      "sha256": "6d897f5f9b25d93d062a14718e248489aa4eb637d24901202934c02436d63bb3",
+      "bytes": 67800
+    },
+    {
+      "id": "human-09",
+      "race": "Human",
+      "path": "assets/crew/human-09.webp",
+      "sha256": "02faf838765d7c0b7a47bedee9722aa5c6f7a9d5f794789e0f28baa5c2303335",
+      "bytes": 74378
+    },
+    {
+      "id": "human-10",
+      "race": "Human",
+      "path": "assets/crew/human-10.webp",
+      "sha256": "cd8655262e3c39a5a15b19026d46bff4d49051d21f34d6acc2a90f8eb0a667fa",
+      "bytes": 68628
+    },
+    {
+      "id": "velox-01",
+      "race": "Velox",
+      "path": "assets/crew/velox-01.webp",
+      "sha256": "bb99df911fe44ec8f97e51d640e056eb8f96918c4d7e9c2ece3280b9afb2651b",
+      "bytes": 73690
+    },
+    {
+      "id": "velox-02",
+      "race": "Velox",
+      "path": "assets/crew/velox-02.webp",
+      "sha256": "3c59146304c3160672b8611b17dd7c1e8176cb63dfeff4b52eaed0c18572f2e2",
+      "bytes": 73784
+    },
+    {
+      "id": "velox-03",
+      "race": "Velox",
+      "path": "assets/crew/velox-03.webp",
+      "sha256": "2dfc9adaeb18563bd73dab72c26ab3dcb50c90f757f56f26c6d2e175ce69b97e",
+      "bytes": 70330
+    },
+    {
+      "id": "velox-04",
+      "race": "Velox",
+      "path": "assets/crew/velox-04.webp",
+      "sha256": "bdb411c91030937b76d167be433b5405188a3a36f46810e122cdadcf73943ec1",
+      "bytes": 71124
+    },
+    {
+      "id": "velox-05",
+      "race": "Velox",
+      "path": "assets/crew/velox-05.webp",
+      "sha256": "25731d6ce5480677d6ebbed861af8358d50f850a508d883a3198a2851c071854",
+      "bytes": 75066
+    },
+    {
+      "id": "velox-06",
+      "race": "Velox",
+      "path": "assets/crew/velox-06.webp",
+      "sha256": "e4984640ad602c595e81fd7ee8e6050b361b22f3c8e69371f15f4b2cbba83faa",
+      "bytes": 72562
+    },
+    {
+      "id": "velox-07",
+      "race": "Velox",
+      "path": "assets/crew/velox-07.webp",
+      "sha256": "f4536b3be67be45ebec2d76cc1ab41de211d01074b1e45bac8ce40550dab2568",
+      "bytes": 72608
+    },
+    {
+      "id": "velox-08",
+      "race": "Velox",
+      "path": "assets/crew/velox-08.webp",
+      "sha256": "dfdcae27b81ec8f19c487dcb28a3b7ec4fe370e14069fb7cf5052d6dd6e67481",
+      "bytes": 78510
+    },
+    {
+      "id": "velox-09",
+      "race": "Velox",
+      "path": "assets/crew/velox-09.webp",
+      "sha256": "f4066b10309971d3ddb9d7e83afcb69711acbe46d4cb0a818dc923350263c2ba",
+      "bytes": 71856
+    },
+    {
+      "id": "velox-10",
+      "race": "Velox",
+      "path": "assets/crew/velox-10.webp",
+      "sha256": "31c79a7bdea11de9462fd72f5482c521b5a4c8a8bd9fef01a0e83a9b32dc19a2",
+      "bytes": 74336
+    },
+    {
+      "id": "thrynn-01",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-01.webp",
+      "sha256": "480b3518424660d8d1d97322b1fd39e5c3aa2b0d56647fcb113816f76d298a28",
+      "bytes": 90662
+    },
+    {
+      "id": "thrynn-02",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-02.webp",
+      "sha256": "7d297d703c49ac57399c33c938dedb31f2207c0dd7c047530be59dd73a5591ad",
+      "bytes": 83166
+    },
+    {
+      "id": "thrynn-03",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-03.webp",
+      "sha256": "2e25227a0f9b82806e20d37c5ce10ed5a35512367eaadb794499c9f2ef16496f",
+      "bytes": 87754
+    },
+    {
+      "id": "thrynn-04",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-04.webp",
+      "sha256": "1e5f77ac463bef6b58ccc0386538d6e738b5eb7df4fbafe7ac1b9819be982720",
+      "bytes": 85570
+    },
+    {
+      "id": "thrynn-05",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-05.webp",
+      "sha256": "ef6115d10c4128dc04e705a07d9c6a8c587a87923c6f3066420d1a66e1da220c",
+      "bytes": 87846
+    },
+    {
+      "id": "thrynn-06",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-06.webp",
+      "sha256": "710e3b0291a0341b8d09287d0c7e0b4c729430b9a43511e94297926b94343122",
+      "bytes": 82778
+    },
+    {
+      "id": "thrynn-07",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-07.webp",
+      "sha256": "f6b441227a548c8a71f29a29ebd7dd72c8452a2c89bec7c6e85b310d34f76128",
+      "bytes": 91768
+    },
+    {
+      "id": "thrynn-08",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-08.webp",
+      "sha256": "e0e03738dc7a97a182209df1907ae31bfa3341fc04040f3be35567ce14e8ed29",
+      "bytes": 83616
+    },
+    {
+      "id": "thrynn-09",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-09.webp",
+      "sha256": "d387a3b27e35d40d5caaa59e9c07851b1f0af8d7d0ef6b23720eceb7cbe7fc6f",
+      "bytes": 88280
+    },
+    {
+      "id": "thrynn-10",
+      "race": "Thrynn",
+      "path": "assets/crew/thrynn-10.webp",
+      "sha256": "4241f1ca1b949db34df9f4f55a243fe476643c705d5fc11d6163a264bc429cb6",
+      "bytes": 82080
+    },
+    {
+      "id": "elowan-01",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-01.webp",
+      "sha256": "b6f77325b406fb70c35fe0f7ae5e3bd008b11b8de6bd04632493f33dad885b85",
+      "bytes": 84932
+    },
+    {
+      "id": "elowan-02",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-02.webp",
+      "sha256": "97fe4d419cb6e45c17882a19d01db4ee88c93daf3c441a5460eb250b3897d9bf",
+      "bytes": 91192
+    },
+    {
+      "id": "elowan-03",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-03.webp",
+      "sha256": "f2ce7a953c7c379f82686216bc6d73190c3abd59decea939c6f3358726d8ae16",
+      "bytes": 104686
+    },
+    {
+      "id": "elowan-04",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-04.webp",
+      "sha256": "2a742b6e5482ecc65c0f61012060ed71e83f0d8a9e8acf018e1a9bd8a7ea2986",
+      "bytes": 99268
+    },
+    {
+      "id": "elowan-05",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-05.webp",
+      "sha256": "87d0089b0de67d1d0d3fefbbb14e454c65ae297b4b248d699da43fdda18f67f1",
+      "bytes": 86090
+    },
+    {
+      "id": "elowan-06",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-06.webp",
+      "sha256": "cbe41c23481ae62e601fd522e6a7166fd8d2b98c41df6a92d91fed63d4a89bd5",
+      "bytes": 93000
+    },
+    {
+      "id": "elowan-07",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-07.webp",
+      "sha256": "bf46779c0d30e40e34a1936fb23e0908b6232ea3acc948a7b1b63e8385f17716",
+      "bytes": 100308
+    },
+    {
+      "id": "elowan-08",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-08.webp",
+      "sha256": "034e66f1f290c29211bfb5893e650e3633daf3cc21efcd58a80d07bf19f89c8b",
+      "bytes": 87512
+    },
+    {
+      "id": "elowan-09",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-09.webp",
+      "sha256": "24e34f28afaf0e870e4829c124020d2ac3fb3d8fa33703ef5c7a1bb5cadd7dc0",
+      "bytes": 92996
+    },
+    {
+      "id": "elowan-10",
+      "race": "Elowan",
+      "path": "assets/crew/elowan-10.webp",
+      "sha256": "05560ece3fc2237fa71226f0faadf6e757fe3c63af1e6b359c59ac71467f069a",
+      "bytes": 81998
+    },
+    {
+      "id": "android-01",
+      "race": "Android",
+      "path": "assets/crew/android-01.webp",
+      "sha256": "c8961476bd4cf0fda0c5d661a4ff2ff97994e4ebb6444ee365ed13d255292674",
+      "bytes": 78562
+    },
+    {
+      "id": "android-02",
+      "race": "Android",
+      "path": "assets/crew/android-02.webp",
+      "sha256": "18297c28cfa5d257835214ae82845e1d221e61906f494583c592f6bf158e262b",
+      "bytes": 74562
+    },
+    {
+      "id": "android-03",
+      "race": "Android",
+      "path": "assets/crew/android-03.webp",
+      "sha256": "5cd7b869082046aa50c65a77ebd1102d26a34ab52c75b90672a3d0da840fac59",
+      "bytes": 80960
+    },
+    {
+      "id": "android-04",
+      "race": "Android",
+      "path": "assets/crew/android-04.webp",
+      "sha256": "8aa2bad1c24e252352f7f84cb8dfcabb0ac258fd742a149d662adfe4ae316cfd",
+      "bytes": 74786
+    },
+    {
+      "id": "android-05",
+      "race": "Android",
+      "path": "assets/crew/android-05.webp",
+      "sha256": "425bf92969f8542e4038ad3b4188b592e5200f10e82b8e8004495a8b579e752d",
+      "bytes": 74352
+    },
+    {
+      "id": "android-06",
+      "race": "Android",
+      "path": "assets/crew/android-06.webp",
+      "sha256": "4ed0aead0ed05de841864278f85de6cd368f62fca7a05edc62cec4edef49155d",
+      "bytes": 75720
+    },
+    {
+      "id": "android-07",
+      "race": "Android",
+      "path": "assets/crew/android-07.webp",
+      "sha256": "f5f1fbaec8fbb52241106780e4d2416980ec63e1e5cb57b6d29d02cd0ac2fec3",
+      "bytes": 79850
+    },
+    {
+      "id": "android-08",
+      "race": "Android",
+      "path": "assets/crew/android-08.webp",
+      "sha256": "fdea79cf1134e680bd8da7dfb9a109e41e4612f42c88421ac6c68208b1ce22fd",
+      "bytes": 82528
+    },
+    {
+      "id": "android-09",
+      "race": "Android",
+      "path": "assets/crew/android-09.webp",
+      "sha256": "76d4232f217bee04620f4c83f1bf39c19c095fc1c327087e1d439db6ebe62389",
+      "bytes": 75472
+    },
+    {
+      "id": "android-10",
+      "race": "Android",
+      "path": "assets/crew/android-10.webp",
+      "sha256": "d9b47db2d8574c257e29653100978d731525bee312db6f30eef5cd09b2ba9272",
+      "bytes": 74106
+    }
+  ],
+  "sources": {
+    "human": {
+      "path": "artifacts/crew-diversity/source-sheets/human.png",
+      "sha256": "f15aeb166e2e6d484053690b7bdf9a9e1bdcbd4f9cb633e1be088ac59d3ded23",
+      "rowBoundaries": [
+        0,
+        188,
+        363,
+        550,
+        734,
+        920,
+        1104,
+        1300,
+        1497,
+        1705,
+        1923
+      ]
+    },
+    "velox": {
+      "path": "artifacts/crew-diversity/source-sheets/velox.png",
+      "sha256": "685a834d10fc57e3c6d71350286bc35337ddd7d4014168d728ee8dc4dc6f8f4f",
+      "rowBoundaries": [
+        0,
+        192,
+        376,
+        563,
+        754,
+        947,
+        1134,
+        1323,
+        1520,
+        1727,
+        1957
+      ]
+    },
+    "thrynn": {
+      "path": "artifacts/crew-diversity/source-sheets/thrynn.png",
+      "sha256": "51db51114903beed004e3cc049b3d70bfd5515eb0956a9cf46d81e4dd35f0e2b",
+      "rowBoundaries": [
+        0,
+        202,
+        389,
+        580,
+        775,
+        977,
+        1168,
+        1364,
+        1565,
+        1767,
+        1983
+      ]
+    },
+    "elowan": {
+      "path": "artifacts/crew-diversity/source-sheets/elowan.png",
+      "sha256": "9b948b342e278bbc8605c08b57c4825cc2b3d464bf63c792376738c78951916a",
+      "rowBoundaries": [
+        0,
+        188,
+        376,
+        565,
+        755,
+        960,
+        1155,
+        1362,
+        1565,
+        1765,
+        1973
+      ]
+    },
+    "android": {
+      "path": "artifacts/crew-diversity/source-sheets/android.png",
+      "sha256": "84f9fa8b671dd539166d02cef8edfa42bd639067d8c593f6996d2416f944b53b",
+      "rowBoundaries": [
+        0,
+        198,
+        398,
+        593,
+        789,
+        988,
+        1186,
+        1385,
+        1588,
+        1785,
+        1983
+      ]
+    }
+  }
+}

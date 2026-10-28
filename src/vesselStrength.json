@@ -1,0 +1,117 @@
+{
+  "Spemin Transport": {
+    "strength": 0,
+    "armor": 200,
+    "shields": 0
+  },
+  "Spemin Scout": {
+    "strength": 5,
+    "armor": 500,
+    "shields": 0
+  },
+  "Spemin Warship": {
+    "strength": 10,
+    "armor": 1000,
+    "shields": 0
+  },
+  "Mechan Scout": {
+    "strength": 200,
+    "armor": 100,
+    "shields": 400
+  },
+  "Elowan Transport": {
+    "strength": 0,
+    "armor": 50,
+    "shields": 600
+  },
+  "Elowan Scout": {
+    "strength": 5,
+    "armor": 50,
+    "shields": 800
+  },
+  "Elowan Warship": {
+    "strength": 15,
+    "armor": 50,
+    "shields": 1000
+  },
+  "Thrynn Transport": {
+    "strength": 8,
+    "armor": 300,
+    "shields": 200
+  },
+  "Thrynn Scout": {
+    "strength": 15,
+    "armor": 400,
+    "shields": 400
+  },
+  "Thrynn Warship": {
+    "strength": 22,
+    "armor": 500,
+    "shields": 600
+  },
+  "Veloxi Transport": {
+    "strength": 10,
+    "armor": 200,
+    "shields": 400
+  },
+  "Veloxi Scout": {
+    "strength": 20,
+    "armor": 100,
+    "shields": 600
+  },
+  "Veloxi Warship": {
+    "strength": 25,
+    "armor": 500,
+    "shields": 800
+  },
+  "Gazurtoid Scout": {
+    "strength": 80,
+    "armor": 500,
+    "shields": 200
+  },
+  "Gazurtoid Warship": {
+    "strength": 120,
+    "armor": 800,
+    "shields": 200
+  },
+  "Uhlek Scout": {
+    "strength": 255,
+    "armor": 1000,
+    "shields": 1000
+  },
+  "Uhlek Warship": {
+    "strength": 255,
+    "armor": 1000,
+    "shields": 1400
+  },
+  "Veloxi Drone": {
+    "strength": 255,
+    "armor": 1000,
+    "shields": 1000
+  },
+  "Nomad Probe": {
+    "strength": 255,
+    "armor": 5,
+    "shields": 0
+  },
+  "Mysterion": {
+    "strength": 0,
+    "armor": 15000,
+    "shields": 15000
+  },
+  "The Enterprise": {
+    "strength": 255,
+    "armor": 1000,
+    "shields": 1000
+  },
+  "Minstrel": {
+    "strength": 0,
+    "armor": 5,
+    "shields": 0
+  },
+  "Noah 9 Derelict Transport": {
+    "strength": 0,
+    "armor": 100,
+    "shields": 0
+  }
+}

@@ -1,0 +1,288 @@
+[
+  {
+    "id": 1,
+    "race": "Spemin",
+    "type": "Transport",
+    "massTons": 800,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Lead",
+      "Iron",
+      "Cobalt"
+    ]
+  },
+  {
+    "id": 2,
+    "race": "Spemin",
+    "type": "Scout",
+    "massTons": 400,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Lead",
+      "Iron"
+    ]
+  },
+  {
+    "id": 3,
+    "race": "Spemin",
+    "type": "Warship",
+    "massTons": 700,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Lead",
+      "Iron",
+      "Cobalt"
+    ]
+  },
+  {
+    "id": 4,
+    "race": "Mechans",
+    "type": "Scout",
+    "massTons": 200,
+    "biological": false,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Iron",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 5,
+    "race": "Elowan",
+    "type": "Transport",
+    "massTons": 350,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Nickel",
+      "Molybdenum",
+      "Plutonium"
+    ]
+  },
+  {
+    "id": 6,
+    "race": "Elowan",
+    "type": "Scout",
+    "massTons": 50,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Nickel",
+      "Molybdenum",
+      "Plutonium"
+    ]
+  },
+  {
+    "id": 7,
+    "race": "Elowan",
+    "type": "Warship",
+    "massTons": 150,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Nickel",
+      "Molybdenum",
+      "Plutonium"
+    ]
+  },
+  {
+    "id": 8,
+    "race": "Thrynn",
+    "type": "Transport",
+    "massTons": 600,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Copper",
+      "Zinc",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 9,
+    "race": "Thrynn",
+    "type": "Scout",
+    "massTons": 200,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Copper",
+      "Zinc",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 10,
+    "race": "Thrynn",
+    "type": "Warship",
+    "massTons": 400,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Copper",
+      "Zinc",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 11,
+    "race": "Veloxi",
+    "type": "Transport",
+    "massTons": 700,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Cobalt",
+      "Molybdenum"
+    ]
+  },
+  {
+    "id": 12,
+    "race": "Veloxi",
+    "type": "Scout",
+    "massTons": 300,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Cobalt",
+      "Molybdenum"
+    ]
+  },
+  {
+    "id": 13,
+    "race": "Veloxi",
+    "type": "Warship",
+    "massTons": 500,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Cobalt",
+      "Molybdenum"
+    ]
+  },
+  {
+    "id": 14,
+    "race": "Gazurtoid",
+    "type": "Scout",
+    "massTons": 30000,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Molybdenum",
+      "Tin",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 15,
+    "race": "Gazurtoid",
+    "type": "Warship",
+    "massTons": 45000,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Molybdenum",
+      "Tin",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 16,
+    "race": "Uhlek",
+    "type": "Scout",
+    "massTons": 1000,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Aluminum",
+      "Titanium"
+    ]
+  },
+  {
+    "id": 17,
+    "race": "Uhlek",
+    "type": "Warship",
+    "massTons": 5000,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Aluminum",
+      "Titanium"
+    ]
+  },
+  {
+    "id": 18,
+    "race": "Veloxi Drone",
+    "type": "Drone",
+    "massTons": 100,
+    "biological": false,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Cobalt",
+      "Molybdenum"
+    ]
+  },
+  {
+    "id": 19,
+    "race": "Nomad",
+    "type": "Probe",
+    "massTons": 20,
+    "biological": false,
+    "powered": true,
+    "constituents": [
+      "Endurium (Fuel)",
+      "Iron",
+      "Magnesium"
+    ]
+  },
+  {
+    "id": 20,
+    "race": "Mysterions",
+    "type": "Cosmic Entity",
+    "massTons": 62000,
+    "biological": true,
+    "powered": true,
+    "constituents": [
+      "Rodnium"
+    ]
+  },
+  {
+    "id": 22,
+    "race": "Minstrels",
+    "type": "Minstrel",
+    "massTons": 2,
+    "biological": true,
+    "powered": false,
+    "constituents": []
+  },
+  {
+    "id": 23,
+    "race": "Derelict",
+    "type": "Derelict",
+    "massTons": 2000,
+    "biological": false,
+    "powered": false,
+    "constituents": []
+  }
+]

@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+import {UNIVERSE} from './galaxy';
+import {generatePlanetSurface,preparePlanetSurface} from './surface';
+import {surveyPlanet,visibleSurveyContacts,rememberLocalContacts,validPlanetSurvey,localContactPosition,surveyClusters} from './utils/planet-survey';
+import {surfaceCoordinates,localSurfacePosition} from './utils/planet-coordinates';
+import {diagnosticStatus} from './utils/ship-diagnostics';
+import {refillPlanetSurface} from './utils/surface-progress';
+import {encodeSaveToBase64,decodeSaveFromBase64} from './utils/save-codec';
+import fixture from './test-fixtures/commissioned-mission.json';
+export function runSurveyTests(){
+ let passed=0;const check=(v:unknown,message:string)=>{assert(v,message);passed++;};
+ const star=UNIVERSE.stars[0],p=star.planets[0];
+ const low=surveyPlanet(undefined,star.x,star.y,p,15,-30,0,false,false,()=>0);
+ check(low.survey?.contacts.length===0,'Science zero does not localize orbital contacts even on the easiest roll');
+ const high=surveyPlanet(undefined,star.x,star.y,p,15,-30,200,false,false,()=>.999);
+ check(high.survey!.contacts.some(c=>c.kind==='mineral'),'Expert analysis locates real mineral deposits');
+ check(high.survey!.contacts.filter(c=>c.kind==='mineral').every(c=>c.uncertaintyKm===0),'Expert mineral positions have zero search radius');
+ check(high.survey!.sampledRegions>=12,'Sparse global coverage is explicitly recorded');
+ check(validPlanetSurvey(high.survey),'Produced survey passes persistence validation');
+ check(high.originLat===15&&high.originLong===-30,'Broad sampling restores the selected landing origin');
+ const mid=surveyPlanet(undefined,star.x,star.y,p,15,-30,50,false,false,()=>0);
+ check(mid.survey!.contacts.filter(c=>c.kind==='mineral').every(c=>c.uncertaintyKm===6),'Lower skill stores a search radius rather than exact coordinates');
+ for(const c of mid.survey!.contacts.filter(c=>c.kind==='mineral').slice(0,4)){
+  const actual=mid.minerals.find(m=>m.id===c.id)!;const at=localContactPosition(mid,c);
+  check(Math.hypot(actual.x-at.x,actual.y-at.y)<=c.uncertaintyKm+.01,'Reported uncertainty encloses the real object');
+ }
+ const again=surveyPlanet(high,star.x,star.y,p,15,-30,0,false,false,()=>.99);
+ check(again.survey!.contacts.length===high.survey!.contacts.length,'A poor rescan does not erase stronger earlier findings');
+ const moved=preparePlanetSurface(structuredClone(high),star.x,star.y,p,-25,170);
+ const c=high.survey!.contacts.find(c=>c.kind==='mineral')!;
+ const m=moved.minerals.find(m=>m.id===c.id)!;const world=surfaceCoordinates(moved.originLat!,moved.originLong!,m.x,m.y);
+ check(Math.abs(world.lat-c.lat)<.000001&&Math.abs(world.lon-c.lon)<.000001,'Relanding leaves a survey object at the same planetary coordinates');
+ m.taken=true;m.volume=0;check(!visibleSurveyContacts(moved).some(x=>x.id===m.id),'Depleted objects disappear from active survey results');
+ const livePlanet={...p,bioDensity:80};const life=surveyPlanet(undefined,star.x,star.y,livePlanet,15,-30,200,false,false,()=>.99);
+ const l=life.lifeforms[0];check(life.survey!.contacts.some(c=>c.id===l.id),'Lifeforms share actual surface IDs');
+ l.captured=true;check(!visibleSurveyContacts(life).some(c=>c.id===l.id),'Captured wildlife is removed from map contacts');
+ const near=generatePlanetSurface(star.x,star.y,p,{lat:15,lon:-30});const first=near.minerals[0];
+ rememberLocalContacts(near,{x:first.x,y:first.y});
+ check(near.survey!.contacts.some(c=>c.id===first.id&&c.source==='surface'&&c.uncertaintyKm===0),'Near-field rover observation confirms an exact location without orbital analysis');
+ check(visibleSurveyContacts(near).length<near.minerals.length,'Near-field discovery is not an omniscient reveal');
+ const restored=refillPlanetSurface(high,star.x,star.y,p);
+ check(!restored.survey?.contacts.some(c=>c.kind==='mineral'||c.kind==='lifeform'),'Orbit departure invalidates regenerated resource locations');
+ const nexusStar=UNIVERSE.stars.find(s=>s.x===192&&s.y===152)!;const nexusPlanet=nexusStar.planets[0];
+ const noCone=surveyPlanet(undefined,192,152,nexusPlanet,47,45,250,false,false,()=>0);
+ check(!noCone.survey!.contacts.some(c=>c.label==='Control Nexus'),'Expert skill alone does not bypass the Crystal Cone gate');
+ const cone=surveyPlanet(undefined,192,152,nexusPlanet,47,45,0,false,true,()=>.99);
+ check(cone.survey!.contacts.some(c=>c.label==='Control Nexus'&&c.lat===47&&c.lon===45&&c.source==='artifact'),'Crystal Cone retains the exact canonical beacon at zero skill');
+ const bad=[{...high.survey,contacts:[{...c,lat:NaN}]},{...high.survey,contacts:[{...c,uncertaintyKm:-1}]},{...high.survey,contacts:[c,c]},{...high.survey,scienceSkill:251}];
+ for(const v of bad)check(!validPlanetSurvey(v),'Malformed survey cannot enter a saved mission');
+ const save:any=structuredClone(fixture);save.data.snapshot.planetSurfaces={[`${star.x},${star.y},${p.orderIndex}`]:high};
+ check(!!decodeSaveFromBase64(encodeSaveToBase64(save as any)),'Optional surveys survive the public save codec');
+ save.data.snapshot.planetSurfaces[`${star.x},${star.y},${p.orderIndex}`].survey={...high.survey!,contacts:[{...c,lon:999}]};
+ check(!decodeSaveFromBase64(encodeSaveToBase64(save as any)),'The real save codec rejects invalid survey coordinates');
+ for(const [hp,inop,installed,state] of [[100,false,true,'Nominal'],[99,false,true,'Degraded'],[1,false,true,'Degraded'],[0,false,true,'Inoperative'],[100,true,true,'Inoperative'],[0,true,false,'Not fitted']] as const)check(diagnosticStatus(hp,inop,installed).state===state,'Diagnostics respect actual health, malfunction flags and installed equipment');
+ check(diagnosticStatus(100).color!==diagnosticStatus(0).color,'Healthy hardware cannot share the failed-system color');
+ const wrap=localSurfacePosition(0,179,0,-179);check(wrap.x===10,'Map coordinates cross the longitude seam by the shortest path');
+
+ const clustered=surveyClusters([{...c,id:'x'},{...c,id:'y',uncertaintyKm:4},{...c,id:'z',kind:'lifeform'}],c=>({x:c.id==='y'?6:5,y:5,radius:c.uncertaintyKm}));
+ check(clustered.length===2,'Different contact categories never merge');
+ check(clustered.find(c=>c.kind==='mineral')?.count===2,'Nearby contact symbols display their true combined count');
+ check(clustered.reduce((n,c)=>n+c.count,0)===3,'Clustering conserves the number of known contacts');
+ check(clustered.find(c=>c.kind==='mineral')?.uncertain&&clustered.find(c=>c.kind==='mineral')?.radius===4,'A cluster retains its largest search uncertainty');
+ check(surveyClusters([{...c,id:'x'},{...c,id:'y'}],c=>({x:c.id==='y'?100:5,y:5,radius:0})).length===2,'Separated map contacts do not cluster');
+ const legacy=generatePlanetSurface(star.x,star.y,p),legacyFirst=legacy.minerals[0],legacyWorld=surfaceCoordinates(15,-30,legacyFirst.x,legacyFirst.y);
+ const legacySurvey=surveyPlanet(legacy,star.x,star.y,p,15,-30,200,false,false,()=>0),legacyContact=legacySurvey.survey!.contacts.find(c=>c.id===legacyFirst.id)!;
+ check(Math.abs(legacyContact.lat-legacyWorld.lat)<.000001&&Math.abs(legacyContact.lon-legacyWorld.lon)<.000001,'Pre-coordinate legacy surfaces keep their implicit landing origin');
+ return {passed,failed:0,results:[`PASS ${passed} shared survey, discovery, save and diagnostic checks`]};
+}

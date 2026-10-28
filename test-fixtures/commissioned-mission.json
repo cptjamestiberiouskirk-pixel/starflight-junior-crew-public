@@ -1,0 +1,372 @@
+{
+  "v": 1,
+  "type": "starflight_save",
+  "slot": "E",
+  "timestamp": 0,
+  "data": {
+    "slot": "E",
+    "timestamp": "QA fixture",
+    "credits": 11700,
+    "shipName": "QA EXPLORER",
+    "stardate": "01-01-4620",
+    "location": "Starport",
+    "empty": false,
+    "isDev": false,
+    "gameWon": false,
+    "flaresHalted": false,
+    "bridgeLog": [
+      {
+        "id": "msg-1792634571127-0.2037101338390671",
+        "text": "Interstel Regulation 404-B clearly states exploration hazards are covered under your standard salary!",
+        "post": "Science Officer",
+        "speaker": "Science Officer Finn",
+        "type": "banter"
+      },
+      {
+        "id": "msg-1792634570670-0.6416072230629225",
+        "text": "Navigating through this asteroid belt requires an additional 250 M.U. per hour hazard surcharge.",
+        "post": "Communications",
+        "speaker": "Communications Cora",
+        "type": "banter"
+      },
+      {
+        "id": "msg-1792634548009-0.07306999302915795",
+        "text": "I polished the dashboard dials. Try not to smudge the primary navigation chronometer!",
+        "post": "Science Officer",
+        "speaker": "Science Officer Finn",
+        "type": "banter"
+      },
+      {
+        "id": "msg-1792634478473-0.867541914232703",
+        "text": "Post assignments finalized. Remember: charity is a misdemeanor under Interstel commercial code.",
+        "post": "Captain",
+        "speaker": "Captain",
+        "type": "banter"
+      },
+      {
+        "id": "msg-1792634477658-0.24672748263847155",
+        "text": "Personnel Academy: Officer Finn trained in science (+9 pts).",
+        "type": "info"
+      },
+      {
+        "id": "msg-1792634448753-0.4011694846792304",
+        "text": "Personnel: Enlisted Finn (Human) to Starport roster.",
+        "type": "info"
+      },
+      {
+        "id": "msg-1792634448002-0.22649372409448754",
+        "text": "Personnel: Enlisted Echo (Android) to Starport roster.",
+        "type": "info"
+      },
+      {
+        "id": "msg-1792634447262-0.1977689925534658",
+        "text": "Personnel: Enlisted Dara (Elowan) to Starport roster.",
+        "type": "info"
+      },
+      {
+        "id": "msg-1792634446517-0.9578227859152152",
+        "text": "Personnel: Enlisted Cora (Thrynn) to Starport roster.",
+        "type": "info"
+      },
+      {
+        "id": "msg-1792634445783-0.9104637081496969",
+        "text": "Personnel: Enlisted Bex (Velox) to Starport roster.",
+        "type": "info"
+      },
+      {
+        "id": "msg-1792634433493-0.44226558121823023",
+        "text": "Personnel: Enlisted Avery (Human) to Starport roster.",
+        "type": "info"
+      },
+      {
+        "id": "init-msg",
+        "text": "Starport Arth operations gantry online. Ready for dispatch.",
+        "type": "info"
+      }
+    ],
+    "snapshot": {
+      "isDev": false,
+      "gameWon": false,
+      "flaresHalted": false,
+      "flaresStopped": false,
+      "destroyedPlanetKeys": [],
+      "destroyedPlanets": [],
+      "sterilizedPlanets": [],
+      "usedFluxes": [],
+      "location": "Starport",
+      "prevLocation": "Hyperspace",
+      "concourseAstronautX": 637.5,
+      "concourseAstronautY": 327.94303797468353,
+      "starportRoomIndex": 0,
+      "inRoom": false,
+      "currentStarId": 1,
+      "galaxyShipX": 125,
+      "galaxyShipY": 100,
+      "systemShipX": -88,
+      "systemShipY": 118,
+      "systemZoom": 8,
+      "hyperZoom": 2.5,
+      "shipHeading": 2.356194490192345,
+      "orbitPlanetIndex": null,
+      "landingLat": 15,
+      "landingLong": -30,
+      "credits": 11700,
+      "stardateDay": 1,
+      "stardateMonth": 1,
+      "stardateYear": 4620,
+      "stardateHour": 0,
+      "starportDestroyed": false,
+      "bridgeLog": [],
+      "systemMessages": [],
+      "banterLog": [],
+      "lastInterestAbsDay": 0,
+      "lastInterestStardateDays": 0,
+      "lastInterestStardate": "01-01-4620",
+      "unsuitablePlanetsRecommendedCount": 0,
+      "unsuitableCount": 0,
+      "recommendedPlanets": [],
+      "loggedTelemetryPlanets": [],
+      "pendingRecommendations": [],
+      "shipName": "QA EXPLORER",
+      "engineClass": 1,
+      "shieldClass": 0,
+      "armorClass": 0,
+      "missileClass": 0,
+      "laserClass": 0,
+      "cargoPods": 0,
+      "enduriumFuel": 20,
+      "hullIntegrity": 250,
+      "playerArmorPoints": 250,
+      "playerShieldPoints": 0,
+      "subsystems": {
+        "Engines": 100,
+        "Sensors": 100,
+        "Comms": 100,
+        "Shields": 100,
+        "Missiles": 100,
+        "Lasers": 100
+      },
+      "inoperativeSystems": {
+        "Engines": false,
+        "Sensors": false,
+        "Comms": false,
+        "Shields": false,
+        "Missiles": false,
+        "Lasers": false
+      },
+      "activePatientId": null,
+      "activeRepairTask": null,
+      "cargoHold": {
+        "Aluminum": 0,
+        "Cobalt": 0,
+        "Molybdenum": 0,
+        "Promethium": 0,
+        "Titanium": 0
+      },
+      "artifactsInHold": [],
+      "specimensInHold": [],
+      "crewRoster": [
+        {
+          "id": "crew-human-1792634433491",
+          "name": "Avery",
+          "race": "Human",
+          "skills": {
+            "science": 50,
+            "navigation": 30,
+            "engineering": 30,
+            "communications": 30,
+            "medicine": 30
+          },
+          "durability": 6,
+          "vitality": 100,
+          "alive": true,
+          "quirk": "Versatile generalists. Enthusiastic about regulations and checklists.",
+          "color": "#00f0ff"
+        },
+        {
+          "id": "crew-velox-1792634445782",
+          "name": "Bex",
+          "race": "Velox",
+          "skills": {
+            "science": 30,
+            "navigation": 50,
+            "engineering": 50,
+            "communications": 0,
+            "medicine": 0
+          },
+          "durability": 8,
+          "vitality": 100,
+          "alive": true,
+          "quirk": "Chitinous insectoids. Obsessed with high-output engine torque and fast reaction drives.",
+          "color": "#d946ef"
+        },
+        {
+          "id": "crew-thrynn-1792634446516",
+          "name": "Cora",
+          "race": "Thrynn",
+          "skills": {
+            "science": 30,
+            "navigation": 30,
+            "engineering": 30,
+            "communications": 50,
+            "medicine": 0
+          },
+          "durability": 6,
+          "vitality": 100,
+          "alive": true,
+          "quirk": "Reptilian pragmatists. Skilled bargainers who prioritize cold hard M.U. profits.",
+          "color": "#ff2244"
+        },
+        {
+          "id": "crew-elowan-1792634447261",
+          "name": "Dara",
+          "race": "Elowan",
+          "skills": {
+            "science": 10,
+            "navigation": 30,
+            "engineering": 10,
+            "communications": 50,
+            "medicine": 50
+          },
+          "durability": 2,
+          "vitality": 100,
+          "alive": true,
+          "quirk": "Sentient botanical beings. Pacifist healers with heightened telepathic empathy.",
+          "color": "#00ffaa"
+        },
+        {
+          "id": "crew-android-1792634448001",
+          "name": "Echo",
+          "race": "Android",
+          "skills": {
+            "science": 50,
+            "navigation": 150,
+            "engineering": 100,
+            "communications": 0,
+            "medicine": 20
+          },
+          "durability": 10,
+          "vitality": 100,
+          "alive": true,
+          "quirk": "Pre-programmed synthetic units. High starting telemetry calculations; cannot undergo training.",
+          "color": "#94a3b8"
+        },
+        {
+          "id": "crew-human-1792634448752",
+          "name": "Finn",
+          "race": "Human",
+          "skills": {
+            "science": 59,
+            "navigation": 30,
+            "engineering": 30,
+            "communications": 30,
+            "medicine": 30
+          },
+          "durability": 6,
+          "vitality": 100,
+          "alive": true,
+          "quirk": "Versatile generalists. Enthusiastic about regulations and checklists.",
+          "color": "#00f0ff"
+        }
+      ],
+      "assignedPosts": {
+        "Captain": "crew-human-1792634433491",
+        "Science Officer": "crew-human-1792634448752",
+        "Navigator": "crew-android-1792634448001",
+        "Engineer": "crew-velox-1792634445782",
+        "Communications": "crew-thrynn-1792634446516",
+        "Doctor": "crew-elowan-1792634447261"
+      },
+      "traversedFluxIds": [],
+      "bulletins": [
+        {
+          "id": 1,
+          "date": "01-01-4620",
+          "title": "INTERSTEL COMMENCEMENT & EXPLORATION GRANT",
+          "author": "Interstel Operations HQ",
+          "paragraphs": [
+            "Welcome to active duty, Captain and crew! Under Interstel Exploration Mandate #4620, your newly commissioned vessel has been seeded with a starting grant of 12,000 M.U. in your operating account.",
+            "Your primary mandate is the survey of uncharted star systems, recovery of vital Endurium crystalline fuel, and evaluation of potential Grade-A habitable colony worlds for the future of Arth civilization."
+          ],
+          "read": true
+        }
+      ],
+      "evaluations": [],
+      "bankLedger": [
+        {
+          "date": "01-01-4620",
+          "desc": "Personnel Training (Finn - science)",
+          "amount": -300,
+          "balance": 11700
+        },
+        {
+          "date": "01-01-4620",
+          "desc": "Interstel Commission Starting Grant",
+          "amount": 12000,
+          "balance": 12000
+        }
+      ],
+      "vehicleDestroyed": false,
+      "vehicleFuel": 100,
+      "vehicleHold": [],
+      "vehicleX": 0,
+      "vehicleY": 0.6,
+      "vehicleHeading": 0,
+      "vehicleWeapon": "Stunner",
+      "discoveredSpecies": [],
+      "commLineUsage": {},
+      "activeEncounterGroup": null,
+      "encounterTargetIndex": 0,
+      "alienCommsState": {
+        "active": false,
+        "connected": false,
+        "playerPosture": "Neutral",
+        "alienPosture": "Neutral",
+        "alienMood": 50,
+        "conversationCount": 0,
+        "maxPhrases": 6,
+        "pendingAlienQuestion": null,
+        "activeTradeOffer": null,
+        "activeTriviaQuestion": null,
+        "activeAssistanceRequest": null,
+        "alienHailsCount": 0,
+        "lastAlienSpeakerText": "",
+        "lastGarbledAlienText": "",
+        "lastCaptainText": "",
+        "activeSubject": null,
+        "dialogueHistory": []
+      },
+      "hasPurchasedBlackBox": false,
+      "grantedDroneClearanceUntilHyperspace": false,
+      "hasGivenEllipsoid": false,
+      "hasRefusedCrystalOrb": false,
+      "uhlekSilenced": false,
+      "elowanHostile": false,
+      "speciesBaseMoods": {
+        "Veloxi": 45,
+        "Uhlek": 95,
+        "Gazurtoid": 85,
+        "Spemin": 60,
+        "Thrynn": 35,
+        "Elowan": 15,
+        "Mechans": 25,
+        "Minstrels": 10,
+        "Nomad": 20,
+        "Veloxi Drone": 50,
+        "Mysterions": 20,
+        "Derelict": 0
+      },
+      "visitedStarIds": [
+        1
+      ],
+      "settings": {
+        "banterEnabled": true,
+        "textSpeed": "Normal",
+        "musicVolume": 0.45,
+        "soundVolume": 0.6,
+        "voicesVolume": 0.8,
+        "alienVoiceEffects": true
+      }
+    }
+  }
+}
