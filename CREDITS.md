@@ -7,15 +7,17 @@ Google Playground export. The established hull, original-style rules, authored
 galaxy/dialogue material, campaign and existing recordings were retained through
 the recent presentation and usability work.
 
-This records provenance, not ownership of third-party works or proof of
-redistribution permission. See [licensing status](LICENSE.md).
+This records provenance. The maintainer has authorized proceeding with public
+source availability on the basis that distribution rights are resolved. The
+permissions granted to recipients are in the [personal-use license](LICENSE.md);
+that decision does not change the recorded sources or third-party notices.
 
 ## Content and creative tools
 
 | Material | Recorded provenance / location |
 | --- | --- |
 | Original-game foundations | 1986 Starflight; retained world, encounter and dialogue context also trace through the maintainer's Unity-port work. Junior Crew adds documented presentation/usability adaptations. |
-| Cartoon scenes and original hull | Preserved export artwork in assets/images and atlas sources in assets/source-images; [asset descriptions](design/asset_manifest.json). Original rights and generation-account terms need confirmation before broader redistribution. |
+| Cartoon scenes and original hull | Maintainer-created artwork retained from the project export in assets/images and atlas sources in assets/source-images; [asset descriptions](design/asset_manifest.json). Recipient reuse is governed by LICENSE.md and any separately applicable terms. |
 | Diverse crew portraits | Approved animated atlas library in assets/crew; original atlases preserved. |
 | Configured ship artwork | 3,672 whole-ship images in assets/ships, with invariant original hull and fitted equipment. Historical geometry/render work used Blender; no further Blender work is authorized. [Configuration record](design/SHIP_CONFIGURATION_COMPLETION.md). |
 | Painted hangar and bay | Approved retained models/textures in assets/models and runtime renderers in utils; installed equipment remains visible. |

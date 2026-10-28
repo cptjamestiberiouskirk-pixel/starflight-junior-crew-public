@@ -18,7 +18,7 @@ independent technical acceptance remain separate decisions.
 | Clean Windows machine | Pending independent machine/clean VM launch, first voyage, online/offline behavior, save/import, updates and shutdown. Development-PC checks do not close this item. |
 | Devices/accessibility/audio | Partial: small-screen emulation, keyboard and software fallback checked; physical devices, screen-reader output and human listening remain separate coverage. |
 | Final packaged campaign/soak | Pending fresh package-level campaign/soak; earlier campaigns/soaks belong to their documented earlier builds. |
-| Licensing/credits | Restricted current status and consolidated provenance documented. Public rights confirmation still needed for original-derived content, franchise references and service-generated media. No general license is invented. |
+| Licensing/credits | October 28: maintainer authorizes proceeding on the basis that licensing issues are resolved. LICENSE.md permits personal noncommercial play/study and private modifications; redistribution/commercial reuse requires permission. Third-party rights and notices remain separate. This is the maintainer's release decision, not a claim of independently verified rights clearance. |
 | Download/support route | No public destination authorized or configured; owner selects audience, delivery and support route before broader release. |
 | Website | Not deployed; Pages remains manual-only. |
 
