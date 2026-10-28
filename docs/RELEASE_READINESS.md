@@ -1,6 +1,6 @@
 # Release readiness
 
-**October 26, 2026: documented private playtest, not a public release.**
+**October 28, 2026: source-available preview; Windows package remains a private tester.**
 
 The docs are written for a new player. Public availability, rights clearance and
 independent technical acceptance remain separate decisions.
@@ -11,7 +11,7 @@ independent technical acceptance remain separate decisions.
 | Player onboarding | Spoiler-free first mission, navigation, surveys, mining, trade, repairs and campaign guidance. |
 | Controls/support | Dedicated controls, FAQ, Windows guide and private bug-report template. |
 | Screenshots | Actual current-build fictional mission captures with provenance; no owner saves. |
-| Source/build | Private GitHub synchronized; source/build/package instructions available. |
+| Source/build | Fresh-history source preview at cptjamestiberiouskirk-pixel/starflight-junior-crew-public; original development repository remains private. Source/build/package instructions available. |
 | Local verification | Security-remediated source passed clean install/typecheck, 10,718 assertions and build/resources. Current ZIP extraction passed launcher, browser, upgrade, 87 save and server regression/security checks. [Exact scope](VERIFICATION_2026-10-26.md). |
 | Windows ZIP | October 26 security rebuild verified locally, including old-to-new save continuation without import; no public release asset uploaded. |
 | Security | Local mitigations verified; upstream picomatch advisory and reviewed static alerts remain visible. App source size exclusion removed. [Limits](SECURITY_MITIGATIONS.md). |
@@ -19,7 +19,7 @@ independent technical acceptance remain separate decisions.
 | Devices/accessibility/audio | Partial: small-screen emulation, keyboard and software fallback checked; physical devices, screen-reader output and human listening remain separate coverage. |
 | Final packaged campaign/soak | Pending fresh package-level campaign/soak; earlier campaigns/soaks belong to their documented earlier builds. |
 | Licensing/credits | October 28: maintainer authorizes proceeding on the basis that licensing issues are resolved. LICENSE.md permits personal noncommercial play/study and private modifications; redistribution/commercial reuse requires permission. Third-party rights and notices remain separate. This is the maintainer's release decision, not a claim of independently verified rights clearance. |
-| Download/support route | No public destination authorized or configured; owner selects audience, delivery and support route before broader release. |
+| Download/support route | Owner authorized public source at starflight-junior-crew-public under the personal-use license. Public Issues accepts nonsensitive bug reports. No public binary download is supplied. |
 | Website | Not deployed; Pages remains manual-only. |
 
 ## Independent Windows test procedure
@@ -38,5 +38,5 @@ Git installed. Use only the tester ZIP supplied by the maintainer.
 9. Record failures as well as successes; do not weaken Windows protections.
 
 This procedure is not a claim that clean-VM, device or rights checks passed.
-Keep private playtesting until evidence exists and the owner explicitly
-authorizes broader distribution.
+The owner authorized public source separately from package acceptance.
+Source publication does not close portable-package acceptance gaps.

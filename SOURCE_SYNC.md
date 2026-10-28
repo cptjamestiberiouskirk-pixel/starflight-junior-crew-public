@@ -1,5 +1,16 @@
 # Source snapshot and verification
 
+October 28 update: the maintainer authorized source availability at
+https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew-public.
+That repository starts with fresh history and excludes private development
+history, saves and local artifacts. The original repository remains private.
+LICENSE.md permits personal play/study and private modifications; redistribution
+and commercial reuse require permission. The Windows ZIP stays local/private;
+no Pages deployment is part of this source publication.
+
+The October 26 evidence below is historical. Source publication does not add
+independent Windows, human listening or package campaign acceptance.
+
 The October 26, 2026 synchronization brings the private repository up to the
 accepted local game source, artwork/configuration library, regression suites,
 design documentation and Windows launcher tooling. Source history is retained.

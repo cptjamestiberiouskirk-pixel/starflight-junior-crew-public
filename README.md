@@ -16,10 +16,13 @@ improvements; it is not an exact emulation of the original.
 
 ![Starflight Junior Crew title screen](docs/screenshots/title.jpg)
 
-**Status: private playtest.** There is no public download or hosted release.
-The Windows tester ZIP is supplied privately by the maintainer. See
-[release readiness](docs/RELEASE_READINESS.md) for remaining distribution,
-rights and independent-machine checks.
+**Status: source-available preview.** Public source is at
+[starflight-junior-crew-public](https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew-public).
+Personal play and study are allowed under [LICENSE.md](LICENSE.md);
+redistribution and commercial reuse require permission. The Windows tester ZIP
+is supplied privately by the maintainer; no public binary download or hosted
+game is included. See [release readiness](docs/RELEASE_READINESS.md) for remaining
+package, device and independent-machine checks.
 
 The October 26 tester includes server security hardening and verified save
 continuation from the previous tester. See the [verification summary](docs/VERIFICATION_2026-10-26.md)
@@ -107,7 +110,7 @@ coverage remains limited.
 
 ## Build from source
 
-Developers with Node.js 24 can clone this private repository, open its folder
+Developers with Node.js 24 can clone the public source repository, open its folder
 and run:
 
 ~~~sh
@@ -121,8 +124,10 @@ production preview, packaging and deployment details.
 
 ## Feedback, credits and release information
 
-Send the maintainer your build ID, Windows/browser version, reproduction steps
-and a screenshot. Share a backup only deliberately: the game does not upload
+Use the public repository's Issues page for nonsensitive bug reports with your
+build ID, Windows/browser version, reproduction steps and a relevant screenshot.
+Send private details to the maintainer through an agreed private channel.
+Share a backup only deliberately: the game does not upload
 bug reports or saves automatically. See the [reporting template](docs/FAQ.md#how-do-i-report-a-problem).
 
 - [Credits and asset provenance](CREDITS.md)

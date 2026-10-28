@@ -94,5 +94,7 @@ deploy a website. Check `BUILD-INFO.json` for the package's exact compiled-build
 identity; see the [verification summary](docs/VERIFICATION_2026-10-26.md) for the
 current package hash and actual tests. Keep all bundled third-party notices.
 
-See [project licensing status](LICENSE.md) and [credits](CREDITS.md) before
-redistributing material. A public download or reuse license has not been granted.
+See the [personal-use license](LICENSE.md) and [credits](CREDITS.md).
+Public source permits personal play/study and private modifications;
+redistribution and commercial reuse require permission. The source repository
+does not supply a public tester ZIP download.

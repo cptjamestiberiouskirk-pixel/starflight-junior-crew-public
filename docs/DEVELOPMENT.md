@@ -5,11 +5,12 @@ For playing, use the [Windows tester](../WINDOWS_TESTING.md) or
 
 ## Source setup
 
-Install Node.js 24 and Git. Access to the private repository is required.
+Install Node.js 24 and Git. Personal source use is governed by
+[LICENSE.md](../LICENSE.md); public access does not grant unrestricted reuse.
 
 ~~~sh
-git clone https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew.git
-cd starflight-junior-crew
+git clone https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew-public.git
+cd starflight-junior-crew-public
 npm ci
 npm run dev
 ~~~

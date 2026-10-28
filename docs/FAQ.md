@@ -106,7 +106,8 @@ bay. Back up before changing browser. No minimum frame rate is guaranteed.
 
 ## How do I report a problem?
 
-Send this template through your agreed private channel:
+Use this template in a public-repository Issue for nonsensitive reports, or
+through your agreed private channel when it contains private details:
 
 ~~~text
 Build ID from BUILD-INFO.json:
