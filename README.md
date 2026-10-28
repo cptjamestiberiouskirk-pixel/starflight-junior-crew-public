@@ -1,5 +1,9 @@
 # Starflight: Junior Crew
 
+<p align="center">
+  <img src="assets/branding/starflight-junior-crew-github-icon-512.png" alt="Starflight Junior Crew ship and JC mission badge" width="180" height="180">
+</p>
+
 **Explore strange worlds. Keep your crew alive. Bring something valuable home.**
 
 Starflight: Junior Crew is a single-player space exploration RPG inspired by the

@@ -1,0 +1,34 @@
+{
+  "created": "2026-10-28",
+  "provider": "Meshy official CLI",
+  "model": "nano-banana-2",
+  "operation": "image-to-image",
+  "taskId": "01a18288-aab6-761c-8647-1ed5f7cfdfaa",
+  "consumedCredits": 6,
+  "approvedCredits": 6,
+  "reference": "assets/images/ship_player.png",
+  "file": "starflight-junior-crew-github-icon.png",
+  "width": 1024,
+  "height": 1024,
+  "sha256": "4df82fc3b50c9c57d620c5c0275979ece48f46780330b52b0860c2c98a94ea7e",
+  "purpose": "GitHub README, profile-sized icon and repository social-preview branding",
+  "license": "Project LICENSE.md; no independent unrestricted asset license",
+  "review": "Viewed actual result: established white/orange hull, two lateral engines, cyan planet, orange badge and JC monogram; no magenta background. No game/runtime files changed.",
+  "exports": [
+    {
+      "file": "starflight-junior-crew-github-icon-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 424303,
+      "sha256": "a0c2cf0354003dce785de443e001ada2a7f96ee52adacc7e146f9b3c06c94bb3"
+    },
+    {
+      "file": "starflight-junior-crew-social-preview.png",
+      "width": 1280,
+      "height": 640,
+      "bytes": 718480,
+      "sha256": "e3f651472072bf7a5417aa7573268df6ba721ed9fbef3a13a593fe675ca96b98"
+    }
+  ],
+  "exportMethod": "Resized PNG exports; social preview adds navy padding. Original 1024px Meshy output retained byte-identically. No additional generation."
+}
