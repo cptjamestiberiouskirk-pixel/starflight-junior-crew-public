@@ -13,6 +13,7 @@ try {
   console.log('Saved Playground configuration: PASS');
 
   for (const [file, entrypoint, label] of [
+    ['/presentation-polish.test.ts','runPresentationPolishTests','Contextual guidance and crowded navigation label bounds'],
     ['/save-validation.test.ts','runSaveValidationTests','Malformed and oversized save rejection with legacy compatibility'],
     ['/save-render-safety.test.ts','runSaveRenderSafetyTests','Adversarial imported coordinates, bounded rendering and legacy save compatibility'],
     ['/playground-player-count.test.ts','runPlaygroundPlayerCountTests','Bounded development SDK player allocation'],

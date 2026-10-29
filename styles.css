@@ -9,6 +9,7 @@
 
 @import 'tailwindcss' source(none);
 @source './App.tsx';
+@source './GameInterface.tsx';
 @source './utils';
 @source './components';
 
@@ -231,6 +232,7 @@ button, input, select, textarea { font: inherit; }
 .survey-selected-contact b,.survey-selected-contact small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .survey-mobile-legend-button{display:none}
 @media(max-width:1100px){
+ #game-viewport-16-9>[data-autosave-toast]{top:auto;bottom:12px;pointer-events:none}
  #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]{flex-wrap:nowrap;min-height:46px;padding:5px 10px;gap:8px}
  #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:first-of-type{min-width:0;flex:1;flex-wrap:nowrap}
  #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:first-of-type>span:not(:first-of-type),
@@ -386,3 +388,35 @@ button, input, select, textarea { font: inherit; }
 }
 
 .science-ship-art-hull .science-configured-hull,.science-ship-art-shields .science-configured-hull{height:68%}
+
+/* Reuse the simulation's saved stardate/hour; this is a display, not a new timer. */
+.expedition-clock{display:flex;align-items:center;gap:8px;flex-shrink:0;padding:5px 10px;border:1px solid #155e75;border-radius:7px;background:#061827;color:#f1f5f9;font:700 13px/1.3 Rajdhani,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.expedition-clock-copy{display:grid;gap:1px}
+.expedition-clock-copy>strong{font-size:11px;letter-spacing:.05em;color:#67e8f9;text-transform:uppercase}
+.expedition-clock-copy>span{font-family:'Chakra Petch',monospace}
+@media(max-width:1100px){
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]{flex-wrap:wrap}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:last-of-type{display:contents}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud]>div:last-of-type>span[data-expedition-clock]{display:flex;order:1;flex:1 0 100%;box-sizing:border-box}
+ #game-viewport-16-9:has([data-science-focus="true"])>[data-flight-hud] .expedition-clock-copy{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0}
+}
+@media(max-width:760px){
+ #game-viewport-16-9>[data-flight-hud]>div:last-of-type{display:contents}
+ #game-viewport-16-9>[data-flight-hud]>div:last-of-type>span[data-expedition-clock]{display:flex;order:1;flex:1 0 100%;box-sizing:border-box}
+ #game-viewport-16-9>[data-flight-hud] .expedition-clock-copy{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:1;min-width:0}
+}
+
+.flight-guidance{display:flex;align-items:center;gap:12px;flex-shrink:0;padding:4px 12px;background:#071221;border-bottom:1px solid #1e3a4f;font:13px/1.45 Rajdhani,sans-serif;color:#cbd5e1}
+.flight-guidance button{flex-shrink:0;border:1px solid #155e75;border-radius:6px;padding:3px 9px;color:#a5f3fc;background:#0f2336;font-weight:700}
+.flight-guidance p{margin:0;max-width:95ch}
+.system-focus-control{position:absolute;top:12px;left:12px;display:grid;gap:3px;max-width:min(260px,65%);padding:8px 10px;border:1px solid #155e75;border-radius:10px;background:#020617ed;color:#cbd5e1;font:12px/1.4 Rajdhani,sans-serif}
+.system-focus-control label{color:#67e8f9;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.system-focus-control select{min-width:0;padding:3px 6px;background:#0f172a;color:#f1f5f9;border:1px solid #334155;border-radius:4px}
+.upgrade-comparison{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:5px;font:12px/1.4 Rajdhani,sans-serif}
+.upgrade-comparison dt{color:#94a3b8;font-size:11px}.upgrade-comparison dd{color:#e2e8f0;margin:0}.upgrade-comparison strong{color:#a5f3fc}
+.crew-transmission{display:flex;gap:10px;align-items:center;border:1px solid #0e7490;border-radius:10px;padding:9px;background:#082032;color:#f1f5f9;font:14px/1.5 Rajdhani,sans-serif}
+.crew-transmission strong{color:#fcd34d}.crew-transmission p{margin:2px 0 0}.transmitting-portrait{flex-shrink:0;animation:crew-transmit-focus 1.8s ease-in-out infinite}
+.dialogue-subtitle{padding:12px;border-left:3px solid #67e8f9;border-radius:4px;background:#020617d9;max-width:78ch}
+@keyframes crew-transmit-focus{50%{filter:brightness(1.14);transform:translateY(-1px)}}
+@media(prefers-reduced-motion:reduce){.transmitting-portrait{animation:none}}
+@media(max-width:640px){.flight-guidance{align-items:flex-start;font-size:12px}.system-focus-control{max-width:58%;font-size:11px}.upgrade-comparison{gap:3px 9px}}

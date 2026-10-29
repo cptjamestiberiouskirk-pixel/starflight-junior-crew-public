@@ -33,6 +33,14 @@ continuation from the previous tester. See the [verification summary](docs/VERIF
 for its build identity, checks and remaining security/release limits. The ZIP
 remains a private, locally supplied artifact; it is not hosted in this repository.
 
+The latest source adds clearer navigation, optional crew guidance, surface contact
+contrast, equipment comparisons, recorded-speaker subtitles and a smaller lossless
+ship-image build. The labeled **Expedition clock** stays visible in the main HUD,
+including compact Science and live transmissions. See the
+[October 29 verification](docs/VERIFICATION_2026-10-29.md) and
+[presentation improvements](docs/GAMEPLAY_POLISH.md). The private October 26 tester
+does not yet include these source updates.
+
 ## What you can do
 
 - **Build a crew:** recruit five species, assign six posts, train several skills

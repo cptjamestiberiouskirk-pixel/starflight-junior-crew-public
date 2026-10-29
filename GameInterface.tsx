@@ -1,3 +1,7 @@
+import FlightGuidance from './components/FlightGuidance';
+import ExpeditionClock from './components/ExpeditionClock';
+import UpgradeComparison from './components/UpgradeComparison';
+import CrewTransmission from './components/CrewTransmission';
 import {BayVideoPlayer} from './utils/bay-video';
 import CrewTraining from './components/CrewTraining';
 import BridgeLogFilters from './components/BridgeLogFilters';
@@ -843,6 +847,8 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     setSurfaceRecording,
     setSurfaceRuinModal,
     setSystemMessages,
+    setSystemFocusIndex,
+    systemFocusIndex,
     setSystemZoom,
     setTradeDepotMessage,
     setTradeQuantity,
@@ -1030,7 +1036,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
       {/* AUTOSAVE TOAST BANNER */}
       {autosaveToast && (
-        <div className="absolute top-14 right-4 z-50 glass-panel px-3.5 py-1.5 rounded-lg border-cyan-400 text-cyan-300 font-bold text-xs flex items-center gap-2 animate-bounce shadow-xl">
+        <div data-autosave-toast className="absolute top-14 right-4 z-50 glass-panel px-3.5 py-1.5 rounded-lg border-cyan-400 text-cyan-300 font-bold text-xs flex items-center gap-2 animate-bounce shadow-xl">
           <Database size={14} className="text-yellow-400" />
           {saveDurable ? '💾 Autosaved' : '⚠ Session save only — export a backup before closing'}
         </div>
@@ -1103,10 +1109,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
         {/* Right Controls & Stardate Clock */}
         <div className="flex items-center gap-2">
-          <span className="bg-slate-950 border border-slate-800 px-2.5 py-1 rounded text-slate-200 font-bold flex items-center gap-1.5 font-mono text-[11px]">
-            <Clock size={13} className="text-cyan-400 shrink-0" />
-            {formattedClock}
-          </span>
+          <ExpeditionClock value={formattedClock}/>
 
           {gameLocation === 'Star System' && nearbyPlanet?.isHomeworld && (
             <button
@@ -1175,6 +1178,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
       </header>
 
       {/* MAIN VIEWPORT CONTAINER */}
+      <FlightGuidance location={gameLocation} fuel={enduriumFuel} engines={engineClass} hull={hullIntegrity} nearby={nearbyPlanet} mining={!!miningSession} missingPosts={Object.values(assignedPosts).filter(id=>!crewRoster.some(c=>c.id===id&&c.alive&&c.vitality>0)).length} unreadBulletins={bulletins.filter(b=>!b.read).length} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)}/>
       <main className="flex-1 w-full min-h-0 relative flex flex-col md:flex-row overflow-hidden">
         {/* STARPORT CONCOURSE */}
         {gameLocation === 'Starport' && activeRoomIndex === null && (
@@ -2748,6 +2752,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                   <span className="text-[10px] text-slate-400">
                                     {mod.curLvl > 0 ? mod.table[mod.curLvl - 1]?.name : 'None Installed'}
                                   </span>
+                                  <UpgradeComparison kind={mod.key} level={mod.curLvl} current={mod.table[mod.curLvl-1]} next={nextPart}/>
                                 </div>
 
                                 {nextPart ? (
@@ -3587,6 +3592,14 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                 {(gameLocation==='On Planet'||gameLocation==='Terrain Vehicle')&&<div role="group" aria-label="Ground view controls" className="absolute top-3 right-3 z-20 flex flex-wrap gap-2 rounded-xl border border-cyan-700 bg-slate-950/90 p-2 text-xs">
                   <button aria-label="Zoom out ground" disabled={groundZoom<=.4} onClick={()=>setGroundZoom(z=>clampGroundZoom(z/1.25))}>−</button><span>{Math.round(groundZoom*100)}%</span><button aria-label="Zoom in ground" disabled={groundZoom>=1.4} onClick={()=>setGroundZoom(z=>clampGroundZoom(z*1.25))}>+</button><button onClick={()=>setGroundZoom(1)}>Reset view</button>
+                </div>}
+                {gameLocation==='Star System'&&<div className="system-focus-control">
+                  <label htmlFor="system-focus">Navigation focus</label>
+                  <select id="system-focus" value={systemFocusIndex??''} onChange={e=>setSystemFocusIndex(e.target.value===''?null:Number(e.target.value))}>
+                    <option value="">All planets</option>
+                    {currentStar.planets.filter(p=>!destroyedPlanetKeys.includes(planetKey(currentStar.x,currentStar.y,p.orderIndex))).map((p,i)=><option key={p.orderIndex} value={i}>{p.name}</option>)}
+                  </select>
+                  <span>{nearbyPlanet?`${nearbyPlanet.name}: ${nearbyPlanet.isHomeworld?'Dock':'Orbit'} available`:'Approach a planet for Orbit / Dock'}</span>
                 </div>}
                 {/* Star System Zoom Controls (+ / - buttons and zoom indicator) */}
                 {gameLocation === 'Star System' && (
@@ -4932,11 +4945,12 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     [Full Log ↗]
                   </button>
                 </div>
+                <CrewTransmission messages={systemMessages} portrait={speaker=>{const member=crewRoster.find(c=>speaker.endsWith(c.name)&&c.alive);return member?<CrewPortrait member={member} size="md" inCombat={gameLocation==='Encounter'} hullCritical={hullIntegrity<=50}/>:null;}}/>
                 <BridgeLogFilters prefix="Bridge log" type={shipsLogMsgFilter} search={shipsLogMsgSearch} onType={setShipsLogMsgFilter} onSearch={setShipsLogMsgSearch} count={filterBridgeMessages(systemMessages,shipsLogMsgFilter,shipsLogMsgSearch).length} total={systemMessages.length}/>
                 <div role="log" aria-label="Filtered bridge messages" className="flex-1 overflow-y-auto space-y-1.5 text-xs pr-1 font-mono scrollbar-thin">
                   {!filterBridgeMessages(systemMessages,shipsLogMsgFilter,shipsLogMsgSearch).length&&<p className="text-slate-400 p-2">No matching messages.</p>}
                   {filterBridgeMessages(systemMessages,shipsLogMsgFilter,shipsLogMsgSearch).map((msg) => (
-                    <div key={msg.id} className="text-[11px] leading-relaxed p-1 rounded bg-slate-950/40 border border-slate-900/60">
+                    <div key={msg.id} className="text-[13px] leading-relaxed p-2 rounded bg-slate-950/90 border border-slate-800/80">
                       {msg.speaker && <strong className="text-yellow-400 mr-1.5">[{msg.speaker}]:</strong>}
                       <span className={msg.type === 'alert' ? 'text-red-300 font-bold' : msg.type === 'banter' ? 'text-cyan-200 italic' : 'text-slate-200'}>
                         {msg.text}
@@ -4991,6 +5005,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px]" />
 
                 {/* Header with Signal Strength & Audio Waveform */}
+                <ExpeditionClock value={formattedClock}/>
                 <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 border-b border-slate-800 pb-2.5 z-10">
                   <div className="flex min-w-0 items-center gap-3">
                     <div
@@ -5718,7 +5733,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           )}
                         </span>
                       </div>
-                      <p className="text-sm md:text-base leading-relaxed text-slate-100 font-mono font-medium select-text">
+                      <p aria-label="Alien transmission subtitle" className="dialogue-subtitle text-base md:text-lg leading-relaxed text-slate-100 font-mono font-medium select-text">
                         "{typedSubstr}"
                         {visibleChars < displayText.length && <span className="animate-pulse text-yellow-400">▍</span>}
                       </p>

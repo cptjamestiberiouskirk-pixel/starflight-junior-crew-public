@@ -46,3 +46,19 @@ Use labeled controls for docking, ascent, repairs, treatment and communications.
 Typing a name should not steer the ship. Settings control audio, graphics,
 shake and CRT. Developer shortcuts belong in [Development](DEVELOPMENT.md);
 they are not needed to play and can mark a mission as a development save.
+
+Crew guidance opens an optional hint based on the current location, equipment,
+crew availability and received bulletins. Hide it with the same button.
+In a star system, Navigation focus marks a planet and shows an edge pointer when
+it is outside the view. It does not steer the ship; approach and use the existing
+Orbit or Dock controls. These presentation choices reset when the game reloads.
+
+Ship Configuration previews the next equipment class beside the current class,
+including its capacity or damage, mass and purchase price. Selecting a preview
+does not buy equipment. During recorded crew banter, the bridge shows the current
+speaker's portrait and full subtitle above the searchable log.
+
+The **Expedition clock** in the top HUD shows the existing stardate and hour.
+On small screens it gets its own labeled row, including compact Science. Live
+alien transmissions also show the same clock. This is in-game time: the existing
+flight, pause and Starport time rules still apply. It is not a real-time stopwatch.

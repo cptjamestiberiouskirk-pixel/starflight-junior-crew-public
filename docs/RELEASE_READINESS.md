@@ -1,6 +1,6 @@
 # Release readiness
 
-**October 28, 2026: source-available preview; Windows package remains a private tester.**
+**October 29, 2026: source-available preview; Windows package remains a private tester.**
 
 The docs are written for a new player. Public availability, rights clearance and
 independent technical acceptance remain separate decisions.
@@ -12,7 +12,7 @@ independent technical acceptance remain separate decisions.
 | Controls/support | Dedicated controls, FAQ, Windows guide and private bug-report template. |
 | Screenshots | Actual current-build fictional mission captures with provenance; no owner saves. |
 | Source/build | Fresh-history source preview at cptjamestiberiouskirk-pixel/starflight-junior-crew-public; original development repository remains private. Source/build/package instructions available. |
-| Local verification | Security-remediated source passed clean install/typecheck, 10,718 assertions and build/resources. Current ZIP extraction passed launcher, browser, upgrade, 87 save and server regression/security checks. [Exact scope](VERIFICATION_2026-10-26.md). |
+| Local verification | Current source passes typecheck, 10,801 assertions and optimized build/resource checks. Labeled clock checked across compact/desktop layouts, time rollover and save/reload. [Current source scope](VERIFICATION_2026-10-29.md). The earlier ZIP has its own launcher/browser/save checks and [build identity](VERIFICATION_2026-10-26.md). |
 | Windows ZIP | October 26 security rebuild verified locally, including old-to-new save continuation without import; no public release asset uploaded. |
 | Security | Local mitigations verified; upstream picomatch advisory and reviewed static alerts remain visible. App source size exclusion removed. [Limits](SECURITY_MITIGATIONS.md). |
 | Clean Windows machine | Pending independent machine/clean VM launch, first voyage, online/offline behavior, save/import, updates and shutdown. Development-PC checks do not close this item. |

@@ -1,3 +1,4 @@
+import {placePlanetLabel,type LabelBox} from './utils/presentation-polish';
 import { renderGameInterface } from './GameInterface';
 import {BayVideoPlayer} from './utils/bay-video';
 import CrewTraining from './components/CrewTraining';
@@ -3110,6 +3111,10 @@ function useGameInterfaceState() {
   // Star System Coordinates & Zoom
   const [systemShipX, setSystemShipX, systemShipXFrameRef] = useFrameState<number>(-88, markFrameUIDirty);
   const [systemShipY, setSystemShipY, systemShipYFrameRef] = useFrameState<number>(118, markFrameUIDirty);
+  const [systemFocusIndex,setSystemFocusIndex]=useState<number|null>(null);
+  const systemFocusRef=useRef<number|null>(null);
+  systemFocusRef.current=systemFocusIndex;
+  useEffect(()=>setSystemFocusIndex(null),[currentStar.id]);
   const [systemZoom, setSystemZoom] = useState<number>(8.0); // 8.0 = zoomed in following ship (~16px ship, Arth ~160px), 0.65 = overview
 
   // Window / Document title & unit test runner attachment
@@ -13518,6 +13523,9 @@ function useGameInterfaceState() {
         ctx.restore();
       });
 
+      // Reduce terrain microcontrast behind contacts while retaining the original texture.
+      ctx.fillStyle='rgba(2,6,23,.10)';ctx.fillRect(0,0,canvasWidth,canvasHeight);
+
       // WHEEL DUST PARTICLES
       roverDustParticles.forEach((dp) => {
         const sx = cx + (dp.x - cameraWorldX) * worldScale;
@@ -13587,6 +13595,10 @@ function useGameInterfaceState() {
           const minColor = MINERAL_CATALOG.find((m) => m.name === min.name)?.color || '#00f0ff';
           ctx.save();
           ctx.translate(mx, my);
+
+          // Dark footing separates mineral colors from the terrain, without changing contacts.
+          ctx.fillStyle='rgba(2,6,23,.6)';ctx.beginPath();ctx.ellipse(0,5,21,12,0,0,Math.PI*2);ctx.fill();
+          if(min.id===miningTargetId){ctx.save();ctx.strokeStyle='#ffffff';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(0,2,25,18,0,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#22d3ee';ctx.lineWidth=1;ctx.stroke();ctx.restore();}
 
           // Deposit visual scale shrinks as its volume decreases
           const scaleFactor = Math.max(0.4, Math.min(1.2, Math.sqrt(min.volume / 8)));
@@ -13989,6 +14001,8 @@ function useGameInterfaceState() {
       if (gameLocation === 'Terrain Vehicle') {
         ctx.save();
         ctx.translate(cx, cy + roverSuspensionBounce);
+
+        ctx.save();ctx.fillStyle='rgba(2,6,23,.65)';ctx.shadowColor='#020617';ctx.shadowBlur=8;ctx.beginPath();ctx.ellipse(0,5,25*groundZoomRef.current,17*groundZoomRef.current,vehicleHeading,0,Math.PI*2);ctx.fill();ctx.restore();
 
         // Forward Dual Headlight Illuminated Light Cones
         ctx.save();
@@ -16120,31 +16134,42 @@ function useGameInterfaceState() {
         ctx.restore(); // end clip
         drawPlanetAtmosphere(ctx,px,py,pRadius,planet,zoom);
 
-        // Hover / Proximity Label for Nearest Planet (unscaled to remain readable)
-        const distToShip = Math.hypot(systemShipX - px, systemShipY - py);
-        const isNear = distToShip <= pRadius + 24;
-
-        ctx.save();
-        ctx.translate(px, py);
-        ctx.scale(1 / zoom, 1 / zoom);
-        const pScreenRadius = pRadius * zoom;
-
-        if (isNear) {
-          ctx.fillStyle = '#facc15';
-          ctx.font = 'bold 11px "Orbitron", "Rajdhani", sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(`▼ ${planet.name.toUpperCase()} ▼`, 0, -pScreenRadius - 8);
-        } else {
-          ctx.fillStyle = '#94a3b8';
-          ctx.font = '10px "Rajdhani", sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(planet.name, 0, pScreenRadius + 12);
+        if(pIdx===systemFocusRef.current){
+          ctx.save();ctx.strokeStyle='#67e8f9';ctx.lineWidth=2/zoom;
+          ctx.setLineDash([6/zoom,4/zoom]);ctx.beginPath();ctx.arc(px,py,pRadius+7/zoom,0,Math.PI*2);ctx.stroke();ctx.restore();
         }
-        drawSpriteLabel(`sprite-planet-${planet.type.toLowerCase()}-${planet.name.toLowerCase().replace(/\\s+/g, '-')}`, 0, -pScreenRadius - 20, '#38bdf8');
-        ctx.restore();
       });
 
       ctx.restore(); // end world transform
+
+      // Labels use screen coordinates and collision spacing; world geometry is unchanged.
+      const labelBoxes:LabelBox[]=[{x:12,y:12,width:260,height:86},{x:canvasWidth-76,y:10,width:68,height:150},{x:centerX-35,y:centerY-35,width:70,height:70},{x:centerX-camX*zoom-starRadius*zoom-4,y:centerY-camY*zoom-starRadius*zoom-4,width:starRadius*zoom*2+8,height:starRadius*zoom*2+8},...currentPlanets.map(p=>{const radius=Math.max(p.renderSize*zoom,15)+4;return {x:centerX+(p.currentX-camX)*zoom-radius,y:centerY+(p.currentY-camY)*zoom-radius,width:radius*2,height:radius*2};})];
+      const focus=systemFocusRef.current;
+      const order=currentPlanets.map((planet,index)=>({planet,index})).sort((a,b)=>Number(b.index===focus)-Number(a.index===focus)||Math.hypot(a.planet.currentX-systemShipX,a.planet.currentY-systemShipY)-Math.hypot(b.planet.currentX-systemShipX,b.planet.currentY-systemShipY));
+      ctx.save();ctx.font='bold 12px "Rajdhani", sans-serif';ctx.textBaseline='middle';
+      for(const {planet,index} of order){
+        const x=centerX+(planet.currentX-camX)*zoom,y=centerY+(planet.currentY-camY)*zoom;
+        const radius=Math.max(planet.renderSize*zoom,15);
+        if(x+radius<0||y+radius<0||x-radius>canvasWidth||y-radius>canvasHeight)continue;
+        const selected=index===focus;
+        const text=(selected?'◇ ':'')+planet.name;
+        const box=placePlanetLabel({x,y:y+radius+8},ctx.measureText(text).width+16,20,{width:canvasWidth,height:canvasHeight},labelBoxes);
+        if(!box)continue;
+        ctx.strokeStyle=selected?'#67e8f9':'#64748b';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x,y+radius);ctx.lineTo(box.x+box.width/2,box.y);ctx.stroke();
+        ctx.fillStyle='rgba(2,6,23,.94)';ctx.fillRect(box.x,box.y,box.width,box.height);
+        ctx.strokeRect(box.x,box.y,box.width,box.height);ctx.fillStyle=selected?'#a5f3fc':'#e2e8f0';ctx.textAlign='center';ctx.fillText(text,box.x+box.width/2,box.y+10);
+      }
+      ctx.restore();
+      if(focus!==null&&currentPlanets[focus]){
+        const planet=currentPlanets[focus],dx=planet.currentX-systemShipX,dy=planet.currentY-systemShipY;
+        const px=centerX+dx*zoom,py=centerY+dy*zoom;
+        if(px<24||py<24||px>canvasWidth-24||py>canvasHeight-24){
+          const bearing=Math.atan2(dy,dx),limit=Math.min((centerX-30)/Math.max(.001,Math.abs(Math.cos(bearing))),(centerY-30)/Math.max(.001,Math.abs(Math.sin(bearing))));
+          ctx.save();ctx.translate(centerX+Math.cos(bearing)*limit,centerY+Math.sin(bearing)*limit);ctx.rotate(bearing);
+          ctx.fillStyle='#020617';ctx.strokeStyle='#67e8f9';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-7,-8);ctx.lineTo(-7,8);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+        }
+      }
 
       // DRAW PLAYER STARSHIP IN SCREEN COORDINATES:
       // Cap the scout in screen pixels and below the smallest planetary disc.
@@ -17178,6 +17203,8 @@ function useGameInterfaceState() {
     setSurfaceRecording,
     setSurfaceRuinModal,
     setSystemMessages,
+    setSystemFocusIndex,
+    systemFocusIndex,
     setSystemZoom,
     setTradeDepotMessage,
     setTradeQuantity,

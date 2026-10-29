@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import {shipRuntimePlan} from './ship-runtime.mjs';
 
 const root = new URL('../', import.meta.url);
 const dist = new URL('dist/', root);
@@ -65,9 +66,15 @@ console.log('PASS: both approved painted hangar textures are bundled byte-identi
 const shipManifest=JSON.parse(readFileSync(new URL('assets/ships/manifest.json',root),'utf8'));
 assert.equal(shipManifest.count,3672);assert.equal(shipManifest.images.length,3672);
 assert.equal(new Set(shipManifest.images.map(row=>row.file)).size,3672);
+const runtimeShips=JSON.parse(readFileSync(new URL('assets/ships/runtime.json',dist),'utf8'));
+assert.deepEqual(runtimeShips,JSON.parse(JSON.stringify(shipRuntimePlan().map(({from,...row})=>row))),'Built runtime manifest must match the verified source/cache plan');
+assert.equal(runtimeShips.length,3672);assert.equal(new Set(runtimeShips.map(r=>r.source)).size,3672);
 for(const row of shipManifest.images){
  const relative='assets/ships/configurations/'+row.file;
- for(const location of [root,dist])assert.equal(createHash('sha256').update(readFileSync(new URL(relative,location))).digest('hex'),row.sha256,'Approved whole-ship image differs '+relative);
+ assert.equal(createHash('sha256').update(readFileSync(new URL(relative,root))).digest('hex'),row.sha256,'Approved whole-ship master differs '+relative);
+ const runtime=runtimeShips.find(r=>r.source===row.file);assert(runtime);
+ assert(runtime.file===row.file||runtime.file===row.file.replace(/\.png$/,'.webp'));
+ assert.equal(createHash('sha256').update(readFileSync(new URL('assets/ships/configurations/'+runtime.file,dist))).digest('hex'),runtime.sha256,'Runtime ship differs '+runtime.file);
 }
 const kitName=readdirSync(new URL('assets/',dist)).find(n=>n.startsWith('ship-outfitting-kit-')&&n.endsWith('.glb'));assert(kitName);
 assert.equal(createHash('sha256').update(readFileSync(new URL('assets/'+kitName,dist))).digest('hex'),createHash('sha256').update(readFileSync(new URL('assets/models/ship-outfitting-kit.glb',root))).digest('hex'));
@@ -76,7 +83,7 @@ for(let tier=1;tier<=5;tier++){
  assert.equal(createHash('sha256').update(readFileSync(new URL('assets/'+name,dist))).digest('hex'),createHash('sha256').update(readFileSync(new URL('assets/models/ship-armor-'+tier+'.png',root))).digest('hex'));
 }
 assert.equal(createHash('sha256').update(readFileSync(new URL('assets/ships/catalog.json',dist))).digest('hex'),createHash('sha256').update(readFileSync(new URL('assets/ships/catalog.json',root))).digest('hex'));
-console.log('PASS: all 3672 approved full-ship PNGs, catalog, Blender 5.2 kit and five tactical armor maps match source SHA-256.');
+console.log('PASS: all 3672 approved ship masters preserved; selected runtime images, catalog, kit and five armor maps verified.');
 
 const crewManifest=JSON.parse(readFileSync(new URL('assets/crew/manifest.json',root),'utf8'));
 assert.equal(crewManifest.count,50);assert.equal(new Set(crewManifest.images.map(r=>r.id)).size,50);

@@ -1,5 +1,7 @@
 import {armorAppearance,armorTintLayer} from './armor-style';
 import catalog from '../assets/ships/catalog.json';
+declare const __SHIP_WEBP_KEYS__:string[];
+const webpKeys=new Set(typeof __SHIP_WEBP_KEYS__==='undefined'?[]:__SHIP_WEBP_KEYS__);
 
 export interface ShipVisualConfig { cargoPods:number; armorClass:number; laserClass:number; missileClass:number; }
 const bounded=(n:number,max:number)=>Number.isFinite(n)?Math.max(0,Math.min(max,Math.floor(n))):0;
@@ -12,7 +14,8 @@ export function shipConfigurationKey(config:ShipVisualConfig){
 }
 export function shipConfigurationURL(config:ShipVisualConfig,base=typeof document==='undefined'?'http://localhost/':new URL(import.meta.env.BASE_URL,document.baseURI).href){
   // Deliberately construct an on-demand URL: a glob would preload the entire library.
-  return new URL(catalog.directory+shipConfigurationKey(config)+'.png?v='+catalog.version,base).href;
+  const key=shipConfigurationKey(config);
+  return new URL(catalog.directory+key+(webpKeys.has(key)?'.webp':'.png')+'?v='+catalog.version,base).href;
 }
 type Entry={image:HTMLImageElement;ready:boolean;promise:Promise<boolean>;resolve:(ready:boolean)=>void;tint?:HTMLCanvasElement};
 const armorMaskURLs=[

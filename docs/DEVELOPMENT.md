@@ -52,6 +52,27 @@ Do not present an old campaign result as a fresh test of a different build.
 The resource verifier checks original images, ship configurations, portrait
 atlases, local media/fonts, relative URLs and bundled notices.
 
+For the smaller ship-image distribution, use Python 3 with Pillow's WebP support
+(verified with Pillow 12.3.0), then run:
+
+~~~sh
+npm run build:optimized
+npm run check:ship-runtime
+npm run check:build
+~~~
+
+The optimizer verifies identical decoded RGBA pixels for every configuration and
+uses WebP only when smaller. Approved PNG masters stay untouched. Derivatives and
+their checksums live in the ignored artifacts/ship-runtime/ cache; production
+copies only the selected image for each configuration. Development uses the
+original PNGs. Builds without a cache remain supported and use originals; stale,
+incomplete or corrupted completed caches fail validation. Keep the verified cache
+when running check:build for an optimized build. Interrupted optimization can be
+rerun safely. No generated image library needs to be committed alongside masters.
+
+Tailwind's explicit source list includes both App.tsx and GameInterface.tsx;
+include any future extracted interface entrypoints there as well.
+
 ## Source layout
 
 | Path | Role |

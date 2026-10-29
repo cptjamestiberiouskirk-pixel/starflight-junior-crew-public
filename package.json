@@ -18,7 +18,10 @@
     "test": "node scripts/test.mjs",
     "build": "vite build",
     "check:build": "node scripts/check-build.mjs",
-    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort"
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
+    "optimize:ships": "python scripts/optimize-ships.py",
+    "build:optimized": "npm run optimize:ships && npm run build",
+    "check:ship-runtime": "node scripts/ship-runtime.test.mjs"
   },
   "dependencies": {
     "@fontsource/chakra-petch": "5.3.0",
