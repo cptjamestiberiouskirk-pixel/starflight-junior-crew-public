@@ -1,13 +1,16 @@
 """Build and fully verify the private tester ZIP; Python is build-time only."""
 from pathlib import Path
-import hashlib, json, zipfile, time, os
+import hashlib, json, zipfile, time, os, re
 
 root=Path(__file__).resolve().parents[2]
 evidence=(root/os.environ.get('JUNIOR_TESTER_EVIDENCE_DIR','artifacts/windows-tester-20261026')).resolve()
 if not evidence.is_relative_to(root/'artifacts'):
     raise SystemExit('Tester output must remain inside project artifacts.')
 package=evidence/'package'/'Starflight Junior Crew'
-archive=evidence/'Starflight-Junior-Crew-Windows-x64-20261026-security.zip'
+archive_name=os.environ.get('JUNIOR_TESTER_ARCHIVE_NAME','Starflight-Junior-Crew-Windows-x64-20261026-security.zip')
+if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*\.zip',archive_name):
+    raise SystemExit('Archive name must be a safe ZIP basename.')
+archive=evidence/archive_name
 if archive.exists():
     raise SystemExit('Archive already exists; preserve it rather than overwriting.')
 files=sorted(p for p in package.rglob('*') if p.is_file())

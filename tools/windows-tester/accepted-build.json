@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-ChqdbkwB.js",
-    "sha256": "0b63fdcaf5daa163d43bcf47fb300850796764bb618e0eca49afcccabcf02570"
+    "entry": "assets/index-DKzV7Laz.js",
+    "sha256": "b2c06a652b1afe7f61226edea345fa68d4f58dc4b4ea0754ced8846b707b98a8"
   },
-  "evidenceDate": "2026-10-26",
-  "scope": "Security-remediated local build: 10718 assertions, 87 native save cases and fresh commissioning/launch passed. Explicitly promoted for local Windows tester rebuild; package tests recorded separately.",
-  "evidence": "artifacts/snyk-remediation-20261026/REPORT.md"
+  "evidenceDate": "2026-10-29",
+  "scope": "Owner-requested private Windows tester: latest presentation improvements and expedition clock; extracted ZIP passed 7 launcher, 6 browser, 7 upgrade, 87 save, 16 clock, 53 server and 14 server-limit cases. Original time rules, assets and save format preserved.",
+  "evidence": "artifacts/windows-tester-20261029/REPORT.md"
 }

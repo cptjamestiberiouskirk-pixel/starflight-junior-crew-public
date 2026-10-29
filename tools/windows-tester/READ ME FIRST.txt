@@ -20,6 +20,8 @@ PLAYING AND SAVING
   newer package. Saves are in the browser, not in the extracted game folder.
 - You can move a mission from another address/browser with Export/Import Save.
 - The dancing astronaut starts after eight idle seconds in the concourse.
+- The labeled Expedition clock shows the existing stardate/hour in the top HUD,
+  including compact Science and live transmissions. Existing time rules apply.
 
 STOPPING
 Closing the browser tab does not stop the local server. Open the hidden-icons

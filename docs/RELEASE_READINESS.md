@@ -13,7 +13,7 @@ independent technical acceptance remain separate decisions.
 | Screenshots | Actual current-build fictional mission captures with provenance; no owner saves. |
 | Source/build | Fresh-history source preview at cptjamestiberiouskirk-pixel/starflight-junior-crew-public; original development repository remains private. Source/build/package instructions available. |
 | Local verification | Current source passes typecheck, 10,801 assertions and optimized build/resource checks. Labeled clock checked across compact/desktop layouts, time rollover and save/reload. [Current source scope](VERIFICATION_2026-10-29.md). The earlier ZIP has its own launcher/browser/save checks and [build identity](VERIFICATION_2026-10-26.md). |
-| Windows ZIP | October 26 security rebuild verified locally, including old-to-new save continuation without import; no public release asset uploaded. |
+| Windows ZIP | October 29 rebuild includes current improvements and expedition clock. Extracted ZIP passed launcher/browser, 87 save and 16 clock checks, including old-to-new save continuation without re-import. [Package scope](VERIFICATION_2026-10-29-WINDOWS.md). No public release asset uploaded. |
 | Security | Local mitigations verified; upstream picomatch advisory and reviewed static alerts remain visible. App source size exclusion removed. [Limits](SECURITY_MITIGATIONS.md). |
 | Clean Windows machine | Pending independent machine/clean VM launch, first voyage, online/offline behavior, save/import, updates and shutdown. Development-PC checks do not close this item. |
 | Devices/accessibility/audio | Partial: small-screen emulation, keyboard and software fallback checked; physical devices, screen-reader output and human listening remain separate coverage. |

@@ -28,8 +28,9 @@ is supplied privately by the maintainer; no public binary download or hosted
 game is included. See [release readiness](docs/RELEASE_READINESS.md) for remaining
 package, device and independent-machine checks.
 
-The October 26 tester includes server security hardening and verified save
-continuation from the previous tester. See the [verification summary](docs/VERIFICATION_2026-10-26.md)
+The October 29 tester includes the latest presentation improvements, Expedition
+clock, server security hardening and verified save continuation from the previous
+tester. See the [verification summary](docs/VERIFICATION_2026-10-29-WINDOWS.md)
 for its build identity, checks and remaining security/release limits. The ZIP
 remains a private, locally supplied artifact; it is not hosted in this repository.
 
@@ -38,8 +39,8 @@ contrast, equipment comparisons, recorded-speaker subtitles and a smaller lossle
 ship-image build. The labeled **Expedition clock** stays visible in the main HUD,
 including compact Science and live transmissions. See the
 [October 29 verification](docs/VERIFICATION_2026-10-29.md) and
-[presentation improvements](docs/GAMEPLAY_POLISH.md). The private October 26 tester
-does not yet include these source updates.
+[presentation improvements](docs/GAMEPLAY_POLISH.md). The rebuilt private October
+29 tester includes these updates.
 
 ## What you can do
 

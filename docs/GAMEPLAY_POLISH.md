@@ -40,5 +40,5 @@ receipts are kept under the ignored artifacts/gameplay-polish-20261028/ director
 The local checks passed 10,801 assertions across 35 suites, six image-cache checks,
 87 native save cases and the production browser/layout/resource checks.
 The [October 29 verification](VERIFICATION_2026-10-29.md) covers the labeled clock
-and current source update. The existing accepted Windows tester remains associated
-with its documented earlier build and has not been rebuilt for these changes.
+and current source update. The rebuilt private Windows tester now includes these
+changes; see its [package verification](VERIFICATION_2026-10-29-WINDOWS.md).

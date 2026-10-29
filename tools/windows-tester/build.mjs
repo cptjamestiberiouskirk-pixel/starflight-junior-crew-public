@@ -28,6 +28,7 @@ await fs.copyFile(runtime,path.join(output,'runtime/node.exe'));
 await fs.copyFile(license,path.join(output,'runtime/NODE-LICENSE.txt'));
 await fs.copyFile(path.join(source,'server.mjs'),path.join(output,'runtime/server.mjs'));
 await fs.copyFile(path.join(source,'READ ME FIRST.txt'),path.join(output,'READ ME FIRST.txt'));
+for(const name of ['LICENSE.md','CREDITS.md'])await fs.copyFile(path.join(root,name),path.join(output,name));
 const info={game:'Starflight: Junior Crew',package:'Windows x64 portable tester',createdUTC:new Date().toISOString(),
   build:acceptance.build.entry,buildSHA256:acceptance.build.sha256,runtime:{version:process.version,arch:process.arch,sha256:sha(await fs.readFile(runtime))},
   url:'http://127.0.0.1:4188/starflight-junior-crew/',voicesRequireInternet:true,published:false};

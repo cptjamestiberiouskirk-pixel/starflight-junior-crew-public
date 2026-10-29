@@ -53,9 +53,10 @@ committed copy of the master library.
 
 ## Scope
 
-This is a source/documentation update. The existing private Windows tester still
-has its [October 26 build identity and acceptance scope](VERIFICATION_2026-10-26.md).
-No new ZIP, public binary release or hosted game is supplied by this update.
+This report records the source update. The subsequent private Windows tester
+rebuild is covered by its [October 29 package verification](VERIFICATION_2026-10-29-WINDOWS.md).
+The [October 26 tester](VERIFICATION_2026-10-26.md) remains preserved as an older
+build. No public binary release or hosted public game was supplied.
 Independent Windows/device/audio acceptance and a new packaged campaign/soak
 remain separate work. The existing large JavaScript chunk warning and documented
 upstream security limitations remain visible.

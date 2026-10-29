@@ -1,5 +1,12 @@
 # Source snapshot and verification
 
+October 29 local tester update: the rebuilt private Windows x64 ZIP now includes
+the latest presentation improvements and labeled Expedition clock. Its extracted
+package passed native launcher/browser checks, previous-version save continuation,
+87 save cases, 16 clock cases and server regressions. The private preview retains
+port 4174 and the tester retains port 4188; existing browser save origins are
+unchanged. See [package verification](docs/VERIFICATION_2026-10-29-WINDOWS.md).
+
 October 28 update: the maintainer authorized source availability at
 https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew-public.
 That repository starts with fresh history and excludes private development
@@ -35,7 +42,7 @@ voice repository; the game keeps dialogue visible if a recording cannot load.
 Approved artwork, ship configurations, fonts, music and effects build locally.
 Tests write disposable output under ignored `artifacts/`.
 
-The current accepted Windows tester uses `assets/index-ChqdbkwB.js`, SHA-256
+The historical October 26 Windows tester uses `assets/index-ChqdbkwB.js`, SHA-256
 `0b63fdcaf5daa163d43bcf47fb300850796764bb618e0eca49afcccabcf02570`.
 The security-remediated source passed 10,718 assertions across 34 suites, clean
 installation, typecheck and build/resource verification. The replacement ZIP's
@@ -59,12 +66,14 @@ manifest update. It needs the installed Node runtime's adjacent `LICENSE` and
 the Windows .NET Framework C# compiler. `zip.py` uses Python only on the packaging
 computer; players need neither Python nor development tools.
 
-The default output is `artifacts/windows-tester-20261026/`; existing packages
-and ZIPs are not overwritten. Set `JUNIOR_TESTER_EVIDENCE_DIR` to a new directory
+The tools retain the historical default output, `artifacts/windows-tester-20261026/`;
+existing packages and ZIPs are not overwritten. Set `JUNIOR_TESTER_EVIDENCE_DIR` to a new directory
 under project `artifacts/` for another run. Use the same directory for launcher,
-browser and ZIP commands. The current archive name ends in
-`20261026-security.zip`. The accepted manifest is updated intentionally after
-verification, not automatically by the packager.
+browser and ZIP commands. The historical default archive name ends in
+`20261026-security.zip` unless `JUNIOR_TESTER_ARCHIVE_NAME` selects a new safe
+ZIP basename. The October 29 rebuild uses a fresh evidence directory and
+`Starflight-Junior-Crew-Windows-x64-20261029.zip`. The accepted manifest is updated
+intentionally after verification, not automatically by the packager.
 
 The optional browser test uses an installed `playwright` package, or the local
 module path supplied through `PLAYWRIGHT_MODULE_PATH`. Native launcher tests
