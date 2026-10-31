@@ -24,6 +24,7 @@ try {
     ['/keyboard-input.test.ts','runKeyboardInputTests','Native control activation versus game keyboard shortcuts'],
     ['/software-raster-performance.test.ts','runSoftwareRasterPerformanceTests','Software scanline equivalence and opaque depth regression'],
     ['/science-illustrations.test.ts','runScienceIllustrationTests','Material-specific Science artwork and uncertainty gates'],
+    ['/science-card-art.test.tsx','runScienceCardArtTests','Distinct Science instruments and hidden-field preservation'],
     ['/alien-sensor.test.ts','runAlienSensorTests','Retained original alien mass, bio, energy and constituents'],
     ['/science-context.test.ts','runScienceContextTests','Selected-target science context and timeline isolation'],
     ['/software-ship-raster.test.ts','runSoftwareShipRasterTests','Software ship depth, armor, glazing and texture perspective'],

@@ -28,16 +28,20 @@ is supplied privately by the maintainer; no public binary download or hosted
 game is included. See [release readiness](docs/RELEASE_READINESS.md) for remaining
 package, device and independent-machine checks.
 
-The October 29 tester includes the latest presentation improvements, Expedition
-clock, server security hardening and verified save continuation from the previous
-tester. See the [verification summary](docs/VERIFICATION_2026-10-29-WINDOWS.md)
+The October 29 tester includes distinct Science illustrations, a fix for large
+save-code editor stalls, the Expedition clock, server security hardening and
+verified save continuation from the previous tester. See the
+[verification summary](docs/VERIFICATION_2026-10-29-REGRESSION.md)
 for its build identity, checks and remaining security/release limits. The ZIP
 remains a private, locally supplied artifact; it is not hosted in this repository.
 
 The latest source adds clearer navigation, optional crew guidance, surface contact
 contrast, equipment comparisons, recorded-speaker subtitles and a smaller lossless
 ship-image build. The labeled **Expedition clock** stays visible in the main HUD,
-including compact Science and live transmissions. See the
+including compact Science and live transmissions. Science Analysis and Ship
+status now use distinct contextual instruments, with scrolling cards on short
+screens. Large save codes retain their full content without expensive wrapping
+or spelling assistance. See the
 [October 29 verification](docs/VERIFICATION_2026-10-29.md) and
 [presentation improvements](docs/GAMEPLAY_POLISH.md). The rebuilt private October
 29 tester includes these updates.

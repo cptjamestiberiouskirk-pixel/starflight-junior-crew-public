@@ -52,6 +52,20 @@ Do not present an old campaign result as a fresh test of a different build.
 The resource verifier checks original images, ship configurations, portrait
 atlases, local media/fonts, relative URLs and bundled notices.
 
+### Large-save browser regression
+
+With the local Windows tester running, run
+`node tools/windows-tester/save-boundary.test.mjs` using an existing Playwright
+installation. Set `PLAYWRIGHT_MODULE_PATH` to its module entry if it is not
+available as `playwright` in this checkout. The test launches its own muted,
+nonpersistent Edge profile and uses fictional saves; it never attaches to the
+owner's browser. `JUNIOR_SAVE_TEST_URL` can select another 127.0.0.1 tester origin,
+and `JUNIOR_SAVE_TEST_EVIDENCE` selects an output folder inside `artifacts/`.
+
+It checks responsiveness and slot preservation for an encoded save just above
+the decoded size limit, successful import at the exact limit, and export recovery.
+The timing ceiling is a local regression guard, not a hardware performance claim.
+
 For the smaller ship-image distribution, use Python 3 with Pillow's WebP support
 (verified with Pillow 12.3.0), then run:
 

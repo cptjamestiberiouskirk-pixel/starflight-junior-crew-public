@@ -8400,6 +8400,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               <textarea
                 id="export-code-textarea"
                 readOnly
+                wrap="off"
+                spellCheck={false}
+                autoCorrect="off"
+                autoCapitalize="off"
                 value={exportCodeString}
                 onClick={(e) => (e.target as HTMLTextAreaElement).select()}
                 className="w-full h-32 bg-slate-950 border border-purple-500/80 rounded-2xl p-3 text-cyan-300 font-mono text-[11px] leading-relaxed resize-none focus:outline-hidden focus:border-cyan-400 select-all"
@@ -8531,6 +8535,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
               <textarea
                 value={importCodeInput}
+                wrap="off"
+                spellCheck={false}
+                autoCorrect="off"
+                autoCapitalize="off"
                 onPaste={(e)=>{const text=e.clipboardData.getData('text');if(!importTextWithinBudget(text)){e.preventDefault();acceptImportText(text);}}}
                 onChange={(e) => {
                   acceptImportText(e.target.value);

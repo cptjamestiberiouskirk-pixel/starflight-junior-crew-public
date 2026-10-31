@@ -1,21 +1,21 @@
 import React from 'react';
 const textures={Rock:new URL('../assets/ui/terrain/rock.webp',import.meta.url).href,Ice:new URL('../assets/ui/terrain/ice.webp',import.meta.url).href,Liquid:new URL('../assets/ui/terrain/ocean.webp',import.meta.url).href,Molten:new URL('../assets/ui/terrain/lava.webp',import.meta.url).href,Gas:new URL('../assets/images/planet_map_gas_a.png',import.meta.url).href};
-type Props={field:'object'|'surface'|'gravity'|'density'|'temperature'|'weather';known:boolean;value:string;planetImage?:string;confirmedSurface?:string|null};
+type Props={field:'object'|'surface'|'gravity'|'density'|'temperature'|'weather';known:boolean;value:string;planetImage?:string};
 /** These cards only receive a value once that particular analysis field is
  * confirmed. A hidden field cannot select a revealing image or CSS class. */
-export default function ScienceFieldArt({field,known,value,planetImage,confirmedSurface}:Props){
+export default function ScienceFieldArt({field,known,value,planetImage}:Props){
  if(!known||value==='Unknown')return <span className="science-field-art science-field-unresolved" data-science-field-art="unresolved" aria-hidden="true">?</span>;
- const surface=confirmedSurface&&textures[confirmedSurface as keyof typeof textures];
- const image=field==='surface'?textures[value as keyof typeof textures]:field==='temperature'?surface:undefined;
+ const image=field==='surface'?textures[value as keyof typeof textures]:undefined;
  const hot=field==='temperature'&&/Inferno|Searing/.test(value),cold=field==='temperature'&&/Arctic/.test(value);
+ const temperatureScale=['Sub-Arctic','Arctic','Temperate','Tropical','Searing','Inferno'];
+ const temperatureEnds=value.split(' to ').map(v=>temperatureScale.indexOf(v));
  const storm=field==='weather'&&/Violent/.test(value),clouds=field==='weather'&&!['None','Calm'].includes(value);
  return <span aria-hidden="true" className={'science-field-art science-field-'+field+(hot?' science-thermal-hot':cold?' science-thermal-cold':'')} data-science-field-art={field} data-science-field-value={value}>
   {image&&<img className="science-field-landscape" src={image} alt=""/>}
-  {['object','gravity','density','weather'].includes(field)&&planetImage&&<span className="science-instrument-planet"><img src={planetImage} alt=""/><i/></span>}
-  {field==='gravity'&&<svg viewBox="0 0 240 180" className="science-gravity-grid"><g fill="none" stroke="currentColor" strokeWidth="1.2">{[0,1,2,3,4].map(i=><ellipse key={i} cx="132" cy="100" rx={47+i*14} ry={24+i*9} transform={'rotate(-25 132 100)'}/>)}<path d="M35 150L210 35M50 155L215 63M70 163L223 95" opacity=".45"/></g></svg>}
-  {field==='density'&&value!=='None'&&<span className={'science-atmosphere-limb '+(value.includes('Thin')?'science-atmosphere-thin':'science-atmosphere-dense')}/>}
-  {field==='temperature'&&<svg viewBox="0 0 160 200" className="science-thermal-instrument"><g fill="none" stroke="#9bc8de" strokeWidth="3"><path d="M66 127V36a18 18 0 0136 0v91a32 32 0 11-36 0Z"/><path d="M84 44v104" stroke="currentColor" strokeWidth="10" strokeLinecap="round"/><circle cx="84" cy="157" r="16" fill="currentColor" stroke="none"/>{[50,70,90,110].map(y=><path key={y} d={'M111 '+y+'h16'}/>)}</g></svg>}
-  {clouds&&<img className={'science-weather-clouds '+(storm?'science-weather-storm':'')} src={textures.Gas} alt=""/>}
-  {storm&&<svg className="science-weather-flash" viewBox="0 0 100 100"><path d="M60 8L28 53h22L39 91l35-49H52Z" fill="#b7ecff"/></svg>}
+  {field==='object'&&planetImage&&<span className="science-instrument-planet"><img src={planetImage} alt=""/><i/></span>}
+  {field==='gravity'&&<svg viewBox="0 0 300 160" className="science-context-instrument science-gravity-well"><g fill="none" stroke="currentColor" strokeWidth="1.5">{[0,1,2,3,4].map(i=><path key={i} d={`M${25+i*5} ${35+i*20}Q100 ${15+i*12} 150 ${85+i*12}Q200 ${15+i*12} ${275-i*5} ${35+i*20}`}/>)}{[55,95,150,205,245].map(x=><path key={x} d={`M${x} 26Q150 95 ${x} 146`} opacity=".5"/>)}<circle cx="150" cy="83" r="16" fill="#163c50"/><path d="M150 5v45m-6-8 6 8 6-8M150 113v36m-6-8 6 8 6-8" stroke="#e9cd8f"/></g></svg>}
+  {field==='density'&&<svg viewBox="0 0 300 160" className="science-context-instrument science-density-column"><path d="M40 18v122h220V18M30 140h240" fill="#0b2a40" stroke="#72bcd2" strokeWidth="2"/>{Array.from({length:value==='None'?0:value==='Very Thin'?8:value==='Thin'?18:value==='Moderate'?32:value==='Thick'?48:64},(_,i)=><circle key={i} cx={55+(i*73)%190} cy={30+(i*47)%97} r={3} fill="#9cdeed" opacity={.35+(i%4)*.16}/>)}{[35,60,85,110].map(y=><path key={y} d={`M260 ${y}h12`} stroke="#e9cd8f" strokeWidth="2"/>)}</svg>}
+  {field==='temperature'&&<svg viewBox="0 0 300 160" className="science-context-instrument science-temperature-band"><g fill="none" stroke="currentColor" strokeWidth="2"><path d="M34 42v64a20 20 0 1 0 24 0V42a12 12 0 0 0-24 0Z"/><path d="M46 62v62" strokeWidth="7" strokeLinecap="round"/></g>{['#80cbea','#91dbe8','#b4dfc4','#ead18d','#f5aa73','#f17b6d'].map((color,i)=><rect key={color} x={90+i*29} y="72" width="25" height="26" rx="3" fill={color} opacity={i>=Math.min(...temperatureEnds)&&i<=Math.max(...temperatureEnds)?1:.25}/>)}<path d="M90 112h170m-170-5v10m170-10v10" stroke="#8eb0c2" fill="none"/></svg>}
+  {field==='weather'&&<svg viewBox="0 0 300 160" className="science-context-instrument science-weather-pattern"><g fill="none" stroke="currentColor" strokeWidth="2">{value==='None'?<path d="M104 125l92-90"/>:!clouds?[45,80,115].map((y,i)=><path key={y} d={`M30 ${y}h${180-i*25}q35 0 35-17q0-18-18-18q-16 0-16 14`} opacity={value==='None'?.3:.9}/>):<><path d="M58 83C20 75 48 26 80 45C85 10 141 12 151 41C183 14 223 43 211 62C258 53 269 98 227 100H68" fill="#28536b"/>{[78,120,162,204].map(x=><path key={x} d={`M${x} 112l-8 20`} opacity={storm?1:.5}/>)}</>}{value==='None'&&<circle cx="150" cy="80" r="57" strokeDasharray="4 7"/>}</g>{storm&&<path d="M166 67l-29 42h21l-9 38 39-51h-24l15-29Z" fill="#f5d995"/>}</svg>}
  </span>;
 }

@@ -31,12 +31,12 @@ export default function PlanetarySensors({planet:p,scan,onScan,onAnalyze,officer
    {tab==='Analysis'&&<div className="science-analysis-view science-illustrated-analysis"><h4>SCIENCE OFFICER ANALYSIS</h4><dl><div className="science-analysis-card"><ScienceFieldArt field="object" known={analyzed} value={analyzed?`Planet / ${p.slot}`:''} planetImage={planetImage}/><dt><img src={analysisIcons.object} alt=""/>Object / orbit</dt><dd>{analyzed?`Planet / ${p.slot}`:'Awaiting analysis'}</dd></div>{planetAnalysisFields(p).map((f,i)=>{
     const field=(['surface','gravity','density','temperature','weather'] as const)[i],known=analyzed&&!!scan!.analysis!.known[i];
     return <div key={f.label} className="science-analysis-card" data-science-analysis-field={field} data-science-confirmed={known}>
-     <ScienceFieldArt field={field} known={known} value={known?f.value:''} planetImage={planetImage} confirmedSurface={confirmedSurface}/>
+     <ScienceFieldArt field={field} known={known} value={known?f.value:''} planetImage={planetImage}/>
      <dt><img src={analysisIcons[field]} alt=""/>{f.label}</dt><dd className={analyzed&&!known?'uncertain':''}>{analyzed?(known?f.value:'Not certain'):'Awaiting analysis'}</dd>
     </div>;
    })}</dl><p>Interpretation depends on the assigned officer’s Science skill. Uncertain fields are not confirmed facts.</p></div>}
    {tab==='Ship status'&&<div className="science-analysis-view science-illustrated-status"><h4>SHIP STATUS</h4><dl>{Object.entries({Hull:shipStatus?.hull??0,Shields:shipStatus?.shields??0,Armor:shipStatus?.armor??0,'Endurium fuel':`${shipStatus?.fuel.toFixed(1)??'0'} m³`,Sensors:`${sensorHealth}%`}).map(([k,v])=><div key={k} className="science-analysis-card" data-science-status-field={k}>
-    <ScienceShipArt field={k as 'Hull'|'Shields'|'Armor'|'Endurium fuel'|'Sensors'} outfitting={outfitting} hull={shipStatus?.hull??0} shields={shipStatus?.shields??0} sensorHealth={sensorHealth} planetImage={planetImage}/>
+    <ScienceShipArt field={k as 'Hull'|'Shields'|'Armor'|'Endurium fuel'|'Sensors'} outfitting={outfitting} hull={shipStatus?.hull??0} shields={shipStatus?.shields??0} sensorHealth={sensorHealth} fuel={shipStatus?.fuel??0}/>
     <dt>{k}</dt><dd>{v}</dd>
     {k==='Armor'&&outfitting&&<small className="science-status-caption">Class {outfitting.armorClass} · {outfitting.armorClass*20}% hull skin</small>}
     {k==='Shields'&&outfitting&&<small className="science-status-caption">{outfitting.shieldClass===0?'Not installed':shipStatus?.shields===0?'Depleted':outfitting.shieldsRaised?'Raised':'Standby'}</small>}

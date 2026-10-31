@@ -27,6 +27,12 @@ Run `npm run check:security` after dependency changes. When an upstream fix is
 available, review it, upgrade and retire this guard with the same adversarial and
 build regressions; do not delete it solely to make installation succeed.
 
+The October 29 recheck passed all 68 guard cases across both installed copies.
+The current npm audit reports zero advisories in its database, while the separate
+Snyk advisory still lists no fixed release. This project-specific mitigation is
+enabled; the upstream advisory is not claimed closed. See the
+[latest regression/security verification](VERIFICATION_2026-10-29-REGRESSION.md).
+
 ## Windows tester server
 
 The server still binds only to 127.0.0.1 with strict Host checking and read-only

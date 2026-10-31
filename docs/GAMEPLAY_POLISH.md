@@ -23,6 +23,13 @@ recorded voices. It introduces no save schema or migration.
   Time simulation, calendar rules and saved date fields remain unchanged.
 - Production supports lossless ship-image derivatives, loaded on demand through
   the existing bounded image cache. All 3,672 masters remain in the source library.
+- Science Analysis and Ship status use distinct contextual instruments instead
+  of repeating the planet or ship portrait. Unknown analysis stays hidden, and
+  shield/sensor/fuel diagrams follow existing equipment states. Short-screen card
+  grids scroll so the illustrations remain readable.
+- Import/export save-code fields disable wrapping and spelling assistance to
+  reduce stalls with multi-megabyte payloads. Full save text, decoded size limits,
+  validation, slot storage and export behavior remain unchanged.
 
 The verified optimized library contains 3,671 WebP images and one original PNG.
 Its size is 1,005,389,624 bytes compared with 1,550,595,355 original bytes: a
@@ -37,8 +44,10 @@ Tailwind's source scan, restoring its responsive utility classes.
 Validation uses unit regressions, resource checks and physically muted browsers
 with fictional fixtures and disposable storage. Screenshots and detailed local
 receipts are kept under the ignored artifacts/gameplay-polish-20261028/ directory.
-The local checks passed 10,801 assertions across 35 suites, six image-cache checks,
+The initial polish checks passed 10,801 assertions across 35 suites, six image-cache checks,
 87 native save cases and the production browser/layout/resource checks.
 The [October 29 verification](VERIFICATION_2026-10-29.md) covers the labeled clock
 and current source update. The rebuilt private Windows tester now includes these
-changes; see its [package verification](VERIFICATION_2026-10-29-WINDOWS.md).
+changes. The later Science/save-editor revision passed 10,833 assertions across
+36 suites, the full 87-case adversarial save run and focused large-code boundary
+checks. See the [latest source/package verification](VERIFICATION_2026-10-29-REGRESSION.md).

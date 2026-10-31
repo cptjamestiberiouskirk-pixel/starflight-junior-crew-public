@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-DKzV7Laz.js",
-    "sha256": "b2c06a652b1afe7f61226edea345fa68d4f58dc4b4ea0754ced8846b707b98a8"
+    "entry": "assets/index-Ctojkw-U.js",
+    "sha256": "af2034d02bc893b3f62175b92e866588f1a8b46c9494b2e246e00a8a0a6ff9f2"
   },
   "evidenceDate": "2026-10-29",
-  "scope": "Owner-requested private Windows tester: latest presentation improvements and expedition clock; extracted ZIP passed 7 launcher, 6 browser, 7 upgrade, 87 save, 16 clock, 53 server and 14 server-limit cases. Original time rules, assets and save format preserved.",
-  "evidence": "artifacts/windows-tester-20261029/REPORT.md"
+  "scope": "Owner-requested regression/adversarial/security fixes: technical import/export code fields disable wrapping and spelling assistance to avoid near-limit save editor stalls. Save format and limits unchanged. Focused real-browser size-boundary regression passed; package tests recorded separately.",
+  "evidence": "artifacts/windows-tester-20261029-save-editor/REPORT.md"
 }

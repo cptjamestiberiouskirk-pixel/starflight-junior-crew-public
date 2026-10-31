@@ -1,11 +1,14 @@
 # Source snapshot and verification
 
-October 29 local tester update: the rebuilt private Windows x64 ZIP now includes
-the latest presentation improvements and labeled Expedition clock. Its extracted
-package passed native launcher/browser checks, previous-version save continuation,
-87 save cases, 16 clock cases and server regressions. The private preview retains
-port 4174 and the tester retains port 4188; existing browser save origins are
-unchanged. See [package verification](docs/VERIFICATION_2026-10-29-WINDOWS.md).
+October 29 latest update: distinct Science Analysis/Ship status illustrations and
+scrolling compact cards are included, along with a fix for multi-megabyte save-code
+editor stalls. The source passed 10,833 regression assertions, all 87 adversarial
+save cases, security guards, TypeScript and build/resource checks. A permanent
+browser test covers size-boundary responsiveness, slot preservation, exact-limit
+import and export recovery. The rebuilt private Windows tester passed native
+launcher/browser and previous-version continuation checks. The private preview
+retains port 4174 and the tester retains port 4188; browser save origins and
+formats are unchanged. See the [current verification](docs/VERIFICATION_2026-10-29-REGRESSION.md).
 
 October 28 update: the maintainer authorized source availability at
 https://github.com/cptjamestiberiouskirk-pixel/starflight-junior-crew-public.
