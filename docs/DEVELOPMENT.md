@@ -52,6 +52,15 @@ Do not present an old campaign result as a fresh test of a different build.
 The resource verifier checks original images, ship configurations, portrait
 atlases, local media/fonts, relative URLs and bundled notices.
 
+The [button audit tooling](../tools/button-audit/README.md) provides a separate
+instrumented development build for controlled boundary states. Never distribute
+that output or use it on the owner's save origin. Production browser regressions
+under `tools/windows-tester/` cover contextual actions, communications, navigation,
+the player loop and orbital motion without that state bridge. Each uses a muted,
+disposable profile; URL/evidence environment variables are declared in its script.
+The [latest package report](VERIFICATION_2026-10-31-PACKAGE.md) separates these
+checks from the prior broad audit and independent Windows acceptance.
+
 ### Large-save browser regression
 
 With the local Windows tester running, run

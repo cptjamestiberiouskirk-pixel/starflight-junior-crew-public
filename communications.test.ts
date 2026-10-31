@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {createAlienShip,DEFAULT_BASE_MOODS,generateAlienGroups,type AlienGroup,type AlienRace} from './alien';
 import {moodDisposition,encounterDisposition,moodDecides,postureMoodEffect,rememberedRaceMood,phraseLimit,impatientMoodDelta,alienQuestionDelta,originalCommCandidates,questionWait,newConversationClock,afterPlayerPhrase,playerDiplomaticStrength,alienDiplomaticStrength} from './utils/communications';
-import {restoreConversationClock,closeConversation,hailPostureEffect,playerPhraseEffect,nextUnansweredHail,responseSubject,nextLoreLine,nextTransmission,conversationEvent} from './utils/communications';
+import {restoreConversationClock,closeConversation,hailPostureEffect,playerPhraseEffect,nextUnansweredHail,responseSubject,nextLoreLine,nextTransmission,conversationEvent,hailRefusalMessage} from './utils/communications';
 import {selectCommLine} from './src/commData';
 import {PARSED_COMM_LINES} from './src/commData';
 import {flightEncounter} from './utils/encounters';
@@ -44,6 +44,20 @@ export function runCommunicationsTests() {
   }
   check(impatientMoodDelta('Mechans',48)===8&&impatientMoodDelta('Gazurtoid',26)===16&&impatientMoodDelta('Elowan',60)===32,'Impatience follows talk posture and fight bands');
   check(questionWait({remindersLeft:2},.01)==='wait'&&questionWait({remindersLeft:2},0)==='reminder'&&questionWait({remindersLeft:0},0)==='impatient','Ordinary timeout never creates a NO response');
+  check(questionWait({remindersLeft:0},10)==='wait'&&questionWait({remindersLeft:0},.01)==='wait','Final reminder accepts answers until its existing deadline');
+  const refused=group('Elowan',94);refused.posture='Obsequious';refused.ships=[createAlienShip('Elowan','Transport','unarmed-carrier',2,18)];
+  const refusalState=JSON.stringify(refused);
+  check(hailRefusalMessage(refused,false,94)?.includes('have broken off communications')===true,'Strong player can be refused without hostile fire');
+  check(!hailRefusalMessage(refused,true,94)?.includes('fire'),'Hostile unarmed/out-of-range fleets do not falsely claim shots');
+  check(hailRefusalMessage(group('Elowan',44),false,44)===null,'Neutral mood remains available for hailing');
+  check(hailRefusalMessage({...refused,hasSurrendered:true},true,94)===null,'Surrender overrides both original refusal conditions');
+  check(hailRefusalMessage({...refused,isHomeworldFleet:true},false,94)===null,'Peaceful homeworld exception remains available');
+  check(hailRefusalMessage({...refused,isHomeworldFleet:true},true,94)!==null,'Attacked hostile homeworld still refuses');
+  check(hailRefusalMessage(group('Thrynn',60),false,60)===null,'Abusive talk below fight threshold does not block hailing');
+  check(JSON.stringify(refused)===refusalState,'Refusal description never mutates diplomacy or combat state');
+  const timedOutMood=52+impatientMoodDelta('Elowan',52,20);
+  check(timedOutMood===60&&moodDisposition('Elowan',timedOutMood,20).fleet==='Obsequious'&&hailRefusalMessage(refused,false,timedOutMood)!==null,'Impatience can close a non-firing fleet without changing original mood rules');
+  check(alienQuestionDelta(9,true)===50&&alienQuestionDelta(9,false)===-4,'Elowan Thrynn-alliance answer retains original hostility changes');
   const mech=group('Mechans',48);
   check(originalCommCandidates(mech,14,'Neutral').map(l=>l.id).join(',')==='98,99,100,101,102,103,104,105,106','Neutral Mechans ask the original nine questions');
   check(!originalCommCandidates(mech,14,'Friendly').length&&originalCommCandidates(mech,15,'Friendly').some(l=>l.id===97),'A multi-posture termination line stays available without inventing friendly questions');

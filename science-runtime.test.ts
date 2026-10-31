@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import {advanceSystemFlight,systemFlightLimits,systemPlanetPosition,orbitShipAttitude,groundShipLabelPosition,hyperspaceArrival} from './utils/system-flight';
+import {advanceSystemFlight,systemFlightLimits,systemPlanetAngle,systemPlanetPosition,orbitShipAttitude,groundShipLabelPosition,hyperspaceArrival} from './utils/system-flight';
+import {planetAngularSpeed} from './utils/planet-orbits';
 import {scienceContacts} from './utils/science-visibility';
 import {beginPlanetScan,advancePlanetScan,analyzePlanetScan} from './utils/planet-scans';
 import {surveyPlanet,visibleSurveyContacts,validPlanetSurvey,surfaceSiteKind} from './utils/planet-survey';
@@ -29,6 +30,19 @@ export function runScienceRuntimeTests(){
  check(Math.hypot(start.currentX-later.currentX,start.currentY-later.currentY)>0,'Planets move along their orbits');
  for(const t of [0,1,20,100000]){const v=systemPlanetPosition(p,t);check(Math.abs(Math.hypot(v.currentX,v.currentY)-100)<1e-9,'Planet animation preserves physical orbital radius');}
  check(JSON.stringify(systemPlanetPosition(p,8))===JSON.stringify(systemPlanetPosition(p,8)),'Saved orbital clock reproduces location');
+ for(const star of UNIVERSE.stars)for(const planet of star.planets){
+  const speed=planetAngularSpeed(planet.orbitRadius);
+  check(speed>0&&Number.isFinite(speed),'Every canonical planet has finite prograde orbital motion');
+  check(Math.abs(speed*speed*Math.pow(planet.orbitRadius,3)-540)<1e-9,'Every orbit has the same normalized stellar gravitational parameter');
+  check(planet.orbitSpeed===speed,'New galaxies carry the Kepler rate without rounding');
+ }
+ const inner={...p,orbitRadius:60},outer={...p,orbitRadius:240};
+ check(Math.abs(planetAngularSpeed(60)/planetAngularSpeed(240)-8)<1e-12,'Four times farther takes eight times longer to orbit');
+ check(Math.abs((systemPlanetAngle(inner,12)-systemPlanetAngle(inner,0))/(systemPlanetAngle(outer,12)-systemPlanetAngle(outer,0))-8)<1e-10,'Actual positions use the Kepler ratio even with legacy serialized speeds');
+ check(Math.abs(systemPlanetAngle(p,0)-(.7+.1*.2))<1e-12,'Legacy epoch offset remains intact');
+ for(const t of [NaN,Infinity,-1])check(JSON.stringify(systemPlanetPosition(p,t))===JSON.stringify(start),'Invalid animation times use the epoch safely');
+ for(const t of [1e9,1e100,Number.MAX_VALUE]){const v=systemPlanetPosition(p,t);check(Number.isFinite(v.currentX)&&Math.abs(Math.hypot(v.currentX,v.currentY)-100)<1e-8,'Long-running clocks stay finite and on the orbit');}
+ for(const radius of [NaN,Infinity,-1,0,Number.MIN_VALUE])check(planetAngularSpeed(radius)===0,'Invalid or underflow-scale radii do not produce invalid angular rates');
  const front=orbitShipAttitude(0),side=orbitShipAttitude(Math.PI/2);
  check(front.heading!==side.heading&&front.bank!==side.bank,'Actual model heading and bank follow orbital phase');
  check(front.cameraElevation>0&&front.cameraElevation<Math.PI/2,'Orbit camera is angled, not top-down');

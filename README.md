@@ -28,10 +28,11 @@ is supplied privately by the maintainer; no public binary download or hosted
 game is included. See [release readiness](docs/RELEASE_READINESS.md) for remaining
 package, device and independent-machine checks.
 
-The October 29 tester includes distinct Science illustrations, a fix for large
-save-code editor stalls, the Expedition clock, server security hardening and
-verified save continuation from the previous tester. See the
-[verification summary](docs/VERIFICATION_2026-10-29-REGRESSION.md)
+The October 31 tester includes clearer contextual buttons, Elowan portrait and
+communications fixes, stationary Maneuver entry/exit, home-course guidance,
+thin planetary atmosphere rims and Kepler-based orbital speeds. It retains
+the Science illustrations, large-save editor fix and Expedition clock. See the
+[verification summary](docs/VERIFICATION_2026-10-31-PACKAGE.md)
 for its build identity, checks and remaining security/release limits. The ZIP
 remains a private, locally supplied artifact; it is not hosted in this repository.
 
@@ -43,8 +44,11 @@ status now use distinct contextual instruments, with scrolling cards on short
 screens. Large save codes retain their full content without expensive wrapping
 or spelling assistance. See the
 [October 29 verification](docs/VERIFICATION_2026-10-29.md) and
-[presentation improvements](docs/GAMEPLAY_POLISH.md). The rebuilt private October
-29 tester includes these updates.
+[presentation improvements](docs/GAMEPLAY_POLISH.md). The rebuilt private tester
+includes these updates. See the [button audit](docs/VERIFICATION_2026-10-30-BUTTONS.md),
+[communications/navigation checks](docs/VERIFICATION_2026-10-30-CONTROLS.md),
+[player journey](docs/VERIFICATION_2026-10-30-PLAYTEST.md) and
+[orbital model](docs/VERIFICATION_2026-10-31-PLANET-ORBITS.md) for the latest scope.
 
 ## What you can do
 

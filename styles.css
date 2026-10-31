@@ -431,6 +431,10 @@ button, input, select, textarea { font: inherit; }
 .upgrade-comparison dt{color:#94a3b8;font-size:11px}.upgrade-comparison dd{color:#e2e8f0;margin:0}.upgrade-comparison strong{color:#a5f3fc}
 .crew-transmission{display:flex;gap:10px;align-items:center;border:1px solid #0e7490;border-radius:10px;padding:9px;background:#082032;color:#f1f5f9;font:14px/1.5 Rajdhani,sans-serif}
 .crew-transmission strong{color:#fcd34d}.crew-transmission p{margin:2px 0 0}.transmitting-portrait{flex-shrink:0;animation:crew-transmit-focus 1.8s ease-in-out infinite}
+/* Disabled actions must never advertise readiness through their own animation
+   or a pulsing wrapper. Status indicators elsewhere retain their alerts. */
+button:disabled{opacity:.45;cursor:not-allowed}
+button:disabled,button:disabled *,.animate-pulse:has(button:disabled),.animate-bounce:has(button:disabled){animation:none!important}
 .dialogue-subtitle{padding:12px;border-left:3px solid #67e8f9;border-radius:4px;background:#020617d9;max-width:78ch}
 @keyframes crew-transmit-focus{50%{filter:brightness(1.14);transform:translateY(-1px)}}
 @media(prefers-reduced-motion:reduce){.transmitting-portrait{animation:none}}

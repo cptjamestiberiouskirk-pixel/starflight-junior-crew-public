@@ -30,8 +30,25 @@ export function drawPlanetWeather(ctx:CanvasRenderingContext2D,x:number,y:number
 }
 
 /** Render outside the caller's planet clip: otherwise the entire outer rim disappears. */
-export function drawPlanetAtmosphere(ctx:CanvasRenderingContext2D,x:number,y:number,r:number,p:Planet,zoom=1){
+export function systemAtmosphereRim(p:Planet,zoom=1){
+ const style=planetWeatherStyle(p),z=Number.isFinite(zoom)?Math.max(.1,zoom):1;
+ return {width:style.density?(.55+.55*style.density)/z:0,opacity:style.density?(.18+.3*style.density):0,tint:style.tint};
+}
+export function drawPlanetAtmosphere(ctx:CanvasRenderingContext2D,x:number,y:number,r:number,p:Planet,zoom=1,sunAngle?:number){
  const style=planetWeatherStyle(p);if(!style.density||r<=0)return;
+ if(sunAngle!==undefined){
+  // Screen-space width stays <= 1.1 px even for dense atmospheres at high zoom.
+  // Scattering falls smoothly toward the night side instead of a neon half-ring.
+  const rim=systemAtmosphereRim(p,zoom),width=Math.min(r*.06,rim.width);
+  ctx.save();ctx.strokeStyle=rim.tint;ctx.lineWidth=width;ctx.shadowBlur=0;
+  for(let i=0;i<64;i++){
+   const a=i*Math.PI*2/64,b=(i+1)*Math.PI*2/64;
+   const light=Math.max(0,Math.cos((a+b)/2-sunAngle));
+   ctx.globalAlpha=rim.opacity*(.06+.94*light);
+   ctx.beginPath();ctx.arc(x,y,r+width*.3,a,b+.002);ctx.stroke();
+  }
+  ctx.restore();return;
+ }
  const width=Math.max(2.5/Math.max(.1,zoom),r*(.045+.045*style.density));
  ctx.save();const halo=ctx.createRadialGradient(x,y,r-width*.25,x,y,r+width);
  halo.addColorStop(0,'transparent');halo.addColorStop(.25,style.tint);halo.addColorStop(1,'transparent');

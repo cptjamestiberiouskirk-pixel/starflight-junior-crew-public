@@ -84,9 +84,10 @@ with the project owner.
 ## Package status
 
 Tester ZIPs are built and validated locally and provided privately. The current
-October 29 save-editor rebuild fixes stalls with large save codes and includes
-distinct Analysis and Ship status graphics, readable scrolling cards on short
-screens, the presentation improvements, labeled
+October 31 rebuild includes contextual button availability and blinking fixes,
+Elowan portrait/communications corrections, stopped Maneuver transitions,
+home-course guidance and Kepler orbital speeds with thin atmospheric rims.
+It also retains the large-save editor fix, distinct Science graphics, labeled
 Expedition clock, optimized lossless ship images and hardened server.
 The previous-to-current upgrade preserved an existing test browser save at the
 same address without re-import. Use the same browser/profile and exit the old
@@ -94,7 +95,7 @@ tray server before launching the updated package.
 
 Source synchronization does not upload the ZIP, create a GitHub Release or
 deploy a website. Check `BUILD-INFO.json` for the package's exact compiled-build
-identity; see the [Windows verification summary](docs/VERIFICATION_2026-10-29-REGRESSION.md) for the
+identity; see the [Windows verification summary](docs/VERIFICATION_2026-10-31-PACKAGE.md) for the
 current package hash and actual tests. Keep all bundled third-party notices.
 
 See the [personal-use license](LICENSE.md) and [credits](CREDITS.md).

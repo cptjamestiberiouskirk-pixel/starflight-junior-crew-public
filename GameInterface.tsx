@@ -256,6 +256,9 @@ import type { GameInterfaceScope, BridgeConsoleSubmenu, CrewMember, CrewPost, Ga
 // Presentation only. State, hooks, simulation and save ownership stay in App.
 export function renderGameInterface(scope: GameInterfaceScope) {
   const {
+    buttonActions,
+    spaceActions,
+    isArthDestroyed,
     ALIEN_TERRITORIES,
     Activity,
     AlertTriangle,
@@ -1047,19 +1050,20 @@ export function renderGameInterface(scope: GameInterfaceScope) {
         <DevUiTag id="#flight-hud-top" />
         {/* Left Status Identifiers & Gauges */}
         <div className="flex flex-wrap items-center gap-2 md:gap-3">
-          <span className="font-extrabold text-cyan-300 flex items-center gap-1.5 text-sm md:text-base tracking-wide neon-glow-cyan">
+          <span title="ISS — Interstel Superphotonic Starship; registered vessel name" className="font-extrabold text-cyan-300 flex items-center gap-1.5 text-sm md:text-base tracking-wide neon-glow-cyan">
             <DevUiTag id="#ship-name-label" color="cyan" />
             <Rocket size={16} className="text-yellow-400 shrink-0" />
             {shipName || 'UNNAMED VESSEL'}
           </span>
-          <span className="bg-slate-900/90 border border-amber-500/50 px-2.5 py-0.5 rounded text-amber-300 font-bold flex items-center gap-1 font-mono">
+          <span title="M.U. — Monetary Units (available credits)" className="bg-slate-900/90 border border-amber-500/50 px-2.5 py-0.5 rounded text-amber-300 font-bold flex items-center gap-1 font-mono">
             <DevUiTag id="#badge-funds" color="yellow" />
             <Coins size={13} className="shrink-0" />
             {credits.toLocaleString()} M.U.
           </span>
           <span
+            title="LOC — Current location"
             className={`px-2.5 py-0.5 rounded font-bold uppercase tracking-wider text-[11px] ${
-              gameLocation === 'Encounter'
+              spaceActions.underAttack
                 ? 'bg-red-950 border border-red-500 text-red-300 animate-pulse'
                 : 'bg-blue-950/80 border border-cyan-800 text-cyan-300'
             }`}
@@ -1067,7 +1071,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             <DevUiTag id="#badge-location" color="pink" />
             LOC: {gameLocation}
           </span>
-          <span className="bg-slate-950 border border-slate-800 px-2 py-0.5 rounded text-yellow-400 font-bold font-mono text-[11px]">
+          <span title="POS — Galactic position [X, Y]" className="bg-slate-950 border border-slate-800 px-2 py-0.5 rounded text-yellow-400 font-bold font-mono text-[11px]">
             <DevUiTag id="#badge-galaxy-coords" color="emerald" />
             POS: {fluxDisorientationTimer > 0
               ? `[${scrambledCoords.x}, ${scrambledCoords.y}]`
@@ -1078,22 +1082,22 @@ export function renderGameInterface(scope: GameInterfaceScope) {
           {/* Quick Vital Gauges (Hull / Shield / Armor / Fuel) */}
           <div className="flex flex-wrap items-center gap-1 sm:gap-2 bg-slate-950/80 border border-slate-800 px-2.5 py-0.5 rounded-lg text-[10px] sm:text-[11px] font-mono">
             <DevUiTag id="#gauges-vital-vessel" />
-            <span className="flex items-center gap-1" title="Hull Integrity">
+            <span className="flex items-center gap-1" title="H — Hull integrity points">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
               <strong className={hullIntegrity <= 50 ? 'text-red-400' : 'text-emerald-300'}>H:{+hullIntegrity.toFixed(2)}</strong>
             </span>
             <span className="text-slate-600">|</span>
-            <span className="flex items-center gap-1" title="Shield Points">
+            <span className="flex items-center gap-1" title="S — Shield points">
               <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0" />
               <strong className={shieldsRaised ? 'text-cyan-300' : 'text-slate-500'}>S:{playerShieldPoints}</strong>
             </span>
             <span className="text-slate-600">|</span>
-            <span className="flex items-center gap-1" title="Armor Points">
+            <span className="flex items-center gap-1" title="A — Armor points">
               <span className="w-2 h-2 rounded-full bg-yellow-400 shrink-0" />
               <strong className="text-yellow-300">A:{playerArmorPoints}</strong>
             </span>
             <span className="text-slate-600">|</span>
-            <span className="flex items-center gap-1" title="Endurium Fuel">
+            <span className="flex items-center gap-1" title="F — Endurium fuel; m³ — cubic meters">
               <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
               <strong className="text-amber-300">F:{enduriumFuel.toFixed(1)}m³</strong>
             </span>
@@ -1112,7 +1116,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
           <ExpeditionClock value={formattedClock}/>
 
           {gameLocation === 'Star System' && nearbyPlanet?.isHomeworld && (
-            <button
+            <button title={buttonActions.dock?'Dock with Starport Arth':'Starport Arth is unavailable'} disabled={!buttonActions.dock}
               onClick={dockWithStarport}
               className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-black flex items-center gap-1 shadow-lg animate-pulse"
             >
@@ -1132,7 +1136,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
           )}
 
           {gameLocation === 'In Orbit' && (
-            <button
+            <button disabled={!buttonActions.landingScreen}
               onClick={handleOpenLandingScreen}
               className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 rounded text-xs font-black flex items-center gap-1 shadow-lg animate-pulse"
             >
@@ -1353,7 +1357,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     >
                       ◀
                     </button>
-                    <button
+                    <button disabled={!nearbyConcourseDoor}
                       onClick={() => {
                         if (nearbyConcourseDoor) {
                           handleEnterDoor(nearbyConcourseDoor.index);
@@ -1956,6 +1960,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={handleAcknowledgeCurrent}
+                                  disabled={!!currentEval?.read&&safeEvalIdx>=totalEvals-1}
                                   className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl font-black text-xs shadow flex items-center gap-1"
                                 >
                                   <Check size={13} />
@@ -1963,6 +1968,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 </button>
                                 <button
                                   onClick={handleMarkAllRead}
+                                  disabled={!evaluations.some(e=>!e.read)}
                                   className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-3 py-1.5 rounded-xl font-bold text-xs"
                                 >
                                   [Mark All Read]
@@ -2238,7 +2244,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-emerald-900/60">
                       <div className="flex flex-wrap items-center gap-2">
                         {/* 1. [Create] */}
-                        <button
+                        <button disabled={crewRoster.length>=25}
                           onClick={() => {
                             setIsCreatingCrewModal(true);
                             setNewCrewNameInput('');
@@ -2416,7 +2422,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                             >
                               Cancel
                             </button>
-                            <button
+                            <button disabled={!newCrewNameInput.trim()||newCrewNameInput.trim().length>14||crewRoster.length>=25}
                               onClick={handleCreateRecruit}
                               className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl font-black text-xs shadow-lg"
                             >
@@ -2728,7 +2734,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 setShipConfigMessage(`Installed Cargo Pod #${nextPods} (-500 M.U.).`);
                                 handleSaveToSlot(activeSlot, { cargoPods: nextPods, credits: nextCreds });
                               }}
-                              disabled={cargoPods >= 16}
+                              disabled={cargoPods>=16||credits<500}
                               className="bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-slate-950 px-3 py-1.5 rounded-xl font-black text-xs shadow"
                             >
                               + Pod (500 M.U.)
@@ -2756,7 +2762,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 </div>
 
                                 {nextPart ? (
-                                  <button
+                                  <button disabled={credits<nextPart.buy}
                                     onClick={() => {
                                       if (credits < nextPart.buy) {
                                         setShipConfigMessage(`Insufficient funds for ${nextPart.name} (${nextPart.buy.toLocaleString()} M.U. required).`);
@@ -2824,7 +2830,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 setShipConfigMessage('Sold Cargo Pod (+500 M.U.).');
                                 handleSaveToSlot(activeSlot, { cargoPods: nextPods, credits: nextCreds });
                               }}
-                              disabled={cargoPods <= 0}
+                              disabled={!canRemoveCargoPod(cargoPods,shipCargoVolume(enduriumFuel,cargoHold,artifactsInHold,specimensInHold))}
                               className="bg-amber-700 hover:bg-amber-600 disabled:opacity-40 text-white px-3 py-1.5 rounded-xl font-bold text-xs"
                             >
                               Sell Pod (+500 M.U.)
@@ -2963,7 +2969,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 )}
                               </div>
 
-                              <button
+                              <button disabled={credits<repairBreakdown.totalCost}
                                 onClick={() => {
                                   if (credits < repairBreakdown.totalCost) {
                                     setShipConfigMessage(`Insufficient funds to repair ship (${repairBreakdown.totalCost.toLocaleString()} M.U. required).`);
@@ -3039,7 +3045,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           >
                             Cancel
                           </button>
-                          <button
+                          <button disabled={!shipNameInput.trim()}
                             onClick={() => {
                               const trimmed = shipNameInput.trim();
                               if (!trimmed) {
@@ -3308,7 +3314,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                               <p className="text-[11px] text-slate-300 line-clamp-1">{comm.desc}</p>
 
                               <div className="flex gap-2 pt-1 border-t border-slate-800">
-                                <button
+                                <button disabled={clampPurchaseQuantity(tradeQuantity,credits,comm.buyPrice,freeHoldSpace)<0.1}
                                   onClick={() => handleBuyCommodity(comm, tradeQuantity)}
                                   aria-label={`Buy ${tradeQuantity.toFixed(1)} m³ ${comm.name}`}
                                   className="flex-1 bg-cyan-700 hover:bg-cyan-600 text-white py-1.5 rounded-xl font-black text-xs shadow flex items-center justify-center gap-1"
@@ -3341,7 +3347,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 <div className="flex items-center justify-between gap-2"><strong className="text-cyan-200 text-xs">{entry.artifact.appraised?entry.artifact.realName:entry.artifact.codeName}</strong><span className="text-[10px] text-slate-400">{entry.artifact.volume} m³</span></div>
                                 <p className="text-[11px] text-slate-300">{entry.artifact.description}</p>
                                 <div className="flex items-center justify-between gap-2"><span className="text-xs text-amber-300 font-mono">{entry.price.toLocaleString()} M.U.</span>
-                                  <button className="bg-cyan-700 hover:bg-cyan-600 text-white px-3 py-1 rounded-lg font-black text-xs"
+                                  <button disabled={credits<entry.price||freeHoldSpace+1e-9<entry.artifact.volume} className="bg-cyan-700 hover:bg-cyan-600 text-white px-3 py-1 rounded-lg font-black text-xs"
                                     aria-label={`Buy ${entry.artifact.realName}`}
                                     onClick={()=>{
                                       const occupied=shipCargoVolume(enduriumFuelFrameRef.current,cargoHoldFrameRef.current,artifactsInHoldRef.current,specimensInHoldRef.current);
@@ -3380,7 +3386,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                                 <div className="flex gap-2 items-center justify-between pt-2 border-t border-slate-800">
                                   {!art.appraised ? (
-                                    <button
+                                    <button disabled={credits<500}
                                       onClick={() => {
                                         if(art.appraised) return;
                                         if (creditsLiveRef.current < 500) {
@@ -3520,9 +3526,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   )}
 
                   {/* Primary Launch Action Button */}
-                  <button
+                  <button title={buttonActions.departureReason||'Clear the gantry and launch'}
                     onClick={handleDockingBayLaunch}
-                    disabled={isReleasingClamps}
+                    disabled={!buttonActions.departure}
                     className={`w-full py-2.5 rounded-xl font-black text-xs md:text-sm shadow-2xl flex items-center justify-center gap-2 transition ${
                       isReleasingClamps
                         ? 'bg-amber-600 text-amber-100 border border-amber-400 animate-pulse cursor-wait'
@@ -3707,13 +3713,13 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
-                        <button
+                        <button disabled={landingLat>=90}
                           onClick={() => setLandingLat((l) => Math.min(90, l + 5))}
                           className="bg-slate-900 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded text-xs font-bold hover:bg-slate-800"
                         >
                           +5° Lat ▲
                         </button>
-                        <button
+                        <button disabled={landingLat<=-90}
                           onClick={() => setLandingLat((l) => Math.max(-90, l - 5))}
                           className="bg-slate-900 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded text-xs font-bold hover:bg-slate-800"
                         >
@@ -3743,7 +3749,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         >
                           Cancel / Orbit ↩
                         </button>
-                        <button
+                        <button title={buttonActions.descent?'Begin atmospheric descent':'Descent requires a solid surface, safe gravity and sufficient fuel'} disabled={!buttonActions.descent}
                           onClick={handleInitiateDescent}
                           className="bg-linear-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 px-6 py-2 rounded-xl font-black text-xs shadow-xl flex items-center gap-1.5 animate-pulse"
                         >
@@ -3769,7 +3775,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs [&_button:disabled]:opacity-40 [&_button:disabled]:cursor-not-allowed">
                       <button
                         onClick={handleDisembarkRover}
-                        disabled={vehicleDestroyed}
+                        disabled={!buttonActions.disembark}
                         className="bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white p-2.5 rounded-xl font-black shadow-lg flex items-center justify-center gap-1.5"
                       >
                         <Truck size={15} />
@@ -3777,7 +3783,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       </button>
                       <button
                         onClick={handleLaunchFromPlanet}
-                        disabled={enduriumFuel<calculatedLandingFuel}
+                        disabled={!buttonActions.ascent}
                         className="bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white p-2.5 rounded-xl font-black shadow-lg flex items-center justify-center gap-1.5"
                       >
                         <Rocket size={15} />
@@ -3850,7 +3856,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         <div className="grid grid-cols-3 gap-2 w-full flex-none md:w-auto md:flex-1 [&>button]:min-h-11">
                           <button
                             onClick={handleFireSurfaceWeapon}
-                            disabled={!currentSurfaceState||vehicleDestroyed||(vehicleWeapon==='Laser'&&!miningSession&&!miningActionAvailable(currentSurfaceState,vehicleX,vehicleY,vehicleHold.reduce((v,i)=>v+i.volume,0),vehicleFuel,miningTargetId))}
+                            disabled={!buttonActions.roverFire}
                             className={`p-2.5 rounded-xl font-black shadow flex items-center justify-center gap-1.5 text-white animate-pulse ${
                               vehicleWeapon === 'Stunner' ? 'bg-blue-600 hover:bg-blue-500 border border-blue-400' : 'bg-red-600 hover:bg-red-500 border border-red-400'
                             }`}
@@ -3881,7 +3887,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         </div>
                       ) : roverCargoSubmenuOpen ? (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full flex-none md:w-auto md:flex-1 [&>button]:min-h-11">
-                          <button disabled={!surfacePickupAvailable(currentSurfaceState,vehicleX,vehicleY,vehicleHold.reduce((v,i)=>v+i.volume,0))}
+                          <button disabled={!buttonActions.roverPickup}
                             onClick={() => {
                               handlePickUpNearby();
                               setRoverCargoSubmenuOpen(false);
@@ -3936,7 +3942,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           </button>
 
                           {/* 2. Move */}
-                          <button disabled={vehicleFuel<=0||vehicleDestroyed}
+                          <button disabled={!buttonActions.roverMove}
                             onClick={() => {
                               addMessage('Driving Mode: Steer terrain rover with WASD or Arrow keys.', 'Captain', 'info');
                               gameAudio.playCrispClick();
@@ -3998,7 +4004,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                       {/* Board Starship Button if near ship */}
                       {(vehicleFuel <= 0 || vehicleDestroyed) && (
-                        <button
+                        <button disabled={!spaceActions.distress}
                           onClick={handleRequestDistressTow}
                           className="bg-red-800 hover:bg-red-700 border border-red-500 text-white px-3.5 py-2 rounded-xl font-black shadow-lg flex items-center justify-center gap-1"
                         >
@@ -4019,7 +4025,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       {/* Mobile Virtual D-Pad for Rover Steering */}
                       {isMobile && (
                         <div className="flex items-center gap-1.5 ml-auto touch-none">
-                          <button
+                          <button disabled={!buttonActions.roverMove}
                             onPointerDown={() => setActiveDirectionVector({ dx: -1, dy: 0 })}
                             onPointerUp={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
                             onPointerLeave={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
@@ -4028,7 +4034,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                             ◀
                           </button>
                           <div className="flex flex-col gap-1">
-                            <button
+                            <button disabled={!buttonActions.roverMove}
                               onPointerDown={() => setActiveDirectionVector({ dx: 0, dy: -1 })}
                               onPointerUp={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
                               onPointerLeave={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
@@ -4036,7 +4042,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                             >
                               ▲
                             </button>
-                            <button
+                            <button disabled={!buttonActions.roverMove}
                               onPointerDown={() => setActiveDirectionVector({ dx: 0, dy: 1 })}
                               onPointerUp={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
                               onPointerLeave={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
@@ -4045,7 +4051,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                               ▼
                             </button>
                           </div>
-                          <button
+                          <button disabled={!buttonActions.roverMove}
                             onPointerDown={() => setActiveDirectionVector({ dx: 1, dy: 0 })}
                             onPointerUp={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
                             onPointerLeave={() => setActiveDirectionVector({ dx: 0, dy: 0 })}
@@ -4144,7 +4150,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 {activeConsoleMenu === 'Command' && (
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {gameLocation === 'In Orbit' && (
-                      <button
+                      <button disabled={!buttonActions.landingScreen}
                         onClick={handleOpenLandingScreen}
                         className="bg-amber-600 hover:bg-amber-500 border border-amber-300 text-slate-950 p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1 animate-pulse"
                       >
@@ -4154,14 +4160,14 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     )}
                     {gameLocation === 'On Planet' && (
                       <>
-                        <button
+                        <button disabled={!buttonActions.ascent}
                           onClick={handleLaunchFromPlanet}
                           className="bg-cyan-600 hover:bg-cyan-500 border border-cyan-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1"
                         >
                           <Rocket size={14} />
                           [Launch]
                         </button>
-                        <button
+                        <button disabled={!buttonActions.disembark}
                           onClick={handleDisembarkRover}
                           className="bg-emerald-600 hover:bg-emerald-500 border border-emerald-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1"
                         >
@@ -4219,14 +4225,14 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 {activeConsoleMenu === 'Science' && (
                   <div className="science-console-content flex flex-col gap-2">
                     {gameLocation!=='In Orbit'&&<div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      <button
+                      <button disabled={!buttonActions.sensors}
                         onClick={handleScanSensors}
                         className="bg-cyan-700 hover:bg-cyan-600 border border-cyan-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5"
                       >
                         <Eye size={14} />
                         [Sensors]
                       </button>
-                      <button
+                      <button disabled={!buttonActions.sensors}
                         onClick={() => {
                           if (checkMalfunction('Sensors')) return;
                           let analysisText = '';
@@ -4246,7 +4252,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         <Search size={14} />
                         [Analysis]
                       </button>
-                      <button
+                      <button disabled={!buttonActions.sensors}
                         onClick={() => {
                           if (checkMalfunction('Sensors')) return;
                           const statusText = `SHIP STATUS: Hull ${hullIntegrity.toFixed(0)} • Shields ${playerShieldPoints.toFixed(0)} • Armor ${playerArmorPoints.toFixed(0)} • Fuel ${enduriumFuel.toFixed(1)}m³ • Sensors ${subsystems.Sensors}%.`;
@@ -4268,6 +4274,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </div>}
 
                     {gameLocation==='In Orbit' && orbitPlanetIndex!==null && <PlanetarySensors
+                      landingAvailable={buttonActions.landingScreen}
                       planet={currentPlanets[orbitPlanetIndex]} scan={planetaryScan} onScan={handleScanSensors}
                       onAnalyze={handlePlanetAnalysis} officer={scienceOfficer??undefined} sensorHealth={inoperativeSystems.Sensors?0:subsystems.Sensors}
                       surface={planetSurfacesRef.current[planetKey(currentStar.x,currentStar.y,currentPlanets[orbitPlanetIndex].orderIndex)]} planetSeed={(currentStar.x*73856093)^(currentStar.y*19349663)^(currentPlanets[orbitPlanetIndex].slot*83492791)}
@@ -4287,8 +4294,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                 {/* 3. NAVIGATION (NAVIGATOR) CONSOLE */}
                 {activeConsoleMenu === 'Navigation' && (
-                  <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-6 gap-2 [&_button:disabled]:opacity-40 [&_button:disabled]:cursor-not-allowed">
                     <button
+                      disabled={!spaceActions.maneuver}
                       onClick={() => {
                         if (gameLocation === 'In Orbit') breakOrbit();
                         else handleStartManeuver();
@@ -4320,6 +4328,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </button>
                     <button
                       onClick={handleToggleShields}
+                      disabled={!spaceActions.shields}
                       className={`p-2.5 rounded-xl font-bold text-xs border flex items-center justify-center gap-1.5 transition ${
                         shieldsRaised ? 'bg-cyan-600 border-cyan-300 text-white shadow-[0_0_10px_#00f0ff]' : 'bg-slate-900 border-cyan-700 text-cyan-300'
                       }`}
@@ -4329,22 +4338,26 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </button>
                     <button
                       onClick={handleToggleWeapons}
+                      disabled={!spaceActions.weapons}
                       className={`p-2.5 rounded-xl font-bold text-xs border flex items-center justify-center gap-1.5 transition ${
-                        weaponsArmed ? 'bg-red-600 border-red-300 text-white animate-pulse shadow-[0_0_10px_#ff2244]' : 'bg-slate-900 border-red-700 text-red-300'
+                        weaponsArmed ? 'bg-red-600 border-red-300 text-white' : 'bg-slate-900 border-red-700 text-red-300'
                       }`}
                     >
                       <Zap size={14} />
                       {weaponsArmed ? '[Disarm Weapons]' : '[Arm Weapons]'}
                     </button>
                     <button
+                      disabled={!spaceActions.combat}
+                      title={spaceActions.combat?'Tactical controls for this encounter':'Combat requires an alien encounter with a valid target'}
                       onClick={() => {
+                        if(!spaceActions.combat)return;
                         if (!weaponsArmed) {
                           handleToggleWeapons();
                         }
                         setActiveConsoleMenu('Combat');
                         gameAudio.playConfirmSelect();
                       }}
-                      className="bg-red-700 hover:bg-red-600 border border-red-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1 animate-pulse"
+                      className={`bg-red-700 enabled:hover:bg-red-600 border border-red-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1 ${spaceActions.underAttack?'animate-pulse':''}`}
                     >
                       <CrosshairIcon size={14} />
                       [Combat]
@@ -4552,7 +4565,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <button
                       onClick={handleInitiateComms}
-                      disabled={!!activeEncounterGroup?.conversation?.pendingHail}
+                      disabled={!spaceActions.hail}
                       className="bg-pink-700 hover:bg-pink-600 border border-pink-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5"
                     >
                       <Radio size={14} />
@@ -4560,6 +4573,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </button>
                     <button
                       onClick={handleRequestDistressTow}
+                      disabled={!spaceActions.distress}
                       className={`p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5 transition ${
                         gameLocation === 'Encounter' || (gameLocation === 'In Orbit' && currentStar.x === 192 && currentStar.y === 152 && orbitPlanetIndex === 0 && !hasCrystalOrb)
                           ? 'bg-slate-900 border border-slate-700 text-slate-400 opacity-60 cursor-not-allowed hover:bg-slate-900'
@@ -4670,7 +4684,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                             )}
 
                             {crew.alive && crew.vitality < 100 && (
-                              <button
+                              <button disabled={!buttonActions.treat}
                                 onClick={() => {
                                   setActivePatientId(isPatient ? null : crew.id);
                                   gameAudio.playPowerupChime();
@@ -4696,9 +4710,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 )}
 
                 {activeConsoleMenu === 'Combat' && (
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 [&_button:disabled]:opacity-40 [&_button:disabled]:cursor-not-allowed">
                     <button
                       onClick={handleCycleTarget}
+                      disabled={!spaceActions.combat}
                       className="bg-amber-700 hover:bg-amber-600 border border-amber-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5"
                     >
                       <CrosshairIcon size={14} />
@@ -4706,6 +4721,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </button>
                     <button
                       onClick={handleFireLaser}
+                      disabled={!spaceActions.laser}
                       className="bg-cyan-700 hover:bg-cyan-600 border border-cyan-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5"
                     >
                       <Zap size={14} />
@@ -4713,6 +4729,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </button>
                     <button
                       onClick={handleFireMissile}
+                      disabled={!spaceActions.missile}
                       className="bg-red-700 hover:bg-red-600 border border-red-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5"
                     >
                       <Rocket size={14} />
@@ -4750,7 +4767,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           {name:'west',dx:-1,dy:0,text:'◀'}, {name:'stop',dx:0,dy:0,text:'■'}, {name:'east',dx:1,dy:0,text:'▶'},
                           {name:'southwest',dx:-1,dy:1,text:'↙'}, {name:'south',dx:0,dy:1,text:'▼'}, {name:'southeast',dx:1,dy:1,text:'↘'},
                         ].map(direction => (
-                          <button
+                          <button disabled={(direction.dx!==0||direction.dy!==0)&&!spaceActions.maneuver}
                             key={direction.name}
                             aria-label={direction.name === 'stop' ? 'Stop motion' : `Fly ${direction.name}`}
                             onPointerDown={event => {
@@ -5452,22 +5469,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                             const pWidth = pHeight * (702 / 959); // ~104px
                             pCtx.drawImage(elowanPortraitImg, -pWidth / 2, -pHeight / 2 + breathing, pWidth, pHeight);
 
-                            // Talking mouth glow overlay
-                            if (isSpeaking) {
-                              pCtx.fillStyle = 'rgba(251, 191, 36, 0.4)';
-                              pCtx.beginPath();
-                              pCtx.ellipse(0, breathing + 18 + talkMouthShift, 6, 2.5 + Math.abs(talkMouthShift) * 0.8, 0, 0, Math.PI * 2);
-                              pCtx.fill();
-                            }
-
-                            // Blinking eyelid overlay
-                            if (isBlinking) {
-                              pCtx.fillStyle = '#14532d';
-                              pCtx.beginPath();
-                              pCtx.ellipse(-14, breathing - 8, 8, 4, 0, 0, Math.PI * 2);
-                              pCtx.ellipse(14, breathing - 8, 8, 4, 0, 0, Math.PI * 2);
-                              pCtx.fill();
-                            }
+                            // Keep the painted face intact. Generic mouth/eyelid
+                            // shapes do not align with this three-quarter portrait.
+                            // Its existing breathing motion remains animated.
                           } else {
                             // Botanical Elder Fallback
                             pCtx.fillStyle = '#166534';
@@ -5842,7 +5846,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           })()}
                           <div>
                             <span className="text-amber-300 font-bold block">
-                              {alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft===0?'The aliens have lost patience.':isQuestionReminderActive||alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft<2?'The aliens are waiting for your reply:':'Alien expects immediate response:'}
+                              {alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft===0&&questionCountdownTimer<=0?'The aliens have lost patience.':isQuestionReminderActive||alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft<2?'The aliens are waiting for your reply:':'Alien expects immediate response:'}
                             </span>
                             <span className="text-[10px] text-slate-400 font-mono">
                               {Math.ceil(questionCountdownTimer)}s remaining
@@ -5881,6 +5885,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       return (
                         <button
                           key={posture}
+                        disabled={!buttonActions.dialogue}
                           onClick={() => handleSelectPosture(posture)}
                           className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition ${
                             isSel
@@ -5902,6 +5907,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     {(['Themselves', 'Other Races', 'The Old Empire', 'The Ancients', 'General Info'] as DialogueSubject[]).map((subj) => (
                       <button
                         key={subj}
+                        disabled={!buttonActions.dialogue}
                         onClick={() => handleAskSubject(subj)}
                         className="bg-slate-900/90 hover:bg-cyan-900/60 border border-slate-700 hover:border-cyan-400 text-slate-200 p-2 rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-1"
                       >
@@ -6969,6 +6975,12 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               {([['West',-1,0],['East',1,0],['North',0,1],['South',0,-1]] as const).map(([name,dx,dy])=><button key={name} disabled={starmapZoom<=1} onClick={()=>setStarmapCenter({x:chartView.center.x+dx*30/starmapZoom,y:chartView.center.y+dy*30/starmapZoom})}>{name}</button>)}
             </div>
             {/* Interactive Holographic Canvas (Strict 1:1 Aspect Ratio: 250 x 220 bounds) */}
+            <div aria-label="Route home to Starport Arth" className="rounded-xl border border-amber-500/50 bg-slate-950/90 p-3 text-xs flex flex-wrap items-center justify-between gap-2">
+              <p className="min-w-0 flex-1"><strong className="text-amber-300">HOME · Starport Arth [125, 100]</strong><br />
+                {isArthDestroyed?'Starport Arth has been destroyed. Docking and distress recovery are unavailable.':'Fly to [125, 100] in hyperspace, enter the Arth system, approach planet Arth, then choose Dock.'}
+              </p>
+              <button disabled={isArthDestroyed||fluxDisorientationTimer>0} onClick={()=>{const home=UNIVERSE.stars.find(s=>s.x===125&&s.y===100);if(home){setStarmapSelectedStarId(home.id);setStarmapZoom(1);setStarmapCenter({x:125,y:110});}}} className="rounded-lg border border-amber-500 px-3 py-2 text-amber-300 disabled:opacity-40">Plot course home</button>
+            </div>
             <div className="starmap-chart w-full bg-[#030617] rounded-2xl border border-cyan-900/80 p-2 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
               <canvas
                 width={800}
@@ -7136,6 +7148,12 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       sCtx.stroke();
                     }
                   });
+
+                  // Persistent home marker, separate from the selected destination.
+                  sCtx.save();sCtx.translate(125*sScaleX,120*sScaleY);sCtx.scale(1/chartView.zoom,1/chartView.zoom);
+                  sCtx.strokeStyle=isArthDestroyed?'#94a3b8':'#fbbf24';sCtx.lineWidth=2;sCtx.strokeRect(-7,-7,14,14);
+                  sCtx.font='bold 11px monospace';sCtx.fillStyle='#030717';sCtx.fillRect(10,-9,128,18);
+                  sCtx.fillStyle=isArthDestroyed?'#94a3b8':'#fbbf24';sCtx.fillText(isArthDestroyed?'ARTH (DESTROYED)':'HOME · ARTH',14,4);sCtx.restore();
 
                   // Pulsing Ship Beacon
                   const shipMapX = galaxyShipX * sScaleX;
@@ -7335,7 +7353,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   >
                     [Describe]
                   </button>
-                  <button
+                  <button disabled={enduriumFuel<=1}
                     onClick={() => {
                       if (enduriumFuel <= 1.0) {
                         gameAudio.playErrorBuzz();
@@ -7528,7 +7546,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             </div>
 
             {/* Quick Pick Up Action Button inside Modal */}
-            <button
+            <button disabled={!buttonActions.roverPickup}
               onClick={() => {
                 handlePickUpNearby();
               }}
@@ -7999,6 +8017,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     [No] (Log Telemetry Only)
                   </button>
                   <button
+                    disabled={!buttonActions.recommend}
                     onClick={() => {
                       setColonyPromptStep('enter_name');
                       gameAudio.playConfirmSelect();
@@ -8044,6 +8063,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   </button>
                   <button
                     onClick={handleConfirmColonyRecommendation}
+                    disabled={!buttonActions.recommend}
                     className="flex-1 bg-linear-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 py-3 rounded-xl font-black shadow-xl"
                   >
                     [Submit Recommendation]
@@ -8591,7 +8611,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 Cancel
               </button>
 
-              <button
+              <button disabled={!importCodeInput.trim()}
                 type="button"
                 onClick={handleExecuteImport}
                 className="flex-1 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2.5 rounded-xl font-black text-xs shadow-xl flex items-center justify-center gap-2"
@@ -9611,7 +9631,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     ))}
                   </div>
 
-                  <button
+                  <button disabled={!crewRoster.some(c=>c.id===devSelectedCrewId)}
                     onClick={() =>
                       handleDevModifyCrew(
                         devSelectedCrewId,
@@ -9766,7 +9786,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       onChange={(e) => setDevTargetRange(parseFloat(e.target.value) || 1.0)}
                       className="w-28 bg-slate-900 border border-yellow-500 rounded-xl px-3 py-1.5 text-white font-mono font-bold text-center"
                     />
-                    <button
+                    <button disabled={!activeEncounterGroup?.ships[encounterTargetIndex]}
                       onClick={() => {
                         const tgt = activeEncounterGroup?.ships[encounterTargetIndex] || activeEncounterGroup?.ships[0];
                         if (tgt) {
@@ -9787,7 +9807,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                   <div className="flex flex-wrap gap-1.5">
                     {[1.0, 2.0, 3.0, 5.0, 8.0, 10.0, 12.0, 15.0].map((rVal) => (
-                      <button
+                      <button disabled={!activeEncounterGroup?.ships[encounterTargetIndex]}
                         key={rVal}
                         onClick={() => {
                           setDevTargetRange(rVal);
@@ -10053,7 +10073,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       placeholder="1-556 or crew:<hash>"
                       data-testid="voice-line-input"
                     />
-                    <button
+                    <button disabled={!devVoiceInput.trim()}
                       onClick={() => {
                         const trimmed = devVoiceInput.trim();
                         if (trimmed.startsWith('crew:') || (/^[0-9a-f]{8}$/i.test(trimmed) && isNaN(Number(trimmed)))) {
@@ -10073,7 +10093,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       <Play size={13} className="fill-current" />
                       Play
                     </button>
-                    <button
+                    <button disabled={devVoiceStatus!=='playing'}
                       onClick={() => {
                         stopAlienVoice();
                         stopCrewVoice();

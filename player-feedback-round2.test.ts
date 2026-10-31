@@ -1,7 +1,7 @@
 import terrainBaseline from './test-fixtures/terrain-baseline.json';
 import assert from 'node:assert/strict';
 import {starmapView} from './utils/starmap-view';
-import {planetWeatherStyle} from './utils/planet-weather';
+import {planetWeatherStyle,systemAtmosphereRim} from './utils/planet-weather';
 import {bayDockPose,bayLaunchPose,bayCameraFov} from './utils/bay-flight';
 import {clampGroundZoom,groundShipAnchor,returnToShipAvailable,miningPulse,surfacePickupAvailable,miningActionAvailable} from './utils/surface-presentation';
 import {getSurfaceElevation,surfaceElevationValue} from './surface';
@@ -14,6 +14,11 @@ export async function runFeedbackRound2Tests(){
  for(const a of ['None','Very Thin','Thin','Moderate','Thick','Very Thick'] as const){
   const calm=planetWeatherStyle({type:'Rock',gases:[],atmosphereDensity:a,weather:'None'}),storm=planetWeatherStyle({type:'Rock',gases:[],atmosphereDensity:a,weather:'Very Violent'});
   check(Number.isFinite(calm.cloudOpacity)&&calm.cloudOpacity>=0&&storm.cloudOpacity>=calm.cloudOpacity,'Cloud opacity follows density and weather, including empty gas lists');if(a==='None')check(storm.cloudOpacity===0&&storm.rimOpacity===0,'No invented atmosphere on airless worlds');
+  for(const zoom of [.1,.4,1,2,4]){
+   const rim=systemAtmosphereRim({type:'Rock',gases:[],atmosphereDensity:a,weather:'None'},zoom);
+   check(rim.width*zoom<=1.100001&&rim.opacity<=.48,'System atmosphere stays thin and restrained at every zoom and density');
+   if(a==='None')check(rim.width===0&&rim.opacity===0,'Airless map symbols never get an atmosphere');
+  }
  }
  for(const progress of [0,.25,.5,.75,1])for(const pose of [bayLaunchPose(progress),bayDockPose(progress)]){
   const dx=pose.camera[0]-pose.target[0],dy=pose.camera[1]-pose.target[1],dz=pose.camera[2]-pose.target[2],horizontal=Math.hypot(dx,dy);

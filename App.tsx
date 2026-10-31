@@ -10,7 +10,7 @@ import {clampGroundZoom,groundShipAnchor,returnToShipAvailable,surfacePickupAvai
 import {projectedPlanetTexture} from './utils/planet-globe-renderer';
 import {drawPlanetWeather,drawPlanetAtmosphere} from './utils/planet-weather';
 import {drawOrbitShip} from './utils/orbit-ship-renderer';
-import {advanceSystemFlight,systemPlanetPosition,groundShipLabelPosition,hyperspaceArrival} from './utils/system-flight';
+import {advanceSystemFlight,systemPlanetAngle,systemPlanetPosition,groundShipLabelPosition,hyperspaceArrival} from './utils/system-flight';
 import {landingMapBounds,landingMapPoint,orbitHullLighting} from './utils/map-presentation';
 import {allocateCrewPortrait,normalizeCrewPortraits,crewPortraitPath,crewPortraitId} from './utils/crew-portraits';
 import SurveyPanel from './components/SurveyPanel';
@@ -227,7 +227,7 @@ import {
 import { distressCallPass, DISTRESS_PASS_SECONDS, updateFleetSurrender, fleetPosture, markFleetAttacked, fleetCanFire, beginFleetVisit } from './utils/reinforcements';
 import { flightEncounter, trackFleets } from './utils/encounters';
 import { selectFleetCommLine } from './utils/fleet-comms';
-import {ALIEN_PERSONALITIES,moodDecides,encounterDisposition,postureMoodEffect,rememberedRaceMood,phraseLimit,impatientMoodDelta,alienQuestionDelta,originalCommCandidates,questionWait,newConversationClock,afterPlayerPhrase,playerDiplomaticStrength,alienDiplomaticStrength,clampMood} from './utils/communications';
+import {ALIEN_PERSONALITIES,moodDecides,encounterDisposition,postureMoodEffect,rememberedRaceMood,phraseLimit,hailRefusalMessage,impatientMoodDelta,alienQuestionDelta,originalCommCandidates,questionWait,newConversationClock,afterPlayerPhrase,playerDiplomaticStrength,alienDiplomaticStrength,clampMood} from './utils/communications';
 import {restoreConversationClock,closeConversation,hailPostureEffect,playerPhraseEffect,nextUnansweredHail,responseSubject,nextLoreLine,nextTransmission,conversationEvent} from './utils/communications';
 
 import {
@@ -5908,11 +5908,10 @@ function useGameInterfaceState() {
       return;
     }
 
-    const refusesHail=fleetCanFire(activeEncounterGroup,isCombatActiveRef.current)
-      || !activeEncounterGroup.isHomeworldFleet&&!!ALIEN_PERSONALITIES[race]&&mood>=ALIEN_PERSONALITIES[race]!.fight;
-    if (!activeEncounterGroup.hasSurrendered && refusesHail) {
+    const refusal=hailRefusalMessage(activeEncounterGroup,fleetCanFire(activeEncounterGroup,isCombatActiveRef.current),mood);
+    if (refusal) {
       gameAudio.playAlarmKlaxon();
-      addMessage('Transmission refused: communications jammed by hostile fire.', 'Communications', 'alert');
+      addMessage(refusal, 'Communications', 'alert');
       return;
     }
 
@@ -6166,7 +6165,7 @@ function useGameInterfaceState() {
     (answer: boolean) => {
       const question = alienCommsState.pendingAlienQuestion;
       if (!activeEncounterGroup || !question || resolvedAlienQuestionRef.current === question) return;
-      if(question.id!==undefined&&question.remindersLeft===0){loseAlienPatience();return;}
+      if(question.id!==undefined&&questionWait(question,questionCountdownTimerFrameRef.current)==='impatient'){loseAlienPatience();return;}
       resolvedAlienQuestionRef.current = question;
       setQuestionCountdownTimer(0);
 
@@ -6684,7 +6683,7 @@ function useGameInterfaceState() {
       combatDurationTimerRef.current = 0;
       isCombatActiveRef.current = group.race==='Veloxi Drone'?false:fleetCanFire(group,disposition.fighting);
 
-      const lastAlienSpeakerText=isCombatActiveRef.current&&group.race!=='Uhlek'?'TRANSMISSION REFUSED: COMMUNICATIONS JAMMED BY HOSTILE FIRE.':'';
+      const lastAlienSpeakerText=isCombatActiveRef.current&&group.race!=='Uhlek'?(hailRefusalMessage(group,true,initialMood)??'').toUpperCase():'';
       const lastGarbledAlienText='';
       setAlienCommsState(prev=>({
         active: false,
@@ -6792,7 +6791,10 @@ function useGameInterfaceState() {
       setSystemZoom(8.0);
       setFluxFlashTimer(0.6); // deceleration warp flash
       setOrbitTransitionProgress(1.0);
-      setActiveConsoleMenu('Bridge');
+      for(const key of Object.keys(heldKeysRef.current))delete heldKeysRef.current[key];
+      setActiveDirectionVector({dx:0,dy:0});
+      combatInputBufferRef.current=null;
+      setActiveConsoleMenu('Maneuver');
       setDisplayPanelMode('system_map');
 
       setVisitedStarIds((prev) => (prev.includes(star.id) ? prev : [...prev, star.id]));
@@ -6836,7 +6838,10 @@ function useGameInterfaceState() {
     setShipVy(0);
     setFluxFlashTimer(0.8); // Warp flash & stretch
     setGrantedDroneClearanceUntilHyperspace(false);
-    setActiveConsoleMenu('Bridge');
+    for(const key of Object.keys(heldKeysRef.current))delete heldKeysRef.current[key];
+    setActiveDirectionVector({dx:0,dy:0});
+    combatInputBufferRef.current=null;
+    setActiveConsoleMenu('Maneuver');
     setDisplayPanelMode('system_map');
 
     gameAudio.playRetroJump();
@@ -7561,7 +7566,7 @@ function useGameInterfaceState() {
         setOrbitPlanetIndex(null);
         setCurrentSurfaceState(null);
         const planet = currentPlanets[orbitPlanetIndex!];
-        const angle = planet.initialAngle + planet.orbitSpeed * (.2+orbitAnimPhaseFrameRef.current/.4);
+        const angle = systemPlanetAngle(planet,orbitAnimPhaseFrameRef.current/.4);
         const radius = Math.max(80, planet.orbitRadius + 30);
         setSystemShipX(Math.cos(angle) * radius);
         setSystemShipY(Math.sin(angle) * radius);
@@ -10824,6 +10829,9 @@ function useGameInterfaceState() {
       }
 
       if (isSimulationPaused && !['p', 'P', 'Escape'].includes(e.key)) return;
+      // A held key from the previous flight context must be released and pressed
+      // again; browser auto-repeat cannot restart movement after a transition.
+      if(e.repeat&&!keysHeld[e.key])return;
       if (!isSimulationPaused) keysHeld[e.key] = true;
 
       // Star System View Zoom Controls (+ / - keys)
@@ -16086,22 +16094,6 @@ function useGameInterfaceState() {
         // Vector from planet towards sun (0,0)
         const lightAngle = Math.atan2(-py, -px);
 
-        // ATMOSPHERIC RIM GLOW
-        const rimColor = getAtmosphereRimGlow(planet.gases);
-        const rimThickness = getAtmosphereRimThickness(planet.atmosphereDensity);
-
-        if (rimColor && rimThickness > 0) {
-          ctx.save();
-          ctx.strokeStyle = rimColor;
-          ctx.shadowColor = rimColor;
-          ctx.shadowBlur = 8;
-          ctx.lineWidth = Math.max(0.6, (rimThickness * 0.75) / Math.sqrt(zoom));
-          ctx.beginPath();
-          ctx.arc(px, py, pRadius + 1, lightAngle - Math.PI / 2, lightAngle + Math.PI / 2);
-          ctx.stroke();
-          ctx.restore();
-        }
-
         // Planetary Sphere Surface
         ctx.save();
         ctx.beginPath();
@@ -16132,7 +16124,8 @@ function useGameInterfaceState() {
         ctx.fillRect(px - pRadius, py - pRadius, pRadius * 2, pRadius * 2);
 
         ctx.restore(); // end clip
-        drawPlanetAtmosphere(ctx,px,py,pRadius,planet,zoom);
+        // One thin, directional atmosphere; avoid stacking two bright halos.
+        drawPlanetAtmosphere(ctx,px,py,pRadius,planet,zoom,lightAngle);
 
         if(pIdx===systemFocusRef.current){
           ctx.save();ctx.strokeStyle='#67e8f9';ctx.lineWidth=2/zoom;
@@ -16610,8 +16603,50 @@ function useGameInterfaceState() {
 
   const gameMusicTheme = selectMusicTheme({title:gameState.status==='START',location:gameLocation,inCombat:!!activeEncounterGroup&&fleetCanFire(activeEncounterGroup,isCombatActiveRef.current),victory:victorySequenceModal,defeat:!!gameOverModal});
   const gameMusicTrack = recordedScoreForTheme(gameMusicTheme,{victory:gameState.status==='PLAYING'&&!!victorySequenceModal});
+  const usableSystem=(key:SubsystemKey)=>subsystems[key]>0&&!inoperativeSystems[key];
+  const tacticalContext=gameLocation==='Encounter'&&!!activeEncounterGroup;
+  const liveTargets=tacticalContext?activeEncounterGroup!.ships.filter(s=>!s.isWreck):[];
+  const landingPlanet=orbitPlanetIndex===null?null:currentPlanets[orbitPlanetIndex];
+  const landingScreenAvailable=cinematicState==='none'&&!!landingPlanet&&landingPlanet.type!=='Gas Giant'&&!(currentStar.x===192&&currentStar.y===152&&orbitPlanetIndex===0&&!hasCrystalOrb);
+  const departureWarnings=[
+    ...(evaluations.some(e=>!e.read)?['Report to Operations for evaluation.']:[]),
+    ...(certifiedCrewCount<CREW_POSTS.length?['Report to Crew Assignment.']:[]),
+    ...(!shipName.trim()?['Report to Ship Configuration to christen ship.']:[]),
+    ...(engineClass<=0?['Report to Ship Configuration to purchase engines.']:[]),
+    ...(enduriumFuel<=0?['Report to Trade Depot to purchase fuel.']:[]),
+  ];
+  const buttonActions={
+    dock:!isArthDestroyed&&cinematicState==='none',
+    landingScreen:landingScreenAvailable,
+    descent:landingScreenAvailable&&!calculatedLandingFuelData.isCrush&&!calculatedLandingFuelData.isInsufficient,
+    ascent:cinematicState==='none'&&!detonationSequence&&enduriumFuel>=calculatedLandingFuel,
+    disembark:cinematicState==='none'&&!vehicleDestroyed,
+    departure:!isReleasingClamps&&cinematicState==='none'&&!departureWarnings.length,
+    departureReason:departureWarnings.join(' '),
+    sensors:usableSystem('Sensors'),
+    roverMove:!!currentSurfaceState&&!vehicleDestroyed&&vehicleFuel>0,
+    roverFire:!!currentSurfaceState&&!vehicleDestroyed&&(vehicleWeapon==='Laser'?(!!miningSession||miningActionAvailable(currentSurfaceState,vehicleX,vehicleY,vehicleHold.reduce((v,i)=>v+i.volume,0),vehicleFuel,miningTargetId)):!!stunnerTarget(currentSurfaceState.lifeforms,vehicleX,vehicleY,6)),
+    roverPickup:!vehicleDestroyed&&surfacePickupAvailable(currentSurfaceState,vehicleX,vehicleY,vehicleHold.reduce((v,i)=>v+i.volume,0)),
+    treat:doctorSkill>0,
+    recommend:!!landingPlanet&&!recommendedPlanets.includes(`${currentStar.x}-${currentStar.y}-${landingPlanet.orderIndex}`),
+    dialogue:tacticalContext&&usableSystem('Comms')&&alienCommsState.connected&&!alienCommsState.pendingAlienQuestion&&!alienCommsState.pendingPriorityBusiness,
+  };
+  const spaceActions={
+    combat:liveTargets.length>0,
+    underAttack:liveTargets.some(s=>s.laserClass>0||s.missileClass>0)&&fleetCanFire(activeEncounterGroup!,isCombatActiveRef.current),
+    maneuver:enginesAvailable(engineClass,subsystems.Engines,inoperativeSystems.Engines,enduriumFuel),
+    shields:shieldsRaised||shieldClass>0&&usableSystem('Shields')&&enduriumFuel>0&&!inNebula,
+    weapons:weaponsArmed||(laserClass>0||missileClass>0)&&(laserClass<=0||usableSystem('Lasers'))&&(missileClass<=0||usableSystem('Missiles')),
+    laser:liveTargets.length>0&&weaponsArmed&&laserClass>0&&usableSystem('Lasers')&&laserCooldown<=0&&enduriumFuel>=.1,
+    missile:liveTargets.length>0&&weaponsArmed&&missileClass>0&&usableSystem('Missiles')&&missileCooldown<=0&&enduriumFuel>=.5&&projectiles.filter(p=>p.type==='missile'||p.type==='plasma').length<10,
+    hail:tacticalContext&&usableSystem('Comms')&&!activeEncounterGroup?.conversation?.pendingHail&&!alienCommsState.connected,
+    distress:!tacticalContext&&!isArthDestroyed&&!(['In Orbit','On Planet','Terrain Vehicle'].includes(gameLocation)&&currentStar.x===192&&currentStar.y===152&&orbitPlanetIndex===0&&!hasCrystalOrb),
+  };
 
   return {
+    buttonActions,
+    spaceActions,
+    isArthDestroyed,
     ALIEN_TERRITORIES,
     Activity,
     AlertTriangle,

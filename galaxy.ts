@@ -8,6 +8,7 @@
  */
 
 import { STAR_LINES } from './src/galaxyData';
+import {planetAngularSpeed} from './utils/planet-orbits';
 
 export type SpectralClass = 'O' | 'B' | 'A' | 'F' | 'G' | 'K' | 'M';
 export type PlanetType = 'Rock' | 'Frozen' | 'Liquid' | 'Gas Giant' | 'Molten' | 'Crystal';
@@ -469,7 +470,7 @@ export function parsePlanetToken(
 
   const slotRadii = [60, 95, 135, 175, 215, 265, 315, 355];
   const orbitRadius = slotRadii[slot - 1] || (50 + slot * 40);
-  const orbitSpeed = +(0.05 / Math.sqrt(slot)).toFixed(3);
+  const orbitSpeed = planetAngularSpeed(orbitRadius);
 
   const pSeed = (starX * 73856093) ^ (starY * 19349663) ^ (slot * 83492791);
   const initialAngle = +(((pSeed >>> 0) % 628) / 100).toFixed(2);

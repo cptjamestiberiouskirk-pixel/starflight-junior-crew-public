@@ -1,6 +1,6 @@
 # Release readiness
 
-**October 29, 2026: source-available preview; Windows package remains a private tester.**
+**October 31, 2026: source-available preview; Windows package remains a private tester.**
 
 The docs are written for a new player. Public availability, rights clearance and
 independent technical acceptance remain separate decisions.
@@ -12,8 +12,8 @@ independent technical acceptance remain separate decisions.
 | Controls/support | Dedicated controls, FAQ, Windows guide and private bug-report template. |
 | Screenshots | Actual current-build fictional mission captures with provenance; no owner saves. |
 | Source/build | Fresh-history source preview at cptjamestiberiouskirk-pixel/starflight-junior-crew-public; original development repository remains private. Source/build/package instructions available. |
-| Local verification | Current source passes typecheck, 10,833 assertions, all 87 adversarial save cases and optimized build/resource checks. Science graphics, large-save editor responsiveness and live clock play/pause are verified. [Current scope](VERIFICATION_2026-10-29-REGRESSION.md). Earlier verification records retain their own build identities and limits. |
-| Windows ZIP | Latest October 29 rebuild includes distinct Science graphics and the save-editor stall fix, retaining the expedition clock. Extracted ZIP passed launcher/browser, previous-version continuation and exact/over-limit save boundary checks; bundle identity matches the full 87-case passing run. [Package scope](VERIFICATION_2026-10-29-REGRESSION.md). No public release asset uploaded. |
+| Local verification | Current source passes typecheck, 13,326 assertions and build/resource/security checks. Contextual buttons, communications, stationary navigation transitions and Kepler motion have documented browser coverage. [Current scope](VERIFICATION_2026-10-31-PACKAGE.md). The broad button audit and earlier player journey retain their dated build scopes. |
+| Windows ZIP | October 31 rebuild includes all latest fixes and retains Science graphics, the large-save editor fix and visible expedition clock. Extracted ZIP passed launcher/browser checks, all 87 adversarial save cases, previous-tester continuation and size-boundary checks. [Package scope](VERIFICATION_2026-10-31-PACKAGE.md). ZIP stays private; no public binary release or site deployment. |
 | Security | Local mitigations verified; upstream picomatch advisory and reviewed static alerts remain visible. App source size exclusion removed. [Limits](SECURITY_MITIGATIONS.md). |
 | Clean Windows machine | Pending independent machine/clean VM launch, first voyage, online/offline behavior, save/import, updates and shutdown. Development-PC checks do not close this item. |
 | Devices/accessibility/audio | Partial: small-screen emulation, keyboard and software fallback checked; physical devices, screen-reader output and human listening remain separate coverage. |

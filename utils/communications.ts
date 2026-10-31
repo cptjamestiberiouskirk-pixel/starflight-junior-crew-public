@@ -14,6 +14,16 @@ export const ALIEN_PERSONALITIES: Partial<Record<AlienRace,{friendly:number;host
 export const clampMood=(mood:number)=>Math.max(0,Math.min(100,mood));
 export const postureBit=(posture:DiplomaticPosture)=>({Obsequious:1,Friendly:2,Neutral:4,Hostile:8}[posture]);
 
+/** Describe the existing hail gate without claiming shots or jamming occurred.
+ * A fleet may refuse while retreating, unarmed, or outside weapon range. */
+export function hailRefusalMessage(group:Pick<AlienGroup,'race'|'hasSurrendered'|'isHomeworldFleet'>,hostileFleet:boolean,mood:number):string|null {
+  if(group.hasSurrendered)return null;
+  if(hostileFleet)return 'Transmission refused: the alien fleet is hostile and will not accept hails.';
+  if(!group.isHomeworldFleet&&ALIEN_PERSONALITIES[group.race]&&mood>=ALIEN_PERSONALITIES[group.race]!.fight)
+    return 'Transmission refused: the aliens have broken off communications and are not accepting further hails.';
+  return null;
+}
+
 export function moodDisposition(race:AlienRace,mood:number,strengthDifference=0) {
   const p=ALIEN_PERSONALITIES[race];
   let talk:DiplomaticPosture='Friendly';

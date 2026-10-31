@@ -1,3 +1,4 @@
+import {planetAngularSpeed} from './planet-orbits';
 /** System-flight pacing follows the user's Unity-port D8 decision: class 1 is
  * one third of class 5, with sixths between. Original HYPER-OV has a shared cap;
  * this requested class scaling is a remake rule, not a recovered original one.
@@ -21,9 +22,16 @@ export function advanceSystemFlight(speed:number,seconds:number,moving:boolean,e
  const end=start+a*rampTime;
  return {...limits,speed:end,distance:(start+end)/2*rampTime+limits.topSpeed*(seconds-rampTime)};
 }
-export function systemPlanetPosition(planet:{initialAngle:number;orbitSpeed:number;orbitRadius:number},elapsedSeconds:number){
+export function systemPlanetAngle(planet:{initialAngle:number;orbitSpeed:number;orbitRadius:number},elapsedSeconds:number){
  const t=Number.isFinite(elapsedSeconds)?Math.max(0,elapsedSeconds):0;
- const angle=planet.initialAngle+planet.orbitSpeed*(.2+t);
+ const speed=planetAngularSpeed(planet.orbitRadius);
+ // Retain the old epoch offset, including on legacy saves, but derive motion
+ // from radius instead of trusting the old slot-based serialized orbitSpeed.
+ const epoch=planet.initialAngle+planet.orbitSpeed*.2;
+ return epoch+(speed>0?(t%(Math.PI*2/speed))*speed:0);
+}
+export function systemPlanetPosition(planet:{initialAngle:number;orbitSpeed:number;orbitRadius:number},elapsedSeconds:number){
+ const angle=systemPlanetAngle(planet,elapsedSeconds);
  return {currentX:Math.cos(angle)*planet.orbitRadius,currentY:Math.sin(angle)*planet.orbitRadius};
 }
 /** Same orbit plane as the rendered ellipse; the approved model's nose is +Y. */

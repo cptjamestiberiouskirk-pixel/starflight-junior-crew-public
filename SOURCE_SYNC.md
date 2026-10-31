@@ -1,5 +1,17 @@
 # Source snapshot and verification
 
+October 31 update: the latest source and private tester include Elowan portrait
+and communications corrections, stationary Maneuver transitions, home guidance,
+contextual buttons and nonblinking disabled actions, and circular Kepler orbital
+motion with restrained sun-facing atmosphere rims. The source passed 13,326
+assertions and final-build planetary/navigation browser checks. The button audit
+and fresh player journey retain their separate scopes and dates. See the
+[current Windows verification](docs/VERIFICATION_2026-10-31-PACKAGE.md) for package
+identity, extracted-package checks and previous-tester save continuity.
+The ZIP, saves, profiles and raw evidence stay private; only reviewed source,
+tooling and documentation are synchronized. Save formats and browser origins
+are unchanged. Earlier dated results below remain historical.
+
 October 29 latest update: distinct Science Analysis/Ship status illustrations and
 scrolling compact cards are included, along with a fix for multi-megabyte save-code
 editor stalls. The source passed 10,833 regression assertions, all 87 adversarial
@@ -91,7 +103,8 @@ part of this source synchronization. Links in historical design reports to local
 artifact evidence may be unavailable from a clone; they are provenance references,
 not prerequisites for building or running the game.
 
-The repository remains private. The existing Pages workflow is manual-only;
+The original repository remains private; the separate source preview remains
+public. The existing Pages workflow is manual-only;
 source synchronization does not run it, deploy a site, upload a release or start
 a paid security scan. Both original Cloud findings were remediated locally; the
 historical Cloud report scanned an older revision and is not replaced by this sync.
