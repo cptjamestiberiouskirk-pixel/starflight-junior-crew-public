@@ -14,6 +14,7 @@ let orbitKit:THREE.Group,orbitHull:THREE.Group|null=null,orbitOutfitting:BayShip
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34.12,16/9,.1,600);
 camera.up.set(0,0,1);scene.background=new THREE.Color('#050b18');
 let renderer:THREE.WebGLRenderer|null=null,loading:Promise<void>|null=null,ready=false,error='';
+let loadFailed=false,loadAttempts=0;
 let softwareLayer:HTMLCanvasElement|null=null;
 // Retain the approved historical plate for provenance; configured software
 // rendering now projects the actual room and hull together, avoiding misalignment.
@@ -124,9 +125,7 @@ function loadModel(model:THREE.Group){
   }
   ready=true;
 }
-export function prepareBay(){
-  if(loading)return loading;
-  loading=(async()=>{
+async function loadBay(){
     const gltf=new GLTFLoader();
     approvedKit=(await gltf.loadAsync(new URL('../assets/models/ship-outfitting-kit.glb',import.meta.url).href)).scene;
     orbitKit=approvedKit.clone(true);
@@ -146,6 +145,7 @@ export function prepareBay(){
       ].map(async([name,url])=>{const texture=await loader.loadAsync(url);texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;texture.anisotropy=4;textures.set(name,texture);}));
       const paintedSpace=await loader.loadAsync(new URL('../assets/images/space_bg_a.png',import.meta.url).href);
       paintedSpace.colorSpace=THREE.SRGBColorSpace;scene.background=paintedSpace;
+    error='';
     try{
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
       renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -155,11 +155,32 @@ export function prepareBay(){
       if(!roots.size)loadModel((await new GLTFLoader().loadAsync(new URL('../assets/models/docking-bay.glb',import.meta.url).href)).scene);
       ready=true;
     }
-  })();return loading;
+}
+/** Preloading is optional until a bay shot begins. A single failed request must
+ * not cache a rejected promise forever or escape an eager void preload call.
+ * Retry the same approved assets three times; later player-initiated shots can
+ * retry an exhausted preload. A failed shot keeps the existing skip controls. */
+export function prepareBay(retryFailed=false){
+  if(loading&&!(retryFailed&&loadFailed))return loading;
+  loadFailed=false;
+  loading=(async()=>{
+    for(let attempt=0;attempt<3;attempt++){
+      loadAttempts=attempt+1;
+      try{await loadBay();return;}
+      catch(failure){
+        error=failure instanceof Error?failure.message:'A hangar image could not be loaded';
+        renderer?.dispose();renderer=null;ready=false;
+        if(attempt<2)await new Promise(resolve=>setTimeout(resolve,500*(attempt+1)));
+      }
+    }
+    loadFailed=true;
+  })();
+  return loading;
 }
 export const bayReady=()=>ready;
 export function drawBayDeparture(ctx:CanvasRenderingContext2D,width:number,height:number,progress:number,ship:{engineClass:number,cargoPodsCount:number,armorClass?:number,missileClass?:number,laserClass?:number},quality='High',arrival=false){
-  const pose=arrival?bayDockPose(progress):bayLaunchPose(progress);void prepareBay();
+  const basePose=arrival?bayDockPose(progress):bayLaunchPose(progress);void prepareBay();
+  const pose=ready?basePose:{...basePose,stage:loadFailed?'Hangar graphics unavailable · Enter/Space to skip; retry next docking':'Loading hangar graphics · Please wait or Enter/Space to skip'};
   ctx.fillStyle='#050b18';ctx.fillRect(0,0,width,height);
   if(ready&&roots.size){
     const key=JSON.stringify([ship,arrival]);
@@ -203,7 +224,7 @@ export function drawBayDeparture(ctx:CanvasRenderingContext2D,width:number,heigh
     }
   }
   const invalidTransforms=[...roots.values()].filter(o=>![...o.position.toArray(),...o.quaternion.toArray(),...o.scale.toArray()].every(Number.isFinite)).length;
-  ctx.canvas.dataset.bay=JSON.stringify({ready,arrival,mode:renderer?'3d':'cpu-3d-fallback',retainedPlate,cpuFaces,error,invalidTransforms,seconds:pose.seconds,altitude:pose.worldAltitude,camera:pose.camera,target:pose.target,fov:camera.fov,paintedSpace:scene.background instanceof THREE.Texture,distance:pose.distance,doors:pose.doorOpen,clamps:pose.clampOpen,thrust:pose.mainThrust,cargoPods:outfitting?.diagnostics().cargoPods??0,outfitting:outfitting?.diagnostics(),textures:textures.size,raster:[lastWidth,lastHeight],calls:renderer?.info.render.calls,triangles:renderer?.info.render.triangles});
+  ctx.canvas.dataset.bay=JSON.stringify({ready,arrival,mode:renderer?'3d':'cpu-3d-fallback',retainedPlate,cpuFaces,error,loadFailed,loadAttempts,invalidTransforms,seconds:pose.seconds,altitude:pose.worldAltitude,camera:pose.camera,target:pose.target,fov:camera.fov,paintedSpace:scene.background instanceof THREE.Texture,distance:pose.distance,doors:pose.doorOpen,clamps:pose.clampOpen,thrust:pose.mainThrust,cargoPods:outfitting?.diagnostics().cargoPods??0,outfitting:outfitting?.diagnostics(),textures:textures.size,raster:[lastWidth,lastHeight],calls:renderer?.info.render.calls,triangles:renderer?.info.render.triangles});
   return pose;
 }
 

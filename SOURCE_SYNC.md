@@ -1,5 +1,20 @@
 # Source snapshot and verification
 
+November 1 update: both Junior Crew source repositories receive the completed
+second-pass fixes, unique crew assignments, regression tests and current
+documentation. The private repository retains its development history; the public
+repository retains its separate fresh history. The Windows tester ZIP remains
+local/private and is excluded from both source trees, along with saves, profiles
+and raw evidence. There is no public binary release or Pages deployment.
+
+The exact game bundle passed 50,229 source assertions, 55 compiled-game browser
+regressions and an earned victory/save/reload continuation. The separate second
+adversarial pass and independent feedback have their own dated evidence. See the
+[November 1 package verification](docs/VERIFICATION_2026-11-01-PACKAGE.md) for
+extracted ZIP and previous-version upgrade acceptance. Save format and browser
+origins are unchanged; duplicate legacy duties receive an explicit paused review.
+Earlier dated updates below remain historical.
+
 October 31 update: the latest source and private tester include Elowan portrait
 and communications corrections, stationary Maneuver transitions, home guidance,
 contextual buttons and nonblinking disabled actions, and circular Kepler orbital

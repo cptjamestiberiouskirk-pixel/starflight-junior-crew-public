@@ -13,6 +13,7 @@ try {
   console.log('Saved Playground configuration: PASS');
 
   for (const [file, entrypoint, label] of [
+    ['/crew-assignments.test.ts','runCrewAssignmentTests','Unique crew duties, legacy repair and casualty succession'],
     ['/presentation-polish.test.ts','runPresentationPolishTests','Contextual guidance and crowded navigation label bounds'],
     ['/save-validation.test.ts','runSaveValidationTests','Malformed and oversized save rejection with legacy compatibility'],
     ['/save-render-safety.test.ts','runSaveRenderSafetyTests','Adversarial imported coordinates, bounded rendering and legacy save compatibility'],

@@ -6,7 +6,7 @@ import type { SaveSlotData } from '../App';
 import { UNIVERSE } from '../galaxy';
 import {PARSED_COMM_LINES,resolveRaceId} from '../src/commData';
 import {saveRenderCoordinatesAreSafe} from './render-safety';
-import {MAX_SAVE_JSON_BYTES,MAX_SAVE_NODES,importTextWithinBudget,saveJSONTextWithinBudget,saveStructureWithinBudget,validSaveCollections,validSaveFleetMembers,validSaveSurfaceMembers,validSaveMessages} from './save-validation';
+import {MAX_SAVE_JSON_BYTES,MAX_SAVE_NODES,importTextWithinBudget,saveJSONTextWithinBudget,saveStructureWithinBudget,validSaveCollections,validSaveFleetMembers,validSaveSurfaceMembers,validSaveMessages,isSaveMoney} from './save-validation';
 
 const locations = ['Starport', 'Docking Bay', 'Star System', 'Hyperspace', 'In Orbit', 'Landing', 'On Planet', 'Terrain Vehicle', 'Encounter'];
 const record = (value: unknown): value is Record<string, any> => !!value && typeof value === 'object' && !Array.isArray(value);
@@ -241,7 +241,7 @@ export function restorableSaveSlot(value:unknown,slot:SaveSlotData['slot']):Save
   if(!saveStructureWithinBudget(value)||!record(value))return null;
   if(value.snapshot!==undefined) return isPlayableSave(value)?{...normalizeSlot(value),slot}:null;
   if(typeof value.shipName!=='string'||typeof value.stardate!=='string'||typeof value.timestamp!=='string'
-    ||!finite(value.credits)||!locations.includes(value.location)||typeof value.empty!=='boolean'
+    ||!isSaveMoney(value.credits)||!locations.includes(value.location)||typeof value.empty!=='boolean'
     ||value.bridgeLog!==undefined&&!validSaveMessages(value.bridgeLog))return null;
   return {...value,slot} as SaveSlotData;
 }

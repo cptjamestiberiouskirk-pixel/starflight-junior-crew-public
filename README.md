@@ -36,6 +36,24 @@ the Science illustrations, large-save editor fix and Expedition clock. See the
 for its build identity, checks and remaining security/release limits. The ZIP
 remains a private, locally supplied artifact; it is not hosted in this repository.
 
+The subsequent local deep-testing build fixes legacy projectile-color rendering
+and rejects unsafe camera/projectile numbers before a save slot is replaced.
+Its [campaign and feature verification](docs/VERIFICATION_2026-10-31-DEEP-FEATURES.md)
+records fresh earned victory, final-build continuation and regression coverage.
+The [November 1 private tester update](docs/VERIFICATION_2026-11-01-PACKAGE.md)
+includes these fixes and the subsequent unique crew-role change.
+
+The [November 1 second pass](docs/VERIFICATION_2026-11-01-SECOND-PASS.md) adds
+independent adversarial feedback, stronger save arithmetic and checkpoint
+protection, correctly paused launch preparation, transporter reset and recovery
+from failed hangar asset loads. Reviewed source and regression tests are included
+in the repository update; the Windows tester ZIP stays private.
+
+The [unique crew-role update](docs/VERIFICATION_2026-11-01-CREW-ASSIGNMENTS.md)
+requires a different living officer for each of the six launch posts. Crew
+assignments are available from Pause throughout a mission, and older saves with
+duplicate duties receive a paused review before any checkpoint is replaced.
+
 The latest source adds clearer navigation, optional crew guidance, surface contact
 contrast, equipment comparisons, recorded-speaker subtitles and a smaller lossless
 ship-image build. The labeled **Expedition clock** stays visible in the main HUD,
@@ -103,12 +121,15 @@ game once to allow browser audio.
 ## Your first voyage
 
 1. Start a mission and read the commissioning briefing.
-2. Recruit in **Personnel**; fill six posts in **Crew Assignment**.
+2. Recruit at least six living officers in **Personnel**; assign a different officer to each post in **Crew Assignment**. An officer can hold only one role. Vacate their current role before moving them. **Pause > Crew Assignments** also allows reassignment during a mission. After a casualty, only an unassigned living officer can inherit the lost role; otherwise it remains vacant until reassigned. All six distinct roles must be staffed before launch from Starport.
+
 3. Name the ship and review equipment in **Ship Configuration**.
 4. Check **Operations**, fuel and the **Docking Bay** departure checklist.
 5. Launch, approach a nearby planet, orbit, scan and analyze before landing.
 6. Deploy the rover, gather a manageable load, board and return home.
 7. Sell minerals, review new information, save and export a backup.
+
+Older missions remain loadable. If a save contains duplicate duties, loading pauses for crew review: the officer retains their first role and repeated duties appear vacant. The checkpoint stays unchanged until **Confirm crew assignments and save**; you can also cancel the review without saving. In-flight vacancies are allowed, so a short-handed mission can continue home to recruit. No mission, equipment, position, or progress reset is required.
 
 The first goal is a safe, profitable round trip. You do not need every upgrade
 or the solution to the campaign before leaving the station.

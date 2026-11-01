@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-CZ55noSj.js",
-    "sha256": "664787229014af917b6ce3163b54dc2fd546e24f3d574e6cc2adc3a08f4489c7"
+    "entry": "assets/index-UbzWuYtI.js",
+    "sha256": "cb83ec7729418f29f3bce8b57eab8a0329e49a0a8cf02435f0ee2a745020d9cd"
   },
-  "evidenceDate": "2026-10-31",
-  "scope": "Owner-requested tester rebuild with Elowan communications, navigation and contextual button fixes, thin sunward atmospheric rims and circular Kepler orbital motion. Source passed 13,326 assertions, typecheck, build/resources, security guards and 29 final-build planetary/navigation browser checks. Save schema unchanged; extracted-package and previous-version continuation results recorded separately.",
-  "evidence": "docs/VERIFICATION_2026-10-31-PACKAGE.md"
+  "evidenceDate": "2026-11-01",
+  "scope": "Owner-requested private tester rebuild with all second-pass fixes and unique crew assignments. Exact source passed 50,229 assertions, typecheck, repeated identical build, 55 Playwright regression cases and earned victory/save/reload. Legacy duplicate duties receive a paused review with confirmation or cancel; save schema and browser origins unchanged. Extracted-package and upgrade acceptance are recorded separately.",
+  "evidence": "docs/VERIFICATION_2026-11-01-PACKAGE.md"
 }

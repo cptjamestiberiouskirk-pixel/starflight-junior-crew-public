@@ -1,4 +1,5 @@
 import type { CrewPost, Skills } from '../App';
+import {CREW_ROLES,uniqueCrewAssignments,type CrewAssignments} from './crew-assignments';
 
 const stationSkill:Record<CrewPost,keyof Skills> = {
   Captain:'science','Science Officer':'science',Navigator:'navigation',Engineer:'engineering',Communications:'communications',Doctor:'medicine',
@@ -13,6 +14,18 @@ export function assignedCrew<T extends {id:string}>(roster:T[],posts:Record<stri
 export function bestActingOfficer<T extends {alive:boolean;skills:Skills}>(roster:T[],post:CrewPost):T|null {
   const skill=stationSkill[post];
   return roster.reduce<T|null>((best,officer)=>officer.alive && (!best || officer.skills[skill]>best.skills[skill]) ? officer : best,null);
+}
+
+/** Succession cannot take an officer away from another occupied station. */
+export function crewAssignmentsAfterLoss<T extends {id:string;alive:boolean;skills:Skills}>(roster:T[],posts:CrewAssignments,deceasedId:string) {
+  const next=uniqueCrewAssignments(posts);
+  const lost=CREW_ROLES.filter(post=>next[post]===deceasedId);
+  for(const post of lost) next[post]=null;
+  for(const post of lost) {
+    const eligible=roster.filter(member=>member.alive&&member.id!==deceasedId&&!Object.values(next).includes(member.id));
+    next[post]=bestActingOfficer(eligible,post)?.id??null;
+  }
+  return next;
 }
 
 /** Retain fractional progress; rounding belongs in the display, not each tick. */

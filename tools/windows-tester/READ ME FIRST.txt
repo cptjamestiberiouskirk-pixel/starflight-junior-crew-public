@@ -22,6 +22,10 @@ PLAYING AND SAVING
 - The dancing astronaut starts after eight idle seconds in the concourse.
 - The labeled Expedition clock shows the existing stardate/hour in the top HUD,
   including compact Science and live transmissions. Existing time rules apply.
+- Assign a different living officer to each of the six bridge roles before
+  launch. Use Pause > Crew Assignments to change duties during a mission.
+- Older saves with duplicate duties open a paused review. The old checkpoint
+  stays unchanged until you confirm and save; cancel returns to title unsaved.
 
 STOPPING
 Closing the browser tab does not stop the local server. Open the hidden-icons

@@ -11,6 +11,22 @@ export function starAppearance(radius: number, seconds: number, unstable: boolea
   };
 }
 
+const projectileColors=new Map<string,boolean>();
+/** Legacy saves may omit a projectile color or contain a non-Canvas CSS value.
+ * Validate with Canvas's own parser before a gradient can terminate the frame.
+ * Preserve valid original colors and bound cached imported strings. */
+export function projectileColor(ctx:Pick<CanvasRenderingContext2D,'createLinearGradient'>,value:unknown,fromPlayer:boolean) {
+  const fallback=fromPlayer?'#00f0ff':'#ff2244';
+  if(typeof value!=='string'||!value.trim()||value.length>128)return fallback;
+  let valid=projectileColors.get(value);
+  if(valid===undefined){
+    try{ctx.createLinearGradient(0,0,1,0).addColorStop(0,value);valid=true;}catch{valid=false;}
+    if(projectileColors.size>=64)projectileColors.delete(projectileColors.keys().next().value!);
+    projectileColors.set(value,valid);
+  }
+  return valid?value:fallback;
+}
+
 export function trailScreenRadius(size: number, life: number, maxLife: number) {
   return Math.max(0, Math.min(2, size) * (1 - Math.max(0, life) / maxLife));
 }

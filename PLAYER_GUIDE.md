@@ -47,11 +47,24 @@ trained. Leave money for supplies and repairs rather than spending the whole gra
 In **Crew Assignment**, fill Captain, Science Officer, Navigator, Engineer,
 Communications and Doctor. Choose living officers suited to the work: Science
 for interpretation, Navigation for flight, Engineering for repairs, Communications
-for dialogue and Medicine for treatment. Recruitment alone does not assign a post.
+for dialogue and Medicine for treatment. Each role needs a different officer;
+one person cannot hold multiple posts. Vacate an officer's current role before
+moving them to another. Recruitment alone does not assign a post.
 
 The bay requires **6/6 staffed posts**. Revisit assignments after losing or
 replacing an officer. Assignment voices supplement visible feedback; text remains
 available if audio is muted or unavailable.
+
+Use **Pause > Crew Assignments** to review or reassign duties during a mission.
+After a casualty, only an unassigned living officer can succeed to the lost role;
+otherwise it stays vacant. A short-handed mission can continue, but departure
+from Starport requires six different living officers.
+
+An older save with duplicate duties opens a paused review. The officer keeps
+their first role and the repeated duties appear vacant. Choose replacements,
+then use **Confirm crew assignments and save**. Until then, the stored checkpoint
+is unchanged. Existing position, equipment and mission progress are retained.
+You can also cancel the review and return to the title without saving.
 
 ### Name and inspect the ship
 

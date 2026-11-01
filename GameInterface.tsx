@@ -1,4 +1,5 @@
 import FlightGuidance from './components/FlightGuidance';
+import CrewAssignments from './components/CrewAssignments';
 import ExpeditionClock from './components/ExpeditionClock';
 import UpgradeComparison from './components/UpgradeComparison';
 import CrewTransmission from './components/CrewTransmission';
@@ -377,6 +378,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     artifactsInHoldRef,
     assets,
     assignedPosts,
+    crewAssignmentsNeedReview,
+    handleAssignCrew,
+    handleConfirmCrewAssignments,
+    handleCancelCrewReview,
     assignmentVoiceLine,
     autosaveToast,
     bankLedger,
@@ -688,6 +693,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     safeStorageSet,
     saleQuantity,
     saveDurable,
+    saveBlocked,
     savePersistenceNotice,
     saveSlots,
     scienceOfficer,
@@ -1038,10 +1044,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
       />
 
       {/* AUTOSAVE TOAST BANNER */}
-      {autosaveToast && (
-        <div data-autosave-toast className="absolute top-14 right-4 z-50 glass-panel px-3.5 py-1.5 rounded-lg border-cyan-400 text-cyan-300 font-bold text-xs flex items-center gap-2 animate-bounce shadow-xl">
+      {(autosaveToast || saveBlocked) && (
+        <div data-autosave-toast className={`absolute top-14 right-4 z-50 glass-panel px-3.5 py-1.5 rounded-lg border-cyan-400 text-cyan-300 font-bold text-xs flex items-center gap-2 ${saveBlocked ? '' : 'animate-bounce'} shadow-xl`}>
           <Database size={14} className="text-yellow-400" />
-          {saveDurable ? '💾 Autosaved' : '⚠ Session save only — export a backup before closing'}
+          {saveBlocked ? '⚠ Save blocked — previous checkpoint preserved' : saveDurable ? '💾 Autosaved' : '⚠ Session save only — export a backup before closing'}
         </div>
       )}
 
@@ -1182,7 +1188,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
       </header>
 
       {/* MAIN VIEWPORT CONTAINER */}
-      <FlightGuidance location={gameLocation} fuel={enduriumFuel} engines={engineClass} hull={hullIntegrity} nearby={nearbyPlanet} mining={!!miningSession} missingPosts={Object.values(assignedPosts).filter(id=>!crewRoster.some(c=>c.id===id&&c.alive&&c.vitality>0)).length} unreadBulletins={bulletins.filter(b=>!b.read).length} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)}/>
+      <FlightGuidance location={gameLocation} fuel={enduriumFuel} engines={engineClass} hull={hullIntegrity} nearby={nearbyPlanet} mining={!!miningSession} missingPosts={CREW_POSTS.length-certifiedCrewCount} unreadBulletins={bulletins.filter(b=>!b.read).length} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)}/>
       <main className="flex-1 w-full min-h-0 relative flex flex-col md:flex-row overflow-hidden">
         {/* STARPORT CONCOURSE */}
         {gameLocation === 'Starport' && activeRoomIndex === null && (
@@ -2444,80 +2450,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               })()}
 
               {/* 3. CREW ASSIGNMENT ROOM */}
-              {activeRoomIndex === 2 && (
-                <div className="space-y-4 text-xs">
-                  <p className="text-slate-300">
-                    Junior crew briefing room. Assign bridge station duties to certified personnel before clearance.
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {CREW_POSTS.map((post) => {
-                      const curId = assignedPosts[post];
-                      const officer = crewRoster.find((c) => c.id === curId);
-                      return (
-                        <div key={post} className="bg-slate-950/90 p-3.5 rounded-2xl border border-purple-900/80 flex flex-col gap-2 shadow-inner">
-                          <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
-                            <strong className="text-purple-300 font-extrabold text-sm">{post}</strong>
-                            <span className={officer && !officer.alive ? 'text-red-400 font-bold' : officer ? 'text-cyan-300 font-semibold' : 'text-slate-500'}>
-                              {officer ? (officer.alive ? officer.race : 'DECEASED') : 'VACANT'}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2.5">
-                            {officer ? (
-                              <CrewPortrait
-                                member={officer}
-                                size="sm"
-                                inCombat={false}
-                                hullCritical={hullIntegrity <= 50}
-                              />
-                            ) : (
-                              <div className="w-9 h-9 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-500">
-                                🪑
-                              </div>
-                            )}
-                            <div className="flex-1">
-                              <strong className="text-white text-xs block truncate">{officer ? officer.name : 'No Officer Assigned'}</strong>
-                              <span className="text-[10px] text-slate-400">
-                                {officer ? `Vitality: ${Math.round(officer.vitality)}%` : 'Select replacement from roster'}
-                              </span>
-                            </div>
-                          </div>
-
-                          <select
-                            aria-label={`${post} assignment`}
-                            value={curId || ''}
-                            onChange={(e) => {
-                              const newId = e.target.value || null;
-                              if(newId===curId)return;
-                              const incoming=crewRoster.find(c=>c.id===newId&&c.alive);
-                              const nextPosts = { ...assignedPosts, [post]: newId };
-                              setAssignedPosts(nextPosts);
-                              if(incoming&&!isSilenceFilterActive()){
-                                const text=assignmentVoiceLine(incoming.race);
-                                setBanterLog(prev=>[{speaker:incoming.name,post,text},...prev.slice(0,15)]);
-                                addMessage(text,post,'banter',`${post} ${incoming.name}`);void playCrewBanter(text);
-                              }
-                              gameAudio.playConfirmSelect();
-                              handleSaveToSlot(activeSlot, { assignedPosts: nextPosts });
-                            }}
-                            className="bg-slate-900 border border-purple-700/60 text-white rounded-xl p-2 text-xs font-bold"
-                          >
-                            <option value="">-- Vacant --</option>
-                            {officer && !officer.alive && <option value={officer.id} disabled>{officer.name} (Deceased - replace)</option>}
-                            {crewRoster
-                              .filter((c) => c.alive)
-                              .map((c) => (
-                                <option key={c.id} value={c.id}>
-                                  {c.name} ({c.race}) - Vit: {Math.round(c.vitality)}%
-                                </option>
-                              ))}
-                          </select>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              {activeRoomIndex === 2 && <CrewAssignments roster={crewRoster} posts={assignedPosts} hullCritical={hullIntegrity <= 50} onAssign={handleAssignCrew}/>}
 
               {/* 4. BANK ROOM */}
               {activeRoomIndex === 3 && (
@@ -8079,22 +8012,22 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
       {isGameMenuOpen && (
         <MenuOverlay tone="neutral" zIndex={150}>
-          <div className="w-full max-w-lg glass-panel rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-slate-100 relative">
+          <div className={`w-full ${pauseMenuTab === 'crew' ? 'max-w-4xl' : 'max-w-lg'} max-h-[90dvh] overflow-y-auto glass-panel rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-slate-100 relative`}>
             <DevUiTag id="#modal-pause-menu" color="yellow" />
             <div className="flex flex-wrap justify-between items-center gap-3 border-b border-cyan-900/60 pb-2">
               <h2 className="text-lg font-black text-yellow-400 flex items-center gap-2">
                 <Pause size={18} />
                 COMMAND PAUSE & SETTINGS
               </h2>
-              <button onClick={() => setIsGameMenuOpen(false)} className="text-slate-400 hover:text-white font-bold text-sm">
+              <button disabled={crewAssignmentsNeedReview} aria-label="Close pause menu" onClick={() => setIsGameMenuOpen(false)} className="text-slate-400 hover:text-white font-bold text-sm">
                 ✕
               </button>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex gap-2 border-b border-cyan-950 pb-2 text-xs">
+            <div className="flex flex-wrap gap-2 border-b border-cyan-950 pb-2 text-xs">
               <button
-                onClick={() => setPauseMenuTab('main')}
+                disabled={crewAssignmentsNeedReview} onClick={() => setPauseMenuTab('main')}
                 className={`px-3 py-1.5 rounded-lg font-bold ${
                   pauseMenuTab === 'main' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-300'
                 }`}
@@ -8102,7 +8035,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 Mission
               </button>
               <button
-                onClick={() => setPauseMenuTab('settings')}
+                disabled={crewAssignmentsNeedReview} onClick={() => setPauseMenuTab('settings')}
                 className={`px-3 py-1.5 rounded-lg font-bold ${
                   pauseMenuTab === 'settings' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-300'
                 }`}
@@ -8110,7 +8043,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 Graphics & Audio
               </button>
               <button
-                onClick={() => setPauseMenuTab('slots')}
+                disabled={crewAssignmentsNeedReview} onClick={() => setPauseMenuTab('slots')}
                 className={`px-3 py-1.5 rounded-lg font-bold ${
                   pauseMenuTab === 'slots' ? 'bg-cyan-600 text-white' : 'bg-slate-900 text-slate-300'
                 }`}
@@ -8118,6 +8051,14 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 Save Slots
               </button>
             </div>
+
+            <button onClick={() => setPauseMenuTab('crew')} className="px-3 py-1.5 rounded-lg bg-slate-900 text-cyan-300 font-bold text-xs">Crew Assignments</button>
+            {pauseMenuTab === 'crew' && <>
+              {crewAssignmentsNeedReview && <p role="alert" className="text-amber-300 text-sm">This older mission assigned one officer to multiple roles. Their first role is retained; repeated duties are vacant for review. Your saved checkpoint is unchanged until you confirm these assignments. You may leave vacancies in flight; launch from Starport requires six distinct living officers.</p>}
+              <CrewAssignments roster={crewRoster} posts={assignedPosts} hullCritical={hullIntegrity <= 50} onAssign={handleAssignCrew}/>
+              {crewAssignmentsNeedReview && <button onClick={handleConfirmCrewAssignments} className="bg-cyan-600 text-white p-3 rounded-xl font-bold">Confirm crew assignments and save</button>}
+              {crewAssignmentsNeedReview && <button onClick={handleCancelCrewReview} className="bg-slate-900 text-slate-300 p-3 rounded-xl font-bold">Cancel review and return to title without saving</button>}
+            </>}
 
             {pauseMenuTab === 'main' && (
               <div className="flex flex-col gap-3">
@@ -8678,7 +8619,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
             <div className="space-y-2 text-xs">
               <p className="text-slate-300 font-sans">
-                You are about to return to the Title Screen. Your latest checkpoint is in Slot {activeSlot}. {saveDurable ? 'Export a backup to keep a copy outside this browser.' : 'This checkpoint is available only for this session. Export it before closing the tab.'}
+                You are about to return to the Title Screen. Your latest checkpoint is in Slot {activeSlot}. {saveBlocked ? 'Your current changes were not saved. The previous checkpoint was preserved.' : saveDurable ? 'Export a backup to keep a copy outside this browser.' : 'This checkpoint is available only for this session. Export it before closing the tab.'}
               </p>
             </div>
 

@@ -1,0 +1,38 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {pathToFileURL} from 'node:url';
+
+const url=process.env.JUNIOR_BAY_RESOURCE_URL??'http://127.0.0.1:5219/starflight-junior-crew/';
+assert.equal(new URL(url).hostname,'127.0.0.1');
+assert.notEqual(new URL(url).port,'4174','Fault tests must never use the owner preview');
+const out=path.resolve(process.env.JUNIOR_BAY_RESOURCE_EVIDENCE??'artifacts/second-pass-20261101/bay-resource-recovery');await fs.mkdir(out,{recursive:true});
+const fixture=JSON.parse(await fs.readFile('test-fixtures/commissioned-mission.json','utf8'));
+const health=await(await fetch(new URL('/__junior_tester__/status',url))).json();assert.equal(health.server,'starflight-junior-crew-windows-tester-v1');
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE_PATH?pathToFileURL(path.resolve(process.env.PLAYWRIGHT_MODULE_PATH)).href:'playwright');
+const browser=await chromium.launch({channel:'msedge',headless:true,args:['--mute-audio']});
+const report={build:health.build,scope:'Native muted disposable missions; controlled local503 faults only; actual launch/skip/save/reload controls, no owner storage',cases:[]};
+const definitions=[['healthy-preload-and-normal-launch',null,false],['transient-kit503-recovers-without-reload',/\/ship-outfitting-kit[^/]*\.glb(?:\?|$)/,false],['transient-armor503-recovers-without-reload',/\/ship-armor-1[^/]*\.png(?:\?|$)/,false],['permanent-kit503-is-bounded-captioned-and-skippable',/\/ship-outfitting-kit[^/]*\.glb(?:\?|$)/,true]];
+try{for(const [name,pattern,permanent]of definitions){
+ if(process.env.JUNIOR_BAY_RESOURCE_CASE&&!name.includes(process.env.JUNIOR_BAY_RESOURCE_CASE))continue;
+ const context=await browser.newContext({viewport:{width:1280,height:900}}),row={name,passed:false,faults:[],pageErrors:[],requestFailed:[],failedResponses:[],navigationCount:0,bay:null};let page;
+ try{
+  await context.route('**/*',r=>{const requestURL=r.request().url();if(new URL(requestURL).hostname!=='127.0.0.1')return r.abort();if(pattern?.test(requestURL)&&(permanent||row.faults.length===0)){row.faults.push({at:new Date().toISOString(),url:requestURL,status:503});return r.fulfill({status:503,contentType:'text/plain',body:'Controlled bay-resource regression fault'});}return r.continue();});
+  await context.addInitScript(()=>{window.__bayResourceCaptions=[];const original=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){if(typeof text==='string'&&/hangar graphics/i.test(text)&&window.__bayResourceCaptions.at(-1)!==text)window.__bayResourceCaptions.push(text);return Reflect.apply(original,this,[text,...args]);};});
+  page=await context.newPage();page.setDefaultTimeout(15000);const pageErrors=row.pageErrors;page.on('pageerror',e=>pageErrors.push({at:new Date().toISOString(),message:e.message,stack:e.stack}));page.on('requestfailed',r=>row.requestFailed.push({at:new Date().toISOString(),url:r.url(),error:r.failure()?.errorText}));page.on('response',r=>{if(r.status()>=400)row.failedResponses.push({url:r.url(),status:r.status()});});page.on('framenavigated',f=>{if(f===page.mainFrame())row.navigationCount++;});
+  const button=n=>page.getByRole('button',{name:n,exact:typeof n==='string'}),f=structuredClone(fixture);f.data.credits=10000;f.data.stardate='11-01-4620';Object.assign(f.data.snapshot,{location:'Starport',inRoom:true,starportRoomIndex:6,credits:10000,stardateDay:11,stardateMonth:1,stardateYear:4620,lastInterestAbsDay:0,flaresStopped:true,cinematicState:'none',cinematicRemaining:0});Object.assign(f.data.snapshot.settings,{musicVolume:0,soundVolume:0,voicesVolume:0,banterEnabled:false});
+  await page.goto(url);await button('IMPORT SAVE').click();await button(/^Slot E/).click();await page.getByRole('textbox').fill(JSON.stringify(f));await button('Restore Mission to Slot E').click();await button(/^Launch Mission/).click();await button('CLEAR GANTRY & LAUNCH TO SPACE').click();
+  if(permanent){
+   await page.waitForFunction(()=>{const c=document.querySelector('canvas[data-bay]');return c&&JSON.parse(c.dataset.bay).loadFailed;},{},{timeout:20000});
+   row.bay=await page.locator('canvas[data-bay]').evaluate(c=>JSON.parse(c.dataset.bay));assert.equal(row.bay.ready,false);assert.equal(row.bay.loadAttempts,3);assert(row.faults.length>=3&&row.faults.length<=6,'At most3attempts per preload cycle; starting a shot may restart an exhausted eager cycle');const terminalRequests=row.faults.length;await page.waitForTimeout(1800);assert.equal(row.faults.length,terminalRequests,'Passive RAF frames cannot retry an exhausted cycle indefinitely');row.captions=await page.evaluate(()=>window.__bayResourceCaptions);assert(row.captions.some(t=>t.includes('Hangar graphics unavailable')));assert(row.captions.some(t=>/Enter\/Space to skip/.test(t)));await page.screenshot({path:path.join(out,name+'.png')});await page.evaluate(()=>document.activeElement instanceof HTMLElement&&document.activeElement.blur());await page.keyboard.press('Enter');
+  }else{
+   await page.waitForFunction(()=>{const c=document.querySelector('canvas[data-bay]');return c&&JSON.parse(c.dataset.bay).ready;},{},{timeout:30000});row.bay=await page.locator('canvas[data-bay]').evaluate(c=>JSON.parse(c.dataset.bay));assert.equal(row.bay.ready,true);assert.equal(row.bay.loadFailed,false);if(pattern)assert.equal(row.faults.length,1);else assert.equal(row.faults.length,0);await page.screenshot({path:path.join(out,name+'.png')});
+  }
+  await button('Navigation').waitFor({timeout:30000});assert.equal(row.navigationCount,1,'Recovery/skip must complete in the same document, without reload');row.launchCompletedWithoutReload=true;
+  await button('PAUSE').click();await button('Mission').click();await button('Save Mission (Slot E)').click();await page.waitForFunction(()=>JSON.parse(localStorage.getItem('starflight_save_slot_E'))?.snapshot.credits===10040);const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('starflight_save_slot_E')));assert.equal(saved.credits,10040);assert.equal(saved.snapshot.location,'Star System');assert.equal(saved.snapshot.bankLedger.filter(e=>e.desc==='12% p.a. accrued interest').length,1);row.savedCredits=saved.credits;row.interestPayments=1;
+  await page.reload();await page.getByTestId('resume-slot-E').click();await button('Navigation').waitFor({timeout:30000});await button('PAUSE').click();await button('Mission').click();await button('Save Mission (Slot E)').click();await page.waitForFunction(()=>JSON.parse(localStorage.getItem('starflight_save_slot_E'))?.snapshot.credits===10040);const reloaded=await page.evaluate(()=>JSON.parse(localStorage.getItem('starflight_save_slot_E')));assert.equal(reloaded.credits,10040);assert.equal(reloaded.snapshot.bankLedger.filter(e=>e.desc==='12% p.a. accrued interest').length,1);row.saveReloadPassed=true;assert.deepEqual(pageErrors,[]);row.passed=true;
+ }catch(e){row.error=String(e.stack??e);await page?.screenshot({path:path.join(out,name+'-failed.png')}).catch(()=>{});}
+ finally{row.contextCloseStarted=new Date().toISOString();await context.close();if(row.pageErrors.length){row.passed=false;row.error??='Native page errors observed; see pageErrors';}report.cases.push(row);await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({name,passed:row.passed,error:row.error,faults:row.faults.length,pageErrors:row.pageErrors.length}));}
+}
+report.status=report.cases.length>0&&report.cases.every(r=>r.passed)?'passed':'failed';if(report.status==='failed')process.exitCode=1;
+}finally{await browser.close();await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));}

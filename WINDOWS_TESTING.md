@@ -45,6 +45,11 @@ not stop the server. Starting the same package again reuses its running server.
 
 ## Saves and updates
 
+The November 1 private tester is **Starflight-Junior-Crew-Windows-x64-20261101.zip**.
+It includes the latest second-pass fixes and unique crew roles. See the
+[package verification](docs/VERIFICATION_2026-11-01-PACKAGE.md) for its exact
+build/hash and extracted-package acceptance results.
+
 - Saves belong to the browser and address. Use the same browser and tester
   address each time. Private browsing or clearing site data can remove saves.
 - Use **Export Save** for regular `.sfsave` backups. Use **Import Save** when
@@ -57,6 +62,11 @@ not stop the server. Starting the same package again reuses its running server.
 - Keep only one tester build running. A busy port or different active package
   produces a message; the launcher does not silently change ports or overwrite
   another server's files.
+- Each of the six launch roles needs a different living officer. Use
+  **Pause > Crew Assignments** to reassign during a mission. Older duplicate-duty
+  saves open a paused review: nothing saves until confirmation; cancel returns
+  to the title without changing the checkpoint. Short-handed missions can
+  continue, but Starport launch requires six distinct living officers.
 
 ## Audio and quick checks
 

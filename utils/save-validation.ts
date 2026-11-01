@@ -62,11 +62,20 @@ export function saveStructureWithinBudget(value:unknown):boolean {
 
 type Test=(v:any)=>boolean;
 export const saveRecord=(v:unknown):v is Record<string,any>=>!!v&&typeof v==='object'&&!Array.isArray(v);
+/** A numerical precision domain, not a wallet/gameplay cap. Preserve historical
+ * fractional amounts and debt, but leave ordinary financial arithmetic far
+ * below overflow and reject values that cannot represent whole M.U. changes. */
+export const isSaveMoney=(v:unknown):v is number=>
+  typeof v==='number'&&Number.isFinite(v)&&Math.abs(v)<=Number.MAX_SAFE_INTEGER;
 const str:Test=v=>typeof v==='string';
 const num:Test=v=>typeof v==='number'&&Number.isFinite(v);
 const bool:Test=v=>typeof v==='boolean';
 const nonnegative:Test=v=>num(v)&&v>=0;
+const nonnegativeMoney:Test=v=>isSaveMoney(v)&&v>=0;
 const integer:Test=v=>Number.isSafeInteger(v);
+// Absolute day indices cover the save calendar 01-01-4620..30-10-99999.
+// Both the current checkpoint and its old alias use whole elapsed days.
+const calendarDay:Test=v=>Number.isInteger(v)&&v>=0&&v<=28613999;
 const oneOf=(...values:unknown[]):Test=>v=>values.includes(v);
 const array=(test:Test):Test=>v=>Array.isArray(v)&&v.length<=MAX_SAVE_COLLECTION_ITEMS&&v.every(test);
 const map=(test:Test):Test=>v=>saveRecord(v)&&Object.values(v).every(test);
@@ -78,8 +87,8 @@ const nullable=(test:Test):Test=>v=>v===null||test(v);
 const posts=oneOf('Captain','Science Officer','Navigator','Engineer','Communications','Doctor');
 const races=oneOf('Veloxi','Uhlek','Gazurtoid','Spemin','Thrynn','Elowan','Mechans','Minstrels','Nomad','Veloxi Drone','Mysterions','Derelict');
 export const validSaveMessages=array(shape({id:str,text:str},{speaker:str,post:posts,type:oneOf('info','alert','banter')}));
-const artifact=shape({id:str,codeName:str,realName:str,volume:nonnegative,basePrice:nonnegative,description:str},{name:str,value:nonnegative,appraised:bool,specialEffectDesc:str});
-const cargo=shape({id:str,name:str,type:oneOf('mineral','artifact','specimen'),volume:nonnegative,value:nonnegative},
+const artifact=shape({id:str,codeName:str,realName:str,volume:nonnegative,basePrice:nonnegativeMoney,description:str},{name:str,value:nonnegativeMoney,appraised:bool,specialEffectDesc:str});
+const cargo=shape({id:str,name:str,type:oneOf('mineral','artifact','specimen'),volume:nonnegative,value:nonnegativeMoney},
   {artifactRef:artifact,speciesName:str,isArmed:bool,armedTimer:nonnegative});
 const planet=shape({slot:integer,orderIndex:integer,name:str,type:oneOf('Rock','Frozen','Liquid','Gas Giant','Molten','Crystal'),
   size:oneOf('Small','Medium','Large','Huge'),renderSize:num,color:str,gravity:num,mass:num,orbitRadius:num,orbitSpeed:num,initialAngle:num,
@@ -89,33 +98,33 @@ const planet=shape({slot:integer,orderIndex:integer,name:str,type:oneOf('Rock','
 const pending=shape({starId:integer,starName:str,starX:num,starY:num,slot:integer,planet,colonyName:str,stardate:str});
 const bulletin=shape({id:num,date:str,title:str,paragraphs:array(str),author:str,read:bool});
 const evaluation=shape({id:str,planetName:str,colonyName:str,starX:num,starY:num,stardate:str,suitable:bool,
-  verdict:oneOf('SUITABLE','UNSUITABLE'),payout:num,reasons:array(str),notes:str,read:bool},
-  {rating:oneOf('A','B','C','D','F'),fine:num,bonus:num,warningMessage:str,isOptimal:bool});
-const bank=shape({date:str,desc:str,amount:num,balance:num},{type:str,stardate:str,note:str});
+  verdict:oneOf('SUITABLE','UNSUITABLE'),payout:isSaveMoney,reasons:array(str),notes:str,read:bool},
+  {rating:oneOf('A','B','C','D','F'),fine:isSaveMoney,bonus:isSaveMoney,warningMessage:str,isOptimal:bool});
+const bank=shape({date:str,desc:str,amount:isSaveMoney,balance:isSaveMoney},{type:str,stardate:str,note:str});
 const target=shape({systemCoords:v=>Array.isArray(v)&&v.length===2&&v.every(num),planetIndex:integer,lat:num,lon:num,isArmed:bool});
-const projectile=shape({id:str,fromPlayer:bool,type:oneOf('laser','missile','plasma'),x:num,y:num,targetX:num,targetY:num,speed:num,damage:num,duration:num},
+const projectile=shape({id:str,fromPlayer:bool,type:oneOf('laser','missile','plasma'),x:num,y:num,targetX:num,targetY:num,speed:nonnegative,damage:num,duration:num},
   {maxDuration:num,color:str,targetShipId:str,targetIsPlayer:bool,playerLaunchX:num,playerLaunchY:num,isMiss:bool,sourceRace:str,sourceWeapon:str,sourceClass:str});
 const fleetShip=shape({id:str,race:races,vesselClass:str,x:num,y:num,armor:num,shields:num,hullIntegrity:num,maxHull:num,laserClass:num,missileClass:num},
   {vesselType:oneOf('Transport','Scout','Warship','Drone','Probe','Minstrel','Derelict','Cosmic Entity'),
     size:oneOf('Small','Medium','Large','Dreadnought','Station','Cosmic Entity'),maxShields:num,fireDelay:num,fireCooldown:num,
     isStationary:bool,isMissileImmune:bool,isLaserImmune:bool,hasPlasmaBolts:bool,isWreck:bool,looted:bool,
-    loot:array(shape({name:str,volume:nonnegative,type:oneOf('mineral','endurium','artifact'),value:nonnegative}))});
+    loot:array(shape({name:str,volume:nonnegative,type:oneOf('mineral','endurium','artifact'),value:nonnegativeMoney}))});
 export const validSaveFleetMembers:Test=v=>saveRecord(v)&&array(fleetShip)(v.ships)
   &&shape({},{territoryRadius:num,isHomeworldFleet:bool})(v);
 export const validSaveSurfaceMembers:Test=v=>saveRecord(v)&&shape(
   {planetType:oneOf('Rock','Frozen','Liquid','Gas Giant','Molten','Crystal'),color:str,hydrosphereCompound:str,scannedTimer:num})(v)
-  &&v.lifeforms.every(shape({}, {color:str,composition:array(str),attackCooldown:num,heading:num}))
+  &&v.lifeforms.every(shape({}, {color:str,composition:array(str),attackCooldown:num,heading:num,bountyValue:nonnegativeMoney}))
   &&v.ruins.every(shape({}, {isControlNexus:bool}))
   &&v.droppedCargo.every(cargo);
 
 /** Missing later-version fields retain their existing restore defaults. Every
  * supplied collection member and nested renderable field must have its schema. */
 export function validSaveCollections(slot:unknown):boolean {
-  if(!saveRecord(slot)||!shape({}, {bridgeLog:validSaveMessages,isDev:bool,gameWon:bool,flaresHalted:bool})(slot)||!saveRecord(slot.snapshot))return false;
+  if(!saveRecord(slot)||!shape({}, {credits:isSaveMoney,bridgeLog:validSaveMessages,isDev:bool,gameWon:bool,flaresHalted:bool})(slot)||!saveRecord(slot.snapshot))return false;
   const s=slot.snapshot;
   if(!shape({}, {
-    bridgeLog:validSaveMessages,systemMessages:validSaveMessages,
-    artifactStock:array(shape({stockId:str,price:nonnegative,artifact})),
+    credits:isSaveMoney,bridgeLog:validSaveMessages,systemMessages:validSaveMessages,
+    artifactStock:array(shape({stockId:str,price:nonnegativeMoney,artifact})),
     banterLog:array(shape({speaker:str,text:str,post:posts})),vehicleHold:array(cargo),specimensInHold:array(cargo),
     bulletins:array(bulletin),evaluations:array(evaluation),bankLedger:array(bank),pendingRecommendations:array(pending),
     visitedStarIds:array(integer),traversedFluxIds:array(integer),usedFluxes:array(integer),recommendedPlanets:array(str),
@@ -124,7 +133,7 @@ export function validSaveCollections(slot:unknown):boolean {
     armedDetonationTracker:nullable(target),encounterShotsFired:shape({laser:nonnegative,missile:nonnegative}),
     prevLocation:oneOf('Starport','Docking Bay','Star System','Hyperspace','In Orbit','Landing','On Planet','Terrain Vehicle','Encounter'),
     vehicleWeapon:oneOf('Stunner','Laser'),starportRoomIndex:num,inRoom:bool,systemZoom:num,hyperZoom:num,vehicleHeading:num,vehicleFuel:num,
-    lastInterestAbsDay:num,lastInterestStardateDays:num,lastInterestStardate:str,unsuitablePlanetsRecommendedCount:num,unsuitableCount:num,
+    lastInterestAbsDay:calendarDay,lastInterestStardateDays:calendarDay,lastInterestStardate:str,unsuitablePlanetsRecommendedCount:num,unsuitableCount:num,
     encounterTargetIndex:integer,isDev:bool,gameWon:bool,flaresHalted:bool,flaresStopped:bool,starportDestroyed:bool,vehicleDestroyed:bool,
     shieldsRaised:bool,weaponsArmed:bool,combatActive:bool,hasPurchasedBlackBox:bool,grantedDroneClearanceUntilHyperspace:bool,
     hasGivenEllipsoid:bool,hasRefusedCrystalOrb:bool,uhlekSilenced:bool,elowanHostile:bool,
@@ -135,11 +144,11 @@ export function validSaveCollections(slot:unknown):boolean {
   if(comm!==undefined&&!shape({}, {
     conversationCount:num,maxPhrases:num,alienHailsCount:num,lastAlienSpeakerText:str,lastGarbledAlienText:str,lastCaptainText:str,
     activeSubject:nullable(v=>str(v)||num(v)),alienKnowsNothingMore:bool,
-    activeTradeOffer:nullable(shape({stage:oneOf('Plutonium','Artifact','BlackBox'),itemName:str,costDesc:str,timer:num},{enduriumReward:num,priceCredits:num})),
+    activeTradeOffer:nullable(shape({stage:oneOf('Plutonium','Artifact','BlackBox'),itemName:str,costDesc:str,timer:num},{enduriumReward:num,priceCredits:isSaveMoney})),
     activeTriviaQuestion:nullable(shape({id:str,race:races,questionText:str,options:array(shape({label:str,isCorrect:bool})),timer:num},{rewardMoodDelta:num})),
     activeAssistanceRequest:nullable(shape({race:races,text:str,enduriumRequired:num,timer:num})),
     dialogueHistory:array(shape({text:str,race:races,subject:str},{rawText:str,timestamp:str})),
   })(comm))return false;
-  if(comm?.pendingPriorityBusiness!=null&&!shape({}, {artifactName:str})(comm.pendingPriorityBusiness))return false;
+  if(comm?.pendingPriorityBusiness!=null&&!shape({}, {artifactName:str,tributeAmount:isSaveMoney})(comm.pendingPriorityBusiness))return false;
   return true;
 }

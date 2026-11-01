@@ -1,5 +1,6 @@
 import {placePlanetLabel,type LabelBox} from './utils/presentation-polish';
 import { renderGameInterface } from './GameInterface';
+import {uniqueCrewAssignments,hasDuplicateCrewAssignments,certifiedCrewAssignments,crewAssignmentAllowed} from './utils/crew-assignments';
 import {BayVideoPlayer} from './utils/bay-video';
 import CrewTraining from './components/CrewTraining';
 import BridgeLogFilters from './components/BridgeLogFilters';
@@ -20,7 +21,7 @@ import ShipDiagnostics from './components/ShipDiagnostics';
 import {surveyPlanet,visibleSurveyContacts,rememberLocalContacts,drawSurveyContacts,localContactPosition} from './utils/planet-survey';
 import {diagnosticStatus} from './utils/ship-diagnostics';
 import {drawConfiguredShip,prepareConfiguredShip,configuredLaserEmitters} from './utils/ship-art';
-import {shipExhaustNozzles} from './utils/space-rendering';
+import {shipExhaustNozzles,projectileColor} from './utils/space-rendering';
 import {BAY_LAUNCH_SECONDS,cinematicProgress} from './utils/bay-flight';
 import {drawBayDeparture,prepareBay,bayReady} from './utils/bay-renderer';
 import {drawLandingGear,drawLandingRamp} from './utils/landing-gear';
@@ -29,8 +30,8 @@ import {encounterDriveStep,stoppedEncounterDrive,enginesAvailable} from './utils
 import { thrynnFuelOffer, exchangeArtifactForFuel, payFuelTribute } from './utils/diplomacy-rules';
 import {newDroneChallenge,answerDroneNumber,advanceDroneChallenge,denyDroneOrbit} from './utils/drone';
 import { restoreSettings, scenePixelRatio, type GameSettings, type GraphicsQuality } from './utils/settings';
-import { encodeSaveToBase64, decodeSaveFromBase64, parseSaveJSON, parseSaveManifest, restorableSaveSlot, type ExportSavePayload } from './utils/save-codec';
-import {importTextWithinBudget,MAX_SAVE_FILE_BYTES} from './utils/save-validation';
+import { encodeSaveToBase64, decodeSaveFromBase64, parseSaveJSON, parseSaveManifest, restorableSaveSlot, isPlayableSave, type ExportSavePayload } from './utils/save-codec';
+import {importTextWithinBudget,MAX_SAVE_FILE_BYTES,saveJSONTextWithinBudget} from './utils/save-validation';
 import {boundedGridIndices,saveRenderCoordinatesAreSafe} from './utils/render-safety';
 // tslint:disable
 /* eslint-disable */
@@ -125,7 +126,7 @@ import { advanceSurfaceWeather, surfaceWeatherKind, type SurfaceWeatherParticle 
 import { adjustCargoStock, canRemoveCargoPod, consumeFuel, fitCargo, isCrystalArtifact, newMissionDestination, planetKey, roverCommand, shipCargoVolume, survivingPlanets } from './utils/gameplay-rules';
 import { createSafeStorage } from './utils/storage';
 import { projectileArrival, resolveShipHit } from './utils/combat-rules';
-import { advanceHealth, repairPercentageRate, crewHealingRate, fieldRepairCost, bestActingOfficer, assignedCrew } from './utils/maintenance';
+import { advanceHealth, repairPercentageRate, crewHealingRate, fieldRepairCost, crewAssignmentsAfterLoss, assignedCrew } from './utils/maintenance';
 import { advanceLifeform, stunnerTarget, recoverRuinArtifact, recoveredCargo, landingRequirements } from './utils/surface-rules';
 import { refillPlanetSurface, returnArtifactToSite } from './utils/surface-progress';
 import { initialArtifactStock, depotSale, buyDepotArtifact, limitArtifactStock, type DepotArtifact } from './utils/artifact-shop';
@@ -2494,6 +2495,13 @@ export { encodeSaveToBase64, decodeSaveFromBase64 } from './utils/save-codec';
 function useGameInterfaceState() {
   const heldKeysRef = useRef<Record<string, boolean>>({});
   const missionEpochRef = useRef(0);
+  const launchPreludePausedRef = useRef(true);
+  const launchPreludeFrameTimeRef = useRef(0);
+  const launchTransporterAnimIdRef = useRef<number | null>(null);
+  const cancelLaunchTransporter = useCallback(() => {
+    if (launchTransporterAnimIdRef.current !== null) cancelAnimationFrame(launchTransporterAnimIdRef.current);
+    launchTransporterAnimIdRef.current = null;
+  }, []);
   const pendingBanterRepliesRef=useRef({epoch:0,count:0});
   const blockedSalvageRef = useRef(new Set<string>());
   const scheduleMissionEvent = useCallback((callback: () => void, delay: number) => {
@@ -2754,6 +2762,7 @@ function useGameInterfaceState() {
   // Autosave toast state
   const [autosaveToast, setAutosaveToast] = useState<boolean>(false);
   const [saveDurable, setSaveDurable] = useState(true);
+  const [saveBlocked, setSaveBlocked] = useState(false);
   const toastTimeoutRef = useRef<number | null>(null);
 
   // Export & Import Save State
@@ -2868,6 +2877,11 @@ function useGameInterfaceState() {
   const [clickMoveTarget, setClickMoveTarget] = useState<{ x: number; y: number } | null>(null);
   const [transporterBeamProgress, setTransporterBeamProgress] = useState<number>(0);
   const [transporterParticles, setTransporterParticles, transporterParticlesFrameRef] = useFrameState<{ x: number; y: number; vy: number; life: number; maxLife: number; color: string; size: number }[]>([]);
+  const resetLaunchTransporter = useCallback(() => {
+    cancelLaunchTransporter();
+    setTransporterBeamProgress(0);
+    setTransporterParticles([]);
+  }, [cancelLaunchTransporter, setTransporterParticles]);
   const [cameraX, setCameraX] = useState<number>(0);
   const [activeRoomIndex, setActiveRoomIndex] = useState<number | null>(null);
   const [doorSlideProgress, setDoorSlideProgress] = useState<number>(0); // 0 (closed) to 1 (open)
@@ -2897,6 +2911,7 @@ function useGameInterfaceState() {
   const cinematicCompletingRef = useRef<boolean>(false);
 
   const startCinematic = useCallback((state: CinematicState, duration = 3.0) => {
+    if(state==='launch'||state==='dock')void prepareBay(true);
     cinematicCompletingRef.current = false;
     cinematicStateRef.current = state;
     cinematicTimerRef.current = duration;
@@ -3387,7 +3402,7 @@ function useGameInterfaceState() {
 
   // Personnel & Posts
   const [crewRoster, setCrewRoster, crewRosterFrameRef] = useFrameState<CrewMember[]>(INITIAL_CREW_ROSTER, markFrameUIDirty);
-  const [assignedPosts, setAssignedPosts] = useState<Record<CrewPost, string | null>>({
+  const [assignedPosts, setRawAssignedPosts] = useState<Record<CrewPost, string | null>>({
     Captain: null,
     'Science Officer': null,
     Navigator: null,
@@ -3395,12 +3410,16 @@ function useGameInterfaceState() {
     Communications: null,
     Doctor: null,
   });
+  // The invariant applies to ordinary controls, succession and development presets.
+  const setAssignedPosts = useCallback<React.Dispatch<React.SetStateAction<Record<CrewPost,string|null>>>>(update => {
+    setRawAssignedPosts(previous => uniqueCrewAssignments(typeof update === 'function' ? update(previous) : update));
+  }, []);
+  const [crewAssignmentsNeedReview,setCrewAssignmentsNeedReview] = useState(false);
+  const crewAssignmentsNeedReviewRef = useRef(false);
   const assignedPostsLiveRef=useRef(assignedPosts);
   assignedPostsLiveRef.current=assignedPosts;
   const getCrewAboard=useCallback(()=>assignedCrew(crewRosterFrameRef.current,assignedPostsLiveRef.current),[]);
-  const certifiedCrewCount = CREW_POSTS.filter(post =>
-    crewRoster.some(officer => officer.id === assignedPosts[post] && officer.alive)
-  ).length;
+  const certifiedCrewCount = certifiedCrewAssignments(crewRoster,assignedPosts);
 
   // Bulletins & Evaluations
   const [bulletins, setBulletins] = useState<CorporateBulletin[]>(() => {
@@ -3432,7 +3451,7 @@ function useGameInterfaceState() {
 
   // Modal Dialogs
   const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
-  const [pauseMenuTab, setPauseMenuTab] = useState<'main' | 'slots' | 'settings' | 'help'>('main');
+  const [pauseMenuTab, setPauseMenuTab] = useState<'main' | 'slots' | 'settings' | 'help' | 'crew'>('main');
 
   // Captain's Starship Cargo Hold Modal State
   const [isShipCargoModalOpen, setIsShipCargoModalOpen] = useState<boolean>(false);
@@ -4140,8 +4159,36 @@ function useGameInterfaceState() {
     slot: SaveSlotData['slot']; patch?: Partial<NonNullable<SaveSlotData['snapshot']>>;
   } | null>(null);
   const handleSaveToSlot = useCallback((slot: SaveSlotData['slot'], patch?: Partial<NonNullable<SaveSlotData['snapshot']>>) => {
+    if (crewAssignmentsNeedReviewRef.current) return;
     setPendingCheckpoint({ slot, patch });
   }, []);
+  const handleAssignCrew = useCallback((post:CrewPost,id:string|null) => {
+    const posts=assignedPostsLiveRef.current;
+    if(posts[post]===id || !crewAssignmentAllowed(crewRosterFrameRef.current,posts,post,id)) return;
+    const nextPosts={...posts,[post]:id};
+    assignedPostsLiveRef.current=nextPosts;
+    setAssignedPosts(nextPosts);
+    const incoming=crewRosterFrameRef.current.find(member=>member.id===id);
+    if(incoming&&!isSilenceFilterActive()) {
+      const text=assignmentVoiceLine(incoming.race);
+      setBanterLog(previous=>[{speaker:incoming.name,post,text},...previous.slice(0,15)]);
+      addMessage(text,post,'banter',`${post} ${incoming.name}`);void playCrewBanter(text);
+    }
+    gameAudio.playConfirmSelect();
+    handleSaveToSlot(activeSlot,{assignedPosts:nextPosts});
+  },[activeSlot,handleSaveToSlot,isSilenceFilterActive,addMessage,playCrewBanter,setAssignedPosts]);
+  const handleConfirmCrewAssignments = useCallback(() => {
+    crewAssignmentsNeedReviewRef.current=false;
+    setCrewAssignmentsNeedReview(false);
+    handleSaveToSlot(activeSlot,{assignedPosts:assignedPostsLiveRef.current});
+  },[activeSlot,handleSaveToSlot]);
+  const handleCancelCrewReview = useCallback(() => {
+    // Keep writes inhibited until the next load/new mission resets the guard.
+    setPendingCheckpoint(null);
+    setCrewAssignmentsNeedReview(false);
+    setIsGameMenuOpen(false);
+    setGameState({status:'START',score:100,level:1});
+  },[]);
   useEffect(()=>{
     const knowledge=surveyKnowledgeFrameRef.current;
     if(gameLocation!=='Starport' || gameState.status!=='PLAYING' || isArthDestroyed || knowledge.unpaidValue<=0) return;
@@ -4174,10 +4221,11 @@ function useGameInterfaceState() {
       slotKey: 'A' | 'B' | 'C' | 'D' | 'E',
       customPatch?: Partial<NonNullable<SaveSlotData['snapshot']>>,
     ) => {
-      if (hullIntegrity <= 0 || gameOverModal) return;
+      if (hullIntegrity <= 0 || gameOverModal || crewAssignmentsNeedReviewRef.current) return;
 
       const baseSnap = captureSnapshot();
       const snap = customPatch ? { ...baseSnap, ...customPatch } : baseSnap;
+      if(hasDuplicateCrewAssignments(snap.assignedPosts)) return;
       const currentCredits = customPatch?.credits ?? credits;
       const currentShipName = (customPatch?.shipName ?? shipName) || 'UNNAMED VESSEL';
       const currentLoc = customPatch?.location ?? gameLocation;
@@ -4206,8 +4254,23 @@ function useGameInterfaceState() {
 
       const primaryKey = SLOT_KEYS[slotKey];
       const legacyKey = LEGACY_SLOT_KEYS[slotKey];
+      // Validate before JSON can silently turn nonfinite state into null and
+      // replace the player's last restorable checkpoint with invalid data.
+      if (!isPlayableSave(newSlotData)) {
+        setSaveDurable(false);
+        setSaveBlocked(true);
+        addMessage('Save not written: mission data failed validation. Your existing saved slot was preserved.', 'Captain', 'alert');
+        return;
+      }
       const serialized = JSON.stringify(newSlotData);
+      if (!saveJSONTextWithinBudget(serialized)) {
+        setSaveDurable(false);
+        setSaveBlocked(true);
+        addMessage('Save not written: mission exceeds the save size limit. Your existing saved slot was preserved.', 'Captain', 'alert');
+        return;
+      }
 
+      setSaveBlocked(false);
       const stored = safeStorageSet(primaryKey, serialized);
       safeStorageSet(legacyKey, serialized);
       safeStorageSet(LAST_SLOT_KEY, slotKey);
@@ -4246,7 +4309,7 @@ function useGameInterfaceState() {
       if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
       toastTimeoutRef.current = window.setTimeout(() => setAutosaveToast(false), 2400);
     },
-    [captureSnapshot, credits, shipName, formattedStardate, gameLocation, systemMessages, hullIntegrity, gameOverModal, devUsed, gameWon, flaresStopped],
+    [captureSnapshot, credits, shipName, formattedStardate, gameLocation, systemMessages, hullIntegrity, gameOverModal, devUsed, gameWon, flaresStopped, addMessage],
   );
 
   useEffect(() => {
@@ -4285,8 +4348,13 @@ function useGameInterfaceState() {
       // Work on a copy: surface mining and combat mutate their live models.
       // A loaded mission must never mutate the stored checkpoint in memory.
       const snap = structuredClone(target.snapshot);
+      const needsCrewReview=hasDuplicateCrewAssignments(snap.assignedPosts);
+      crewAssignmentsNeedReviewRef.current=needsCrewReview;
+      setCrewAssignmentsNeedReview(needsCrewReview);
       setReplacementMission(null);
       missionEpochRef.current++;
+      resetLaunchTransporter();
+      setSaveBlocked(false);
       blockedSalvageRef.current.clear();
       heldKeysRef.current = {};
       voiceEngine.stopAllVoices();
@@ -4522,7 +4590,8 @@ function useGameInterfaceState() {
       setActiveConsoleMenu('Bridge');
       setDisplayPanelMode('system_map');
       setGameState({ status: 'PLAYING', score: snap.gameWon ? 9999 : 100, level: 1 });
-      setIsGameMenuOpen(false);
+      setIsGameMenuOpen(needsCrewReview);
+      setPauseMenuTab(needsCrewReview?'crew':'main');
       gameAudio.playPowerupChime();
     },
     [saveSlots, assets, viewDimensions],
@@ -4724,7 +4793,11 @@ function useGameInterfaceState() {
   );
 
   const startNewGame = useCallback(() => {
+    crewAssignmentsNeedReviewRef.current=false;
+    setCrewAssignmentsNeedReview(false);
     missionEpochRef.current++;
+    resetLaunchTransporter();
+    setSaveBlocked(false);
     blockedSalvageRef.current.clear();
     heldKeysRef.current = {};
     voiceEngine.stopAllVoices();
@@ -5148,36 +5221,21 @@ function useGameInterfaceState() {
       gameAudio.playDefeatMotif();
       addMessage(`CASUALTY REPORT: Officer ${deceased.name} (${deceased.race}) has succumbed to fatal injuries!`, 'Doctor', 'alert');
 
-      setAssignedPosts((prevPosts) => {
-        const updated = { ...prevPosts };
-        setCrewRoster((roster) => {
-          const livingCrew = roster.filter((c) => c.alive && c.id !== deceased.id);
-
-          if (livingCrew.length === 0) {
-            setGameOverModal({
-              title: 'TOTAL CREW LOSS',
-              desc: 'All starship personnel have perished. The vessel drifts silently into the deep cosmic void.',
-              poignantLine: 'The emergency beacon echoes unanswered in the deep space silence. No hands remain on the helm.',
-            });
-            return roster;
-          }
-
-          CREW_POSTS.forEach((post) => {
-            if (updated[post] === deceased.id) {
-              const best = bestActingOfficer(livingCrew,post);
-              if (best) {
-                updated[post] = best.id;
-                addMessage(`COMMAND SUCCESSION: ${best.name} designated acting ${post}.`, undefined, 'info');
-              } else {
-                updated[post] = null;
-              }
-            }
-          });
-          return [...roster];
-        });
-        return updated;
-      });
-      if (crewRosterFrameRef.current.some(officer=>officer.alive)) handleSaveToSlot(activeSlot);
+      const roster=crewRosterFrameRef.current.map(member=>member.id===deceased.id?{...member,alive:false,vitality:0}:member);
+      const previous=assignedPostsLiveRef.current;
+      const updated=crewAssignmentsAfterLoss(roster,previous,deceased.id);
+      assignedPostsLiveRef.current=updated;
+      setAssignedPosts(updated);
+      setCrewRoster(roster);
+      if(!roster.some(member=>member.alive)) {
+        setGameOverModal({title:'TOTAL CREW LOSS',desc:'All starship personnel have perished. The vessel drifts silently into the deep cosmic void.',poignantLine:'The emergency beacon echoes unanswered in the deep space silence. No hands remain on the helm.'});
+        return;
+      }
+      for(const post of CREW_POSTS) if(previous[post]===deceased.id) {
+        const replacement=roster.find(member=>member.id===updated[post]);
+        addMessage(replacement?`COMMAND SUCCESSION: ${replacement.name} designated acting ${post}.`:`CREW ASSIGNMENT: ${post} is vacant. Assign a different officer through Pause > Crew Assignments.`,undefined,replacement?'info':'alert');
+      }
+      handleSaveToSlot(activeSlot,{crewRoster:roster,assignedPosts:updated});
     },
     [addMessage,handleSaveToSlot,activeSlot],
   );
@@ -6961,6 +7019,7 @@ function useGameInterfaceState() {
 
   // Enter Starport Door with smooth sliding mask transition over ~0.4s & room banter & steam burst
   const handleEnterDoor = useCallback((doorIndex: number) => {
+    resetLaunchTransporter();
     const doorConfig = STARPORT_DOORS.find((d) => d.index === doorIndex) || STARPORT_DOORS[0];
     const concourseCanvas = getConcourseCanvas(assets);
     const { drawnW, drawnH, offsetX, offsetY } = getConcourseCoverTransform(
@@ -7047,6 +7106,7 @@ function useGameInterfaceState() {
 
   // Exit Room back to Concourse
   const handleExitRoom = useCallback(() => {
+    resetLaunchTransporter();
     if (clampReleaseAnimIdRef.current !== null) {
       cancelAnimationFrame(clampReleaseAnimIdRef.current);
       clampReleaseAnimIdRef.current = null;
@@ -7074,7 +7134,7 @@ function useGameInterfaceState() {
 
   // Canonical Docking Bay Launch Check & Trigger (Rule 5)
   const handleDockingBayLaunch = useCallback(() => {
-    if (clampReleaseAnimIdRef.current !== null) return;
+    if (clampReleaseAnimIdRef.current !== null || launchTransporterAnimIdRef.current !== null) return;
 
     const warnings: string[] = [];
 
@@ -7129,7 +7189,14 @@ function useGameInterfaceState() {
     setClampReleaseProgress(0);
     gameAudio.playHoverMicroTone();
 
-    const startTime = performance.now();
+    launchPreludeFrameTimeRef.current = performance.now();
+    const epoch = missionEpochRef.current;
+    let elapsed = 0;
+    const frameMilliseconds = (now: number) => {
+      const delta = Math.min(100, Math.max(0, now - launchPreludeFrameTimeRef.current));
+      launchPreludeFrameTimeRef.current = now;
+      return launchPreludePausedRef.current || document.hidden ? 0 : delta;
+    };
     const duration = 700; // 0.7s total release
 
     const executeLaunchSequence = () => {
@@ -7162,15 +7229,26 @@ function useGameInterfaceState() {
       }));
       setTransporterParticles(sparkles);
 
-      scheduleMissionEvent(() => {
-        setTransporterBeamProgress(0);
-        startCinematic('launch', BAY_LAUNCH_SECONDS);
-        triggerBanter('launch');
-      }, 850);
+      let beamElapsed = 0;
+      launchPreludeFrameTimeRef.current = performance.now();
+      const animateTransporter = (now: number) => {
+        if (missionEpochRef.current !== epoch) return;
+        beamElapsed += frameMilliseconds(now);
+        if (beamElapsed < 850) {
+          launchTransporterAnimIdRef.current = requestAnimationFrame(animateTransporter);
+        } else {
+          launchTransporterAnimIdRef.current = null;
+          setTransporterBeamProgress(0);
+          startCinematic('launch', BAY_LAUNCH_SECONDS);
+          triggerBanter('launch');
+        }
+      };
+      launchTransporterAnimIdRef.current = requestAnimationFrame(animateTransporter);
     };
 
     const animateClamps = (now: number) => {
-      const elapsed = now - startTime;
+      if (missionEpochRef.current !== epoch) return;
+      elapsed += frameMilliseconds(now);
       const progress = Math.min(1.0, elapsed / duration);
       clampReleaseProgressRef.current = progress;
       setClampReleaseProgress(progress);
@@ -10699,6 +10777,16 @@ function useGameInterfaceState() {
   const isSurfaceDialogOpen = isSurfaceMapOpen || !!surfaceRuinModal || roverCargoModalOpen || !!roverLookData;
   const isSimulationPaused = isGameMenuOpen || isStarmapOpen || !!gameOverModal || !!victorySequenceModal ||
     isDevPanelOpen || isShipsLogOpen || isImportModalOpen || isExportModalOpen || introPage !== 0 || isSurfaceDialogOpen || isPromptingDistress || !!replacementMission;
+  launchPreludePausedRef.current = gameState.status !== 'PLAYING' || isSimulationPaused;
+  useEffect(() => {
+    // A hidden tab can suspend RAF entirely; discard that wall-time gap.
+    const resetLaunchFrame = () => { launchPreludeFrameTimeRef.current = performance.now(); };
+    document.addEventListener('visibilitychange', resetLaunchFrame);
+    return () => {
+      document.removeEventListener('visibilitychange', resetLaunchFrame);
+      cancelLaunchTransporter();
+    };
+  }, []);
   useEffect(() => {
     if(gameState.status!=='PLAYING'||isSimulationPaused||!['launch','dock'].includes(cinematicState))bayVideoPlayer.stop();
     const pauseHidden=()=>{if(document.hidden)bayVideoPlayer.pause();};
@@ -10870,6 +10958,7 @@ function useGameInterfaceState() {
       if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
         if (gameStateRef.current.status === 'PLAYING') {
           e.preventDefault();
+          if (crewAssignmentsNeedReviewRef.current) return;
           setIsGameMenuOpen((prev) => {
             const next = !prev;
             if (next) {
@@ -13049,7 +13138,7 @@ function useGameInterfaceState() {
     };
 
     const fixedBayShot=cinematicState==='launch'||cinematicState==='dock'?cinematicState:null;
-    if(fixedBayShot&&bayVideoPlayer.draw(ctx,canvasWidth,canvasHeight,fixedBayShot,
+    if(fixedBayShot&&bayReady()&&bayVideoPlayer.draw(ctx,canvasWidth,canvasHeight,fixedBayShot,
       cinematicTimerRef.current,cinematicDurationRef.current,{engineClass,cargoPods,armorClass,shieldClass,laserClass,missileClass},
       gameStateRef.current.status==='PLAYING'&&!isSimulationPaused&&!document.hidden,missionEpochRef.current)){
       ctx.fillStyle='#000000aa';ctx.fillRect(0,canvasHeight-58,canvasWidth,58);
@@ -15190,13 +15279,14 @@ function useGameInterfaceState() {
 
         ctx.save();
         if (proj.type === 'laser') {
+          const color=projectileColor(ctx,proj.color,proj.fromPlayer);
           const local=proj.fromPlayer?configuredLaserEmitters(laserClass,playerTacW):[{x:0,y:0}];
           for(const emitter of local){
             const ex=px+emitter.x*Math.cos(shipHeading)-emitter.y*Math.sin(shipHeading);
             const ey=py+emitter.x*Math.sin(shipHeading)+emitter.y*Math.cos(shipHeading);
             const beamGrad=ctx.createLinearGradient(ex,ey,tx,ty);
-            beamGrad.addColorStop(0,proj.fromPlayer?'#ffffff':'#fef2f2');beamGrad.addColorStop(.3,proj.color);beamGrad.addColorStop(1,proj.color);
-            ctx.strokeStyle=beamGrad;ctx.shadowColor=proj.color;ctx.shadowBlur=14*scaleRatio;
+            beamGrad.addColorStop(0,proj.fromPlayer?'#ffffff':'#fef2f2');beamGrad.addColorStop(.3,color);beamGrad.addColorStop(1,color);
+            ctx.strokeStyle=beamGrad;ctx.shadowColor=color;ctx.shadowBlur=14*scaleRatio;
             ctx.lineWidth=(proj.fromPlayer?1.6:3)*scaleRatio;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(tx,ty);ctx.stroke();
             ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(ex,ey,2*scaleRatio,0,Math.PI*2);ctx.fill();
           }
@@ -16766,6 +16856,10 @@ function useGameInterfaceState() {
     assets,
     assignedPosts,
     assignmentVoiceLine,
+    crewAssignmentsNeedReview,
+    handleAssignCrew,
+    handleConfirmCrewAssignments,
+    handleCancelCrewReview,
     autosaveToast,
     bankLedger,
     banterEnabled,
@@ -17076,6 +17170,7 @@ function useGameInterfaceState() {
     safeStorageSet,
     saleQuantity,
     saveDurable,
+    saveBlocked,
     savePersistenceNotice,
     saveSlots,
     scienceOfficer,

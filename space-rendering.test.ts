@@ -3,11 +3,18 @@ import assert from 'node:assert/strict';
 import { createFrameCell } from './utils/frame-state';
 import { createFixedStepper, prepareCanvas } from './utils/helper';
 import { scenePixelRatio } from './utils/settings';
-import { interpolatePosition, projectedOrbitTexture, starAppearance, systemShipLength, orbitShipSize, hyperspaceShipSize, orbitTexturePhase, trailScreenRadius, tacticalCameraTarget,shipExhaustNozzles } from './utils/space-rendering';
+import { interpolatePosition, projectedOrbitTexture, starAppearance, systemShipLength, orbitShipSize, hyperspaceShipSize, orbitTexturePhase, trailScreenRadius, tacticalCameraTarget,shipExhaustNozzles,projectileColor } from './utils/space-rendering';
 
 export function runSpaceRenderingTests() {
   let passed = 0;
   const check = (condition: boolean, label: string) => { assert(condition, label); passed++; };
+  const validColors=new Set(['#abc','#112233','#112233aa','red','rgba(1, 2, 3, .5)']);
+  const colorParser={createLinearGradient(){return {addColorStop(_offset:number,value:string){if(!validColors.has(value))throw new Error('Invalid Canvas color');}};}} as unknown as Pick<CanvasRenderingContext2D,'createLinearGradient'>;
+  for(const value of validColors)check(projectileColor(colorParser,value,false)===value,'Valid legacy beam colors remain unchanged');
+  for(const value of [undefined,null,'','not-a-color','var(--missing)',{},123,'x'.repeat(129)]){
+    check(projectileColor(colorParser,value,false)==='#ff2244','Missing/invalid legacy hostile beam color cannot stop rendering');
+    check(projectileColor(colorParser,value,true)==='#00f0ff','Missing/invalid player beam color uses the established player color');
+  }
   for(const length of [18,50,180,1087]) {
     const nozzles=shipExhaustNozzles(length);
     check(nozzles.length===3&&nozzles[0].y<0&&nozzles[1].y<length*.01&&nozzles[2].y>0,'Every scale keeps all three painted nozzle openings');
