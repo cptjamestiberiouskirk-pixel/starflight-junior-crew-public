@@ -1,5 +1,6 @@
 import type {CrewMember,RaceSpec,Skills,Species} from '../App';
 import {RACE_BANTER_LIBRARY} from '../banter';
+import {CONCOURSE_DANCE_RECTS} from './concourse-sprites';
 export const TRAINING_SKILLS:(keyof Skills)[]=['science','navigation','engineering','communications','medicine'];
 export const TRAINING_COST=300;
 /** A batch is one atomic purchase of the original single-category sessions. */
@@ -14,7 +15,10 @@ export function planCrewTraining(crew:Pick<CrewMember,'alive'|'race'|'skills'>,s
 export const NAME_POOLS={
  'Star Trek':['Spock','James T. Kirk','Uhura','Scotty','Sulu','Chekov','Picard','William Riker','Data','Worf','La Forge','Deanna Troi','Beverly','Wesley Crusher','Sisko','Kira Nerys','Jadzia Dax','Ezri Dax','Odo','Quark','Nog','Rom','Janeway','Chakotay','Tuvok',"B'Elanna",'Tom Paris','Harry Kim','Seven of Nine','Neelix','Kes',"T'Pol",'Archer','Trip Tucker','Hoshi Sato','Malcolm Reed','Travis','Burnham','Saru','Boimler','Mariner','Tendi','Rutherford','Pike','Chapel'],
  'Star Wars':['Luke Skywalker','Leia Organa','Han Solo','Chewbacca','Lando','Obi-Wan Kenobi','Anakin','Padme Amidala','Ahsoka Tano','Rex','Wedge Antilles','Mon Mothma','Admiral Ackbar','Hera Syndulla','Sabine Wren','Ezra Bridger','Kanan Jarrus','Zeb Orrelios','Chopper','Din Djarin','Grogu','Bo-Katan','Boba Fett','Fennec Shand','Cassian Andor','Jyn Erso','K2-SO','Bodhi Rook','Rey','Finn','Poe Dameron','Rose Tico','Maz Kanata','R2-D2','C-3PO','BB-8','Qui-Gon Jinn','Mace Windu','Yoda','Plo Koon'],
- 'The Expanse':['James Holden','Naomi Nagata','Amos Burton','Alex Kamal','Camina Drummer','Bobbie Draper','Avasarala','Fred Johnson','Joe Miller','Julie Mao','Clarissa Mao','Anderson Dawes','Klaes Ashford','Marco Inaros','Filip Inaros','Shed Garvey','Prax','Anna Volovodov','Elvi Okoye','Fayez Sarkis','Duarte','Santiago Singh','Bull','Michio Pa','Dawes','Cotyar','Arjun','Erinwright']
+ 'The Expanse':['James Holden','Naomi Nagata','Amos Burton','Alex Kamal','Camina Drummer','Bobbie Draper','Avasarala','Fred Johnson','Joe Miller','Julie Mao','Clarissa Mao','Anderson Dawes','Klaes Ashford','Marco Inaros','Filip Inaros','Shed Garvey','Prax','Anna Volovodov','Elvi Okoye','Fayez Sarkis','Duarte','Santiago Singh','Bull','Michio Pa','Dawes','Cotyar','Arjun','Erinwright'],
+ // Documented characters/short forms, not invented names. See docs/CREW_NAMES.md.
+ 'Starflight 1':['Max Zarfleen','McGuin','Vok Phenocti','Vetufixi','Falerion','Bethamial','Phexipotex','Eshhh-ahhr','Thyrrthynnn','ThyssArrla',"N'qrrlsss",'G694337','Garan Leh'],
+ 'Starflight 2':['Phloon de Lux','Slim','Ptexok','Rrexolixi','Cionia','Nix Killjoy','Xenopotex'],
 } as const;
 export type NameSource='Any series'|keyof typeof NAME_POOLS;
 const normalized=(name:string)=>name.normalize('NFKC').trim().toLocaleLowerCase();
@@ -32,7 +36,7 @@ export function assignmentVoiceLine(race:Species){
  return RACE_BANTER_LIBRARY[race].starport_crew![index[race]];
 }
 export const CONCOURSE_DANCE_DELAY=8;
-export function concourseDanceFrame(idle:number,moving=false){return !moving&&Number.isFinite(idle)&&idle>=CONCOURSE_DANCE_DELAY?Math.floor((idle-CONCOURSE_DANCE_DELAY)*5)%10:null;}
+export function concourseDanceFrame(idle:number,moving=false){return !moving&&Number.isFinite(idle)&&idle>=CONCOURSE_DANCE_DELAY?Math.floor(((idle-CONCOURSE_DANCE_DELAY)%(CONCOURSE_DANCE_RECTS.length/5))*5):null;}
 export function isConcourseMoveKey(key:string){return ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','a','A','w','W','s','S','d','D'].includes(key);}
 export type BridgeMessage={text:string;speaker?:string;post?:string;type?:'info'|'alert'|'banter'};
 export type BridgeFilter='all'|'info'|'alert'|'banter';

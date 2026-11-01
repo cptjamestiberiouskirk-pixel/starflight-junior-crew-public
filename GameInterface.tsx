@@ -1,4 +1,6 @@
 import FlightGuidance from './components/FlightGuidance';
+import type {NameMode,NameStyle} from './utils/crew-names';
+import {createPortal} from 'react-dom';
 import CrewAssignments from './components/CrewAssignments';
 import ExpeditionClock from './components/ExpeditionClock';
 import UpgradeComparison from './components/UpgradeComparison';
@@ -424,6 +426,16 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     credits,
     creditsLiveRef,
     crewNameSource,
+    crewNameMode,
+    crewNameStyle,
+    generatedCrewName,
+    generateRecruitName,
+    availableCrewNames,
+    canonicalNamePresentation,
+    recruitNamePresentation,
+    setCrewNameMode,
+    setCrewNameStyle,
+    setGeneratedCrewName,
     crewRoster,
     crewRosterFrameRef,
     crtFilterEnabled,
@@ -2038,6 +2050,12 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 const selCrew = totalCrew > 0 ? crewRoster[safeIndex] : null;
                 const spec = selCrew ? RACE_SPECS[selCrew.race] : null;
 
+                const presentation=recruitNamePresentation(newCrewNameInput,newCrewRaceSelect,crewNameStyle,generatedCrewName);
+                const canGenerateName=crewNameMode==='unique'||availableCrewNames(crewNameSource,[...crewRoster.map(member=>member.name),newCrewNameInput],crewNameStyle).length>0;
+                const recruitSpec=RACE_SPECS[newCrewRaceSelect];
+                const recruitPreview:CrewMember={id:'recruit-preview',name:newCrewNameInput||'Recruit preview',race:newCrewRaceSelect,skills:{...recruitSpec.baseSkills},durability:recruitSpec.durability,vitality:100,alive:true,quirk:recruitSpec.desc,color:recruitSpec.color,
+                  portraitId:allocateCrewPortrait(newCrewRaceSelect,crewRoster,`preview-${newCrewRaceSelect}-${crewRoster.length}`,presentation)};
+
                 const handleCreateRecruit = () => {
                   const trimmed = newCrewNameInput.trim();
                   if (!trimmed) {
@@ -2069,7 +2087,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     color: raceSpec.color,
                   };
 
-                  newMember.portraitId = allocateCrewPortrait(newMember.race, crewRoster, newMember.id);
+                  newMember.portraitId = recruitPreview.portraitId;
                   const nextRoster = [...crewRoster, newMember];
                   setCrewRoster(nextRoster);
                   setPersonnelIndex(crewRoster.length);
@@ -2347,9 +2365,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </div>
 
                     {/* CREW CREATION MODAL */}
-                    {isCreatingCrewModal && (
+                    {isCreatingCrewModal && createPortal(
                       <MenuOverlay tone="neutral" zIndex={85}>
-                        <div className="w-full max-w-md glass-panel border-2 border-emerald-500 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-slate-100">
+                        <div className="w-full max-w-md max-h-[90dvh] overflow-y-auto glass-panel border-2 border-emerald-500 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-slate-100">
                           <div className="flex justify-between items-center border-b border-emerald-900/80 pb-2">
                             <h3 className="text-base font-black text-emerald-300 flex items-center gap-2">
                               <Plus size={18} />
@@ -2384,8 +2402,23 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                   <option>Any series</option>{Object.keys(NAME_POOLS).map(source=><option key={source}>{source}</option>)}
                                 </select>
                               </label>
-                              <button onClick={()=>{setNewCrewNameInput(generateCrewName(crewNameSource,[...crewRoster.map(c=>c.name),newCrewNameInput]));setPersonnelMessage(null);gameAudio.playCrispClick();}} className="min-h-11 rounded-xl border border-cyan-600 bg-cyan-950 px-3 text-cyan-200 font-bold">Generate name</button>
+                              <label className="flex-1 min-w-36 text-slate-300 font-bold">Name mode
+                                <select aria-label="Name mode" value={crewNameMode} onChange={e=>setCrewNameMode(e.target.value as NameMode)} className="block w-full mt-1 bg-slate-900 border border-emerald-700 rounded-xl p-2 min-h-11">
+                                  <option value="existing">Existing names</option><option value="unique">Generate unique names</option>
+                                </select>
+                              </label>
+                              <label className="flex-1 min-w-36 text-slate-300 font-bold" title="Used for new generated names. Known character names retain their catalogued style.">Preferred style
+                                <select aria-label="Name and portrait style" value={crewNameStyle} onChange={e=>{setCrewNameStyle(e.target.value as NameStyle);setPersonnelMessage(null);}} className="block w-full mt-1 bg-slate-900 border border-emerald-700 rounded-xl p-2 min-h-11">
+                                  <option value="auto">Automatic match</option><option value="masculine">Masculine</option><option value="feminine">Feminine</option><option value="neutral">Neutral / any</option>
+                                </select>
+                              </label>
+                              <button disabled={!canGenerateName} title={canGenerateName?'Generate a name using these choices':'No unused existing names match. Choose another source/style or Generate unique names.'} onClick={()=>{
+                                const generated=generateRecruitName(crewNameSource,crewNameMode,newCrewRaceSelect,[...crewRoster.map(c=>c.name),newCrewNameInput],crewNameStyle);
+                                if(!generated){setPersonnelMessage('No unused existing names match these choices. Try another source/style or Generate unique names.');gameAudio.playErrorBuzz();return;}
+                                setNewCrewNameInput(generated.name);setGeneratedCrewName(generated);setPersonnelMessage(null);gameAudio.playCrispClick();
+                              }} className="min-h-11 rounded-xl border border-cyan-600 bg-cyan-950 px-3 text-cyan-200 font-bold">Generate name</button>
                             </div>
+                            {!canGenerateName&&<p role="status" className="text-amber-300">All matching existing names are in use. Choose another source/style or Generate unique names.</p>}
                             <div>
                               <label htmlFor="recruit-species" className="text-slate-300 font-bold block mb-1">Species / Race:</label>
                               <select
@@ -2400,6 +2433,11 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 <option value="Elowan">Elowan (Science 10, Nav 30, Eng 10, Com 50, Med 50 • +10/train)</option>
                                 <option value="Android">Android (Science 50, Nav 150, Eng 100, Com 0, Med 20 • No Train)</option>
                               </select>
+                            </div>
+
+                            <div className="flex items-center gap-3 rounded-xl border border-emerald-900 p-3" role="region" aria-label="Recruit portrait preview">
+                              <CrewPortrait member={recruitPreview} size="lg"/>
+                              <p className="text-slate-300">{crewNameMode==='unique'?'Unique mode creates new names inspired by this source and species.':'Existing mode chooses documented character names or established short forms.'} Portrait styles match where defined; unclassified alien designs stay neutral. This preview is the face your recruit will keep.</p>
                             </div>
 
                             {/* Base Stats Preview */}
@@ -2436,8 +2474,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                             </button>
                           </div>
                         </div>
-                      </MenuOverlay>
-                    )}
+                      </MenuOverlay>, document.getElementById('game-viewport-16-9')!)}
 
                     {/* Each selection buys an original 300 M.U. category session. */}
                     {isTrainingSkillModal && selCrew && (

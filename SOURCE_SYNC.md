@@ -1,5 +1,13 @@
 # Source snapshot and verification
 
+November 1 name and portrait update: the source includes the nine-pose starport
+dance correction, Starflight 1/2 name categories, existing and unique name modes
+for every category, species-aware generation and matching recruit previews.
+Existing saved portraits remain stable. See the
+[name and portrait guide](docs/CREW_NAMES.md) and
+[verification](docs/VERIFICATION_2026-11-01-NAMES.md).
+The rebuilt Windows ZIP stays private; source histories remain separate.
+
 November 1 update: both Junior Crew source repositories receive the completed
 second-pass fixes, unique crew assignments, regression tests and current
 documentation. The private repository retains its development history; the public

@@ -1,4 +1,13 @@
 import type {Species} from '../App';
+import type {NamePresentation} from './crew-names';
+/** Authored presentation tags for the fictional artwork, not biological sex.
+ * Insect/reptile designs have no defined gender; their tags remain neutral. */
+const portraitStyles:Partial<Record<Species,readonly NamePresentation[]>>={
+ Human:['neutral','masculine','feminine','masculine','feminine','feminine','masculine','feminine','masculine','feminine','masculine'],
+ Android:['neutral','masculine','feminine','masculine','feminine','masculine','feminine','masculine','feminine','neutral','masculine'],
+ Elowan:['neutral','masculine','feminine','masculine','feminine','masculine','feminine','feminine','neutral','feminine','masculine'],
+};
+export function crewPortraitPresentation(race:Species,id:string):NamePresentation{return portraitStyles[race]?.[Number(id.split('-').at(-1))]??'neutral';}
 
 export interface PortraitMember {id:string;race:Species;portraitId?:string}
 export const PORTRAITS_PER_RACE=11; // Ten new faces plus the retained original atlas.
@@ -47,8 +56,15 @@ export function normalizeCrewPortraits<T extends PortraitMember>(roster:readonly
 /** Includes every roster entry, including reserves and memorial records. Reuse is balanced
  * only when more than eleven members of one race exhaust that race's available faces.
  */
-export function allocateCrewPortrait(race:Species,roster:readonly PortraitMember[],seed:string):string {
+export function allocateCrewPortrait(race:Species,roster:readonly PortraitMember[],seed:string,presentation?:NamePresentation):string {
   const counts=new Map<string,number>();
   for(const member of normalizeCrewPortraits(roster))counts.set(member.portraitId!,(counts.get(member.portraitId!)??0)+1);
+  if(presentation&&presentation!=='neutral'){
+    const matching=portraitIds(race).filter(id=>crewPortraitPresentation(race,id)===presentation);
+    if(matching.length){
+      const minimum=Math.min(...matching.map(id=>counts.get(id)??0)),start=seedHash(seed)%matching.length;
+      for(let i=0;i<matching.length;i++){const id=matching[(start+i)%matching.length];if((counts.get(id)??0)===minimum)return id;}
+    }
+  }
   return pick(race,counts,seed);
 }

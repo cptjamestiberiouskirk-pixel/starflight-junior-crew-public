@@ -10,6 +10,13 @@ explains the game and shows current screenshots.
 
 ## Get and launch the game
 
+The latest private tester includes the starport dance fix and the expanded
+[name generator and portrait preview](docs/CREW_NAMES.md). See its
+[verification record](docs/VERIFICATION_2026-11-01-NAMES.md).
+Keep the previous package until you have confirmed your save in the new one.
+Use the same browser profile and the fixed tester address below to continue
+browser saves; the developer preview at port 4174 has separate browser storage.
+
 1. Get the private Windows x64 tester ZIP from the project owner. There is no
    public download or website deployment associated with these instructions.
 2. Right-click the ZIP and choose **Extract All**. Wait for extraction to finish.

@@ -37,6 +37,12 @@ choose a species and enlist. Humans, Velox, Thrynn, Elowan and Androids have
 different starting skills, limits and learning characteristics. Portraits do not
 determine skills; explicit saved portrait identities stay stable.
 
+Choose a name category, including **Starflight 1** or **Starflight 2**, then use
+**Existing names** or **Generate unique names**. Unique names reflect the selected
+species. The portrait preview matches known or selected name styles where the
+existing artwork supports them; the preview is the portrait enlisted. See the
+[name and portrait guide](docs/CREW_NAMES.md) for details.
+
 Select an officer and choose **Train**. Check several categories to buy their
 sessions together; the dialog shows the total. Each selected category costs
 **300 M.U.** per session. Training respects species limits; Androids cannot be

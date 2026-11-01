@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-UbzWuYtI.js",
-    "sha256": "cb83ec7729418f29f3bce8b57eab8a0329e49a0a8cf02435f0ee2a745020d9cd"
+    "entry": "assets/index-Co6Evlxn.js",
+    "sha256": "d81299b7dea8aa93b2fa92f49f2bc5644b067fc1fb262d543a48f7d3c0aa57af"
   },
   "evidenceDate": "2026-11-01",
-  "scope": "Owner-requested private tester rebuild with all second-pass fixes and unique crew assignments. Exact source passed 50,229 assertions, typecheck, repeated identical build, 55 Playwright regression cases and earned victory/save/reload. Legacy duplicate duties receive a paused review with confirmation or cancel; save schema and browser origins unchanged. Extracted-package and upgrade acceptance are recorded separately.",
-  "evidence": "docs/VERIFICATION_2026-11-01-PACKAGE.md"
+  "scope": "Owner-requested private rebuild with nine-pose dance fix, Starflight name categories, species-aware generation and matching recruit previews. Exact build passed 62,809 source assertions and 46 native browser cases. Extracted ZIP acceptance is recorded separately; owner saves never accessed.",
+  "evidence": "docs/VERIFICATION_2026-11-01-NAMES.md"
 }

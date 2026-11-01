@@ -1,6 +1,8 @@
 import {placePlanetLabel,type LabelBox} from './utils/presentation-polish';
 import { renderGameInterface } from './GameInterface';
 import {uniqueCrewAssignments,hasDuplicateCrewAssignments,certifiedCrewAssignments,crewAssignmentAllowed} from './utils/crew-assignments';
+import {concourseDanceSprite} from './utils/concourse-sprites';
+import {generateRecruitName,availableCrewNames,canonicalNamePresentation,recruitNamePresentation,type NameMode,type NameStyle,type GeneratedCrewName} from './utils/crew-names';
 import {BayVideoPlayer} from './utils/bay-video';
 import CrewTraining from './components/CrewTraining';
 import BridgeLogFilters from './components/BridgeLogFilters';
@@ -3050,6 +3052,9 @@ function useGameInterfaceState() {
   const [selectedTrainingSkills,setSelectedTrainingSkills]=useState<(keyof Skills)[]>([]);
   const trainingPurchaseLockRef=useRef(false);
   const [crewNameSource,setCrewNameSource]=useState<NameSource>('Any series');
+  const [crewNameMode,setCrewNameMode]=useState<NameMode>('existing');
+  const [crewNameStyle,setCrewNameStyle]=useState<NameStyle>('auto');
+  const [generatedCrewName,setGeneratedCrewName]=useState<GeneratedCrewName|null>(null);
   const [personnelMessage, setPersonnelMessage] = useState<string | null>(null);
 
   // Ship Subsystems Damage State (100 down to 0)
@@ -14530,24 +14535,19 @@ function useGameInterfaceState() {
       ctx.rotate(isDancing ? danceRotate : 0);
 
       if (isDancing && astroSheet && astroSheet.complete && astroSheet.naturalWidth > 0) {
-        // Reuse the original ten dance frames after the short idle break.
-        const frameW = astroSheet.naturalWidth / 5;
-        const frameH = astroSheet.naturalHeight / 4;
-        const danceIdx = danceFrame!;
-        const srcRow = danceIdx < 5 ? 2 : 3;
-        const srcCol = danceIdx < 5 ? danceIdx : danceIdx - 5;
-        const renderH = 66;
-        const renderW = renderH * (frameW / frameH);
+        // The dance artwork is irregularly spaced. Keep each complete pose
+        // and a common pixel scale instead of cutting it into equal cells.
+        const pose = concourseDanceSprite(danceFrame!,astroSheet.naturalWidth,astroSheet.naturalHeight)!;
         ctx.drawImage(
           astroSheet,
-          srcCol * frameW,
-          srcRow * frameH,
-          frameW,
-          frameH,
-          -renderW / 2,
-          -renderH + 14,
-          renderW,
-          renderH
+          pose.x,
+          pose.y,
+          pose.width,
+          pose.height,
+          -pose.renderWidth / 2,
+          -pose.renderHeight + 14,
+          pose.renderWidth,
+          pose.renderHeight
         );
       } else if (hasActiveRunFrames) {
         // Running animation from small pre-cached offscreen canvas: 1 frame per 14 pixels moved
@@ -16901,6 +16901,16 @@ function useGameInterfaceState() {
     credits,
     creditsLiveRef,
     crewNameSource,
+    crewNameMode,
+    crewNameStyle,
+    generatedCrewName,
+    generateRecruitName,
+    availableCrewNames,
+    canonicalNamePresentation,
+    recruitNamePresentation,
+    setCrewNameMode,
+    setCrewNameStyle,
+    setGeneratedCrewName,
     crewRoster,
     crewRosterFrameRef,
     crtFilterEnabled,
