@@ -1,5 +1,11 @@
 # Source snapshot and verification
 
+November 1 audio fix update: launch and docking audio failures now remain silent
+without blocking game frames. The source includes bounded mock regressions and
+muted browser failure-path tests. Existing voices, gameplay rules and save format
+are unchanged. See the [audio/package verification](docs/VERIFICATION_2026-11-01-AUDIO.md).
+The Windows tester archive remains private and both source histories stay separate.
+
 November 1 name and portrait update: the source includes the nine-pose starport
 dance correction, Starflight 1/2 name categories, existing and unique name modes
 for every category, species-aware generation and matching recruit previews.

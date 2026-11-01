@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-Co6Evlxn.js",
-    "sha256": "d81299b7dea8aa93b2fa92f49f2bc5644b067fc1fb262d543a48f7d3c0aa57af"
+    "entry": "assets/index-DMj0CPl8.js",
+    "sha256": "fad111cb016cc826a2fbda80f5e59aec3ddd4cd1c20de9afd4088f44429d9c23"
   },
   "evidenceDate": "2026-11-01",
-  "scope": "Owner-requested private rebuild with nine-pose dance fix, Starflight name categories, species-aware generation and matching recruit previews. Exact build passed 62,809 source assertions and 46 native browser cases. Extracted ZIP acceptance is recorded separately; owner saves never accessed.",
-  "evidence": "docs/VERIFICATION_2026-11-01-NAMES.md"
+  "scope": "Owner-requested private rebuild with the audio-load failure freeze fix and regression tests. Exact source passed 62,821 checks, 12 bounded audio regressions, four muted compiled-browser cases, typecheck, build and resource checks. Existing media, gameplay rules and save format unchanged. Extracted-package acceptance recorded separately.",
+  "evidence": "docs/VERIFICATION_2026-11-01-AUDIO.md"
 }

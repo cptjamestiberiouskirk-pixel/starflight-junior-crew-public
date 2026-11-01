@@ -10,6 +10,10 @@ explains the game and shows current screenshots.
 
 ## Get and launch the game
 
+The latest private tester also fixes a freeze after failed launch/docking audio
+loads. Missing or corrupt audio stays silent while the game continues. See the
+[audio/package verification](docs/VERIFICATION_2026-11-01-AUDIO.md).
+
 The latest private tester includes the starport dance fix and the expanded
 [name generator and portrait preview](docs/CREW_NAMES.md). See its
 [verification record](docs/VERIFICATION_2026-11-01-NAMES.md).

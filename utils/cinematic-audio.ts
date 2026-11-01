@@ -17,7 +17,9 @@ export class BayLaunchSound {
   sync(active:boolean,progress:number,duration:number){
     this.wanted=active;this.lastProgress=progress;this.lastDuration=duration;
     if(!active){this.stop();return;}
-    if(!this.buffer){void this.prepare().then(()=>{if(this.wanted)this.sync(this.wanted,this.lastProgress,this.lastDuration);});return;}
+    // A failed load settles prepare() without a buffer. Resume only on success:
+    // reattaching to the cached fulfilled promise after failure starves frames.
+    if(!this.buffer){void this.prepare().then(()=>{if(this.buffer&&this.wanted)this.sync(this.wanted,this.lastProgress,this.lastDuration);});return;}
     if(this.ctx.state!=='running')return;
     const offset=Math.max(0,Math.min(8,progress*8)),rate=8/Math.max(.001,duration);
     if(offset>=this.buffer.duration){this.stop();return;}
