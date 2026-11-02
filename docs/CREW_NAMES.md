@@ -15,6 +15,15 @@ Starflight 1 and Starflight 2. **Any series** mixes those categories.
   current draft and existing-name catalogues; uniqueness is within those lists,
   not a claim that a spelling has never appeared anywhere else in fiction.
 
+Each source has its own human given-name vocabulary as well as surnames and alien
+syllables. Explicit preferred styles affect every species' generated spelling.
+Android masculine/feminine options use an authored nickname with the source's
+model designation; neutral uses a model designation alone. Velox and Thrynn use
+different authored endings for the selected style while retaining neutral portrait
+classification. These are creative naming preferences, not alien biological rules.
+Choose the source, species and style, then press **Generate name**; changing an
+option alone preserves the current draft rather than renaming a typed recruit.
+
 Names retain the existing 14-character limit. Generation is local and requires
 no online service or credits. Recruitment limits, costs, species skills, recorded
 voices, missions and save format are unchanged.
@@ -65,6 +74,8 @@ explicitly inspired creations, separate from those documented names.
 
 Local results and rendered screenshots are retained under
 `artifacts/crew-names-20261101/` and `artifacts/concourse-dance-20261101/`.
+The source/style correction and deterministic browser comparisons are retained in
+`artifacts/full-playthrough-20261101/`.
 Source assertions cover every category/species/mode/style, duplicates, exhausted
 lists, invalid RNG/enum input, length limits, matching portrait selection and
 unchanged saved appearances. Native browser checks use physically muted disposable

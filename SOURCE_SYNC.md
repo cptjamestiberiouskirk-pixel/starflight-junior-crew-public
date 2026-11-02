@@ -1,5 +1,15 @@
 # Source snapshot and verification
 
+November 2 update: the source includes the independent-review crew, naming,
+navigation and save-lifecycle fixes, followed by verified storage write/readback
+and persistent session-recovery warnings. The accepted game passed 63,138 source
+assertions, 253 compiled-browser cases and a fresh earned victory/reload. See the
+[deep feature verification](docs/VERIFICATION_2026-11-02-DEEP-FEATURES.md) and
+[private package verification](docs/VERIFICATION_2026-11-02-PACKAGE.md).
+The repositories retain separate histories and identical reviewed source trees.
+The rebuilt Windows ZIP, profiles, saves and raw evidence remain private; no
+public binary or Pages deployment is included.
+
 November 1 audio fix update: launch and docking audio failures now remain silent
 without blocking game frames. The source includes bounded mock regressions and
 muted browser failure-path tests. Existing voices, gameplay rules and save format

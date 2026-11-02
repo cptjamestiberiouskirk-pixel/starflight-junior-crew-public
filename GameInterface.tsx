@@ -1,5 +1,6 @@
 import FlightGuidance from './components/FlightGuidance';
 import type {NameMode,NameStyle} from './utils/crew-names';
+import {findCrewSpeaker} from './utils/crew-speakers';
 import {createPortal} from 'react-dom';
 import CrewAssignments from './components/CrewAssignments';
 import ExpeditionClock from './components/ExpeditionClock';
@@ -388,7 +389,6 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     autosaveToast,
     bankLedger,
     banterEnabled,
-    beginNewMission,
     breakOrbit,
     bulletins,
     buyDepotArtifact,
@@ -582,7 +582,6 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     handleInitiateComms,
     handleInitiateDescent,
     handleLaunchFromPlanet,
-    handleLoadFromSlot,
     handleLogTelemetryOnly,
     handleOpenExportModal,
     handleOpenLandingScreen,
@@ -723,7 +722,6 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     setActivePatientId,
     setActiveRepairTask,
     setActiveRoomIndex,
-    setActiveSlot,
     setAlienCommsState,
     setArmorClass,
     setArtifactStock,
@@ -1056,8 +1054,8 @@ export function renderGameInterface(scope: GameInterfaceScope) {
       />
 
       {/* AUTOSAVE TOAST BANNER */}
-      {(autosaveToast || saveBlocked) && (
-        <div data-autosave-toast className={`absolute top-14 right-4 z-50 glass-panel px-3.5 py-1.5 rounded-lg border-cyan-400 text-cyan-300 font-bold text-xs flex items-center gap-2 ${saveBlocked ? '' : 'animate-bounce'} shadow-xl`}>
+      {(autosaveToast || saveBlocked || !saveDurable) && (
+        <div data-autosave-toast className={`absolute top-14 right-4 z-50 glass-panel px-3.5 py-1.5 rounded-lg font-bold text-xs flex items-center gap-2 ${saveBlocked || !saveDurable ? 'border-amber-400 text-amber-200' : 'border-cyan-400 text-cyan-300 animate-bounce'} shadow-xl`}>
           <Database size={14} className="text-yellow-400" />
           {saveBlocked ? '⚠ Save blocked — previous checkpoint preserved' : saveDurable ? '💾 Autosaved' : '⚠ Session save only — export a backup before closing'}
         </div>
@@ -2052,6 +2050,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                 const presentation=recruitNamePresentation(newCrewNameInput,newCrewRaceSelect,crewNameStyle,generatedCrewName);
                 const canGenerateName=crewNameMode==='unique'||availableCrewNames(crewNameSource,[...crewRoster.map(member=>member.name),newCrewNameInput],crewNameStyle).length>0;
+                const blockedNameReason=!canGenerateName&&availableCrewNames(crewNameSource,[],crewNameStyle).length===0
+                  ? 'No existing names in this source match this style. Choose another source/style or Generate unique names.'
+                  : 'All matching existing names are in use. Choose another source/style or Generate unique names.';
                 const recruitSpec=RACE_SPECS[newCrewRaceSelect];
                 const recruitPreview:CrewMember={id:'recruit-preview',name:newCrewNameInput||'Recruit preview',race:newCrewRaceSelect,skills:{...recruitSpec.baseSkills},durability:recruitSpec.durability,vitality:100,alive:true,quirk:recruitSpec.desc,color:recruitSpec.color,
                   portraitId:allocateCrewPortrait(newCrewRaceSelect,crewRoster,`preview-${newCrewRaceSelect}-${crewRoster.length}`,presentation)};
@@ -2272,6 +2273,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           onClick={() => {
                             setIsCreatingCrewModal(true);
                             setNewCrewNameInput('');
+                            setGeneratedCrewName(null);
                             setPersonnelMessage(null);
                             gameAudio.playConfirmSelect();
                           }}
@@ -2391,7 +2393,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 maxLength={14}
                                 placeholder="Enter crew name..."
                                 value={newCrewNameInput}
-                                onChange={(e) => setNewCrewNameInput(e.target.value)}
+                                onChange={(e) => {setNewCrewNameInput(e.target.value);setGeneratedCrewName(null);}}
                                 className="w-full bg-slate-900 border border-emerald-500 rounded-xl px-3 py-2 text-white font-mono font-bold focus:outline-hidden"
                               />
                             </div>
@@ -2412,13 +2414,13 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                   <option value="auto">Automatic match</option><option value="masculine">Masculine</option><option value="feminine">Feminine</option><option value="neutral">Neutral / any</option>
                                 </select>
                               </label>
-                              <button disabled={!canGenerateName} title={canGenerateName?'Generate a name using these choices':'No unused existing names match. Choose another source/style or Generate unique names.'} onClick={()=>{
+                              <button disabled={!canGenerateName} title={canGenerateName?'Generate a name using these choices':blockedNameReason} onClick={()=>{
                                 const generated=generateRecruitName(crewNameSource,crewNameMode,newCrewRaceSelect,[...crewRoster.map(c=>c.name),newCrewNameInput],crewNameStyle);
                                 if(!generated){setPersonnelMessage('No unused existing names match these choices. Try another source/style or Generate unique names.');gameAudio.playErrorBuzz();return;}
                                 setNewCrewNameInput(generated.name);setGeneratedCrewName(generated);setPersonnelMessage(null);gameAudio.playCrispClick();
                               }} className="min-h-11 rounded-xl border border-cyan-600 bg-cyan-950 px-3 text-cyan-200 font-bold">Generate name</button>
                             </div>
-                            {!canGenerateName&&<p role="status" className="text-amber-300">All matching existing names are in use. Choose another source/style or Generate unique names.</p>}
+                            {!canGenerateName&&<p role="status" className="text-amber-300">{blockedNameReason}</p>}
                             <div>
                               <label htmlFor="recruit-species" className="text-slate-300 font-bold block mb-1">Species / Race:</label>
                               <select
@@ -4932,7 +4934,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     [Full Log ↗]
                   </button>
                 </div>
-                <CrewTransmission messages={systemMessages} portrait={speaker=>{const member=crewRoster.find(c=>speaker.endsWith(c.name)&&c.alive);return member?<CrewPortrait member={member} size="md" inCombat={gameLocation==='Encounter'} hullCritical={hullIntegrity<=50}/>:null;}}/>
+                <CrewTransmission messages={systemMessages} portrait={speaker=>{const member=findCrewSpeaker(crewRoster,speaker);return member?<CrewPortrait member={member} size="md" inCombat={gameLocation==='Encounter'} hullCritical={hullIntegrity<=50}/>:null;}}/>
                 <BridgeLogFilters prefix="Bridge log" type={shipsLogMsgFilter} search={shipsLogMsgSearch} onType={setShipsLogMsgFilter} onSearch={setShipsLogMsgSearch} count={filterBridgeMessages(systemMessages,shipsLogMsgFilter,shipsLogMsgSearch).length} total={systemMessages.length}/>
                 <div role="log" aria-label="Filtered bridge messages" className="flex-1 overflow-y-auto space-y-1.5 text-xs pr-1 font-mono scrollbar-thin">
                   {!filterBridgeMessages(systemMessages,shipsLogMsgFilter,shipsLogMsgSearch).length&&<p className="text-slate-400 p-2">No matching messages.</p>}
@@ -6793,7 +6795,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             {/* Hero Action Buttons including Import Save */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <button
-                onClick={handleContinue}
+                onClick={() => handleContinue()}
                 autoFocus
                 className="bg-linear-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 px-4 py-3 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 shadow-xl transition hover:scale-105"
               >
@@ -6829,31 +6831,18 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   Mission Save Slots (A – E)
                 </span>
                 <span className="text-[10px] text-slate-400 font-mono">
-                  Click a slot to resume or export
+                  Choose a slot to resume, export or copy
                 </span>
               </div>
 
+              {slotActionNotice && <p role="status" className="text-cyan-200 text-xs">{slotActionNotice}</p>}
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
                 {saveSlots.map((s) => {
                   const isSelected = activeSlot === s.slot;
                   const isDevSave = s.isDev || s.snapshot?.isDev;
                   const selectSlot = () => {
-                    setActiveSlot(s.slot);
                     gameAudio.playCrispClick();
-                    if (s.empty) beginNewMission(s.slot);
-                    else if (s.snapshot || s.loadError) handleLoadFromSlot(s.slot);
-                    else {
-                      setIntroPage(0);
-                      setGameLocation(s.location || 'Starport');
-                      setActiveRoomIndex(null);
-                      setAstronautX(640);
-                      setAstronautY(360);
-                      setSystemMessages(s.bridgeLog ? JSON.parse(JSON.stringify(s.bridgeLog)) : []);
-                      setBanterLog([]);
-                      setGameState({ status: 'PLAYING', score: 100, level: 1 });
-                      setIsGameMenuOpen(false);
-                      gameAudio.playPowerupChime();
-                    }
+                    handleContinue(s.slot);
                   };
                   return (
                     <div
@@ -6889,6 +6878,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         {s.empty ? 'Click to start' : `${s.credits.toLocaleString()} M.U.`}
                       </span>
                       </button>
+                      {s.snapshot && <button type="button" aria-label={`Copy Slot ${s.slot}`} onClick={()=>handleRequestSlotAction(s.slot,'copy')} className="bg-slate-800 hover:bg-slate-700 text-cyan-200 px-1.5 py-1 rounded text-[9px] font-bold">Copy</button>}
                       {!s.empty && (
                           <button
                             type="button"
@@ -8333,7 +8323,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         {!s.empty && (
                           <>
                             <button
-                              onClick={() => handleLoadFromSlot(s.slot)}
+                              onClick={() => handleContinue(s.slot)}
                               className="bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold text-xs"
                             >
                               Load
@@ -8551,12 +8541,12 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               <div
                 className={`p-3 rounded-2xl border text-xs font-bold flex items-center justify-between gap-2 shadow-lg ${
                   importStatus.type === 'success'
-                    ? 'bg-emerald-950/90 border-emerald-400 text-emerald-200 shadow-[0_0_15px_#10b98130]'
+                    ? importStatus.durable === false ? 'bg-amber-950/90 border-amber-400 text-amber-200' : 'bg-emerald-950/90 border-emerald-400 text-emerald-200 shadow-[0_0_15px_#10b98130]'
                     : 'bg-red-950/90 border-red-500 text-red-200 shadow-[0_0_15px_#ef444430] animate-pulse'
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  {importStatus.type === 'success' ? (
+                  {importStatus.type === 'success' && importStatus.durable !== false ? (
                     <CheckCircle size={18} className="text-emerald-400 shrink-0" />
                   ) : (
                     <AlertTriangle size={18} className="text-red-400 shrink-0" />
@@ -8595,7 +8585,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 className="flex-1 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-2.5 rounded-xl font-black text-xs shadow-xl flex items-center justify-center gap-2"
               >
                 <Check size={16} />
-                Restore Mission to Slot {importDestSlot}
+                {gameState.status === 'PLAYING' && importDestSlot === activeSlot ? 'Restore and load active Slot' : 'Restore Mission to Slot'} {importDestSlot}
               </button>
             </div>
           </div>
@@ -8626,8 +8616,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               <label htmlFor="copy-mission-destination" className="text-sm font-bold text-cyan-200">Destination slot</label>
               <select id="copy-mission-destination" value={copyTargetSlot} className="w-full rounded-xl border border-cyan-800 bg-slate-950 p-2 text-sm"
                 onChange={event=>{const target=event.target.value as SaveSlotData['slot'];setCopyTargetSlot(target);setCopyDestination(loadInitialSaveSlots().slots.find(slot=>slot.slot===target)!);setReplacementStatus(null);}}>
-                {saveSlots.filter(slot=>slot.slot!==replacementMission.slot).map(slot=><option key={slot.slot} value={slot.slot}>Slot {slot.slot} · {slot.empty?'Empty':slot.shipName}</option>)}
+                {saveSlots.filter(slot=>slot.slot!==replacementMission.slot).map(slot=><option key={slot.slot} value={slot.slot} disabled={gameState.status==='PLAYING' && slot.slot===activeSlot}>Slot {slot.slot} · {slot.empty?'Empty':slot.shipName}</option>)}
               </select>
+              {gameState.status==='PLAYING' && replacementMission.slot!==activeSlot && <p className="text-xs text-slate-300">To copy into active Slot {activeSlot}, return to the title screen first.</p>}
               <p className="text-xs text-slate-400">{copyDestination?.empty?'The destination is empty.':`Replaces ${copyDestination?.shipName??'the destination mission'} (${copyDestination?.stardate??''}).`}</p>
             </div>}
             {replacementStatus && <p className="text-sm text-amber-300" role="status">{replacementStatus}</p>}

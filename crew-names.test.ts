@@ -7,6 +7,22 @@ export function runCrewNameTests(){
  const sources=Object.keys(NAME_POOLS) as Exclude<NameSource,'Any series'>[],races:Species[]=['Human','Velox','Thrynn','Elowan','Android'],styles:NameStyle[]=['auto','masculine','feminine','neutral'];
  const all=new Set(Object.values(NAME_POOLS).flat().map(name=>name.toLowerCase()));
  check(sources.includes('Starflight 1')&&sources.includes('Starflight 2'),'Both original game categories exist');
+ // Hold randomness constant so a selector cannot appear functional merely
+ // because the next random roll happens to choose a different spelling.
+ for(const roll of [0,.13,.51,.87]){
+  for(const style of ['masculine','feminine','neutral'] as const){
+   const given=sources.map(source=>generateRecruitName(source,'unique','Human',[],style,()=>roll)!.name.split(' ')[0]);
+   check(new Set(given).size===sources.length,'Every category has its own human given-name vocabulary');
+   for(const race of races.filter(race=>race!=='Human')){
+    const names=sources.map(source=>generateRecruitName(source,'unique',race,[],style,()=>roll)!.name);
+    check(new Set(names).size===sources.length,`${race}/${style}: every source affects the spelling at the same random roll`);
+   }
+  }
+  for(const source of sources)for(const race of races){
+   const names=['masculine','feminine','neutral'].map(style=>generateRecruitName(source,'unique',race,[],style as NameStyle,()=>roll)!.name);
+   check(new Set(names).size===3,`${source}/${race}: explicit preferred styles change the generated spelling`);
+  }
+ }
  for(const source of sources){
   const original=[...NAME_POOLS[source]];const used:string[]=[];
   for(let n=0;n<original.length;n++){

@@ -10,6 +10,12 @@ explains the game and shows current screenshots.
 
 ## Get and launch the game
 
+The November 2 private tester includes the latest crew, navigation, save-lifecycle
+and storage-recovery fixes. If storage fails, the game identifies the checkpoint
+as session-only and keeps an export warning visible until a verified save works.
+See the [current package verification](docs/VERIFICATION_2026-11-02-PACKAGE.md).
+The dated updates below describe earlier builds.
+
 The latest private tester also fixes a freeze after failed launch/docking audio
 loads. Missing or corrupt audio stays silent while the game continues. See the
 [audio/package verification](docs/VERIFICATION_2026-11-01-AUDIO.md).
@@ -56,9 +62,9 @@ not stop the server. Starting the same package again reuses its running server.
 
 ## Saves and updates
 
-The November 1 private tester is **Starflight-Junior-Crew-Windows-x64-20261101.zip**.
-It includes the latest second-pass fixes and unique crew roles. See the
-[package verification](docs/VERIFICATION_2026-11-01-PACKAGE.md) for its exact
+The November 2 private tester is **Starflight-Junior-Crew-Windows-x64-20261102-tested.zip**.
+It includes the latest verified fixes and unique crew roles. See the
+[package verification](docs/VERIFICATION_2026-11-02-PACKAGE.md) for its exact
 build/hash and extracted-package acceptance results.
 
 - Saves belong to the browser and address. Use the same browser and tester
@@ -67,7 +73,8 @@ build/hash and extracted-package acceptance results.
   moving from a different browser, device, development server or hosted site.
 - Invalid or oversized backups are rejected without replacing a saved slot.
   The current local tester build accepts at most 4 MiB of decoded save JSON.
-- Before updating, save and export a backup, then exit the old tray server.
+- Before updating, save and export a backup, close the old game tab, then exit
+  the old tray server.
   Extract the new ZIP into a separate folder and launch its EXE. Browser saves
   remain at the fixed address; they are not stored in the extracted game folder.
 - Keep only one tester build running. A busy port or different active package

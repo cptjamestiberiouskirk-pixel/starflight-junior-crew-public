@@ -39,6 +39,27 @@ try{
   const selected=await name().inputValue(),face=await portrait().getAttribute('data-portrait-id'),before=await snapshot();await button('Enlist Recruit').click();await page.waitForFunction(selected=>JSON.parse(localStorage.getItem('starflight_save_slot_E')).snapshot.crewRoster.some(member=>member.name===selected),selected);const after=await snapshot(),member=after.crewRoster.find(member=>member.name===selected);
   assert.equal(member.portraitId,face);assert.equal(member.race,species);assert.deepEqual(member.skills,RACE_SPECS[species].baseSkills);assert.equal(after.credits,before.credits);assert.deepEqual(after.assignedPosts,before.assignedPosts);assert.deepEqual(after.crewRoster.slice(0,-1),before.crewRoster);
   await page.reload();await page.getByTestId('resume-slot-E').click();assert.equal((await snapshot()).crewRoster.find(member=>member.name===selected).portraitId,face);
+  await page.getByRole('button').filter({has:page.getByText(selected,{exact:true})}).click();
+  const resumedFace=page.getByRole('img',{name:`${selected}, ${species}, ready`,exact:true});
+  await resumedFace.waitFor();assert.equal(await resumedFace.getAttribute('data-portrait-id'),face);
+ });
+ await check('source-and-preferred-style-drive-all-species-spelling',async()=>{
+  await load();await button('[Create]').click();await mode().selectOption('unique');
+  // Deterministic fictional draft only; the fresh campaign never seeds randomness.
+  await page.evaluate(()=>{window.__qaNameRandom=Math.random;Math.random=()=>0;});
+  const samples=[];
+  try{
+   for(const species of races)for(const category of sources)for(const preferred of ['masculine','feminine','neutral']){
+    await race().selectOption(species);await source().selectOption(category);await style().selectOption(preferred);await name().fill('');await button('Generate name').click();
+    samples.push({species,category,preferred,name:await name().inputValue()});
+   }
+   for(const species of races)for(const category of sources)assert.equal(new Set(samples.filter(s=>s.species===species&&s.category===category).map(s=>s.name)).size,3,category+'/'+species+' styles');
+   for(const preferred of ['masculine','feminine','neutral']){
+    assert.equal(new Set(samples.filter(s=>s.species==='Human'&&s.preferred===preferred).map(s=>s.name.split(' ')[0])).size,sources.length,'Source-specific human given names');
+    for(const species of races)assert.equal(new Set(samples.filter(s=>s.species===species&&s.preferred===preferred).map(s=>s.name)).size,sources.length,'Source-specific spelling for '+species+'/'+preferred);
+   }
+   await fs.writeFile(path.join(out,'source-style-samples.json'),JSON.stringify(samples,null,2));
+  }finally{await page.evaluate(()=>{Math.random=window.__qaNameRandom;delete window.__qaNameRandom;});}
  });
  await check('exhausted-canonical-list-disabled-without-fake-names-or-save-write',async()=>{
   const f=JSON.parse(await fs.readFile('test-fixtures/commissioned-mission.json','utf8')),roster=f.data.snapshot.crewRoster;

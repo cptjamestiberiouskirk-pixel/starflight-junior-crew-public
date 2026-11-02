@@ -1,6 +1,6 @@
 # Release readiness
 
-**November 1, 2026: source-available preview; Windows package remains a private tester.**
+**November 2, 2026: source-available preview; Windows package remains a private tester.**
 
 The docs are written for a new player. Public availability, rights clearance and
 independent technical acceptance remain separate decisions.
@@ -12,12 +12,12 @@ independent technical acceptance remain separate decisions.
 | Controls/support | Dedicated controls, FAQ, Windows guide and private bug-report template. |
 | Screenshots | Actual current-build fictional mission captures with provenance; no owner saves. |
 | Source/build | Fresh-history source preview at cptjamestiberiouskirk-pixel/starflight-junior-crew-public; original development repository remains private. Source/build/package instructions available. |
-| Local verification | Current game bundle passes typecheck, 50,229 source assertions, 55 compiled-game browser regressions, earned victory/reload and build/resource/security checks. Unique crew roles and the second-pass save/launch/resource fixes have documented coverage. [Current package scope](VERIFICATION_2026-11-01-PACKAGE.md). Prior campaign/button audits retain their dated build scopes. |
-| Windows ZIP | November 1 rebuild includes the completed second-pass fixes and unique crew assignments, retaining Science graphics and the visible expedition clock. Extracted-package native launcher/browser, historical save, previous-version continuation and boundary results are recorded in the [package scope](VERIFICATION_2026-11-01-PACKAGE.md). ZIP stays private; no public binary release or site deployment. |
+| Local verification | The accepted November 2 game passed typecheck, 63,138 source assertions, 253 compiled-game browser cases, fresh earned victory/reload and build/resource checks. Independent-review crew, save and navigation repairs and storage-failure recovery have documented coverage. [Deep feature scope](VERIFICATION_2026-11-02-DEEP-FEATURES.md). Prior campaign/button audits retain their dated build scopes. |
+| Windows ZIP | November 2 rebuild includes the latest verified repairs, unique crew assignments, Science graphics and the visible expedition clock. Extracted-package acceptance is recorded in the [current package scope](VERIFICATION_2026-11-02-PACKAGE.md). ZIP stays private; no public binary release or site deployment. |
 | Security | Local mitigations verified; upstream picomatch advisory and reviewed static alerts remain visible. App source size exclusion removed. [Limits](SECURITY_MITIGATIONS.md). |
 | Clean Windows machine | Pending independent machine/clean VM launch, first voyage, online/offline behavior, save/import, updates and shutdown. Development-PC checks do not close this item. |
 | Devices/accessibility/audio | Partial: small-screen emulation, keyboard and software fallback checked; physical devices, screen-reader output and human listening remain separate coverage. |
-| Final packaged campaign/soak | Pending fresh package-level campaign/soak; earlier campaigns/soaks belong to their documented earlier builds. |
+| Final packaged campaign/soak | A fresh November 2 extracted-package campaign through earned victory and reload passed. Longer unattended soaks remain unverified. [Package scope](VERIFICATION_2026-11-02-PACKAGE.md). |
 | Licensing/credits | October 28: maintainer authorizes proceeding on the basis that licensing issues are resolved. LICENSE.md permits personal noncommercial play/study and private modifications; redistribution/commercial reuse requires permission. Third-party rights and notices remain separate. This is the maintainer's release decision, not a claim of independently verified rights clearance. |
 | Download/support route | Owner authorized public source at starflight-junior-crew-public under the personal-use license. Public Issues accepts nonsensitive bug reports. No public binary download is supplied. |
 | Website | Not deployed; Pages remains manual-only. |

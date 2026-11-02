@@ -1,11 +1,48 @@
-import {CREW_ROLES,uniqueCrewAssignments,hasDuplicateCrewAssignments,crewAssignmentAllowed,certifiedCrewAssignments,type CrewAssignments} from './utils/crew-assignments';
+import {CREW_ROLES,uniqueCrewAssignments,hasDuplicateCrewAssignments,crewAssignmentAllowed,certifiedCrewAssignments,crewAssignmentValue,crewAssignmentSkillLabel,recommendedCrewForRole,type CrewAssignments} from './utils/crew-assignments';
 import {crewAssignmentsAfterLoss} from './utils/maintenance';
+import {findCrewSpeaker} from './utils/crew-speakers';
 
 export function runCrewAssignmentTests() {
   let passed=0,failed=0;const results:string[]=[];
   const check=(ok:boolean,label:string)=>{if(ok)passed++;else{failed++;results.push('FAIL '+label);}};
   const roster=Array.from({length:8},(_,index)=>({id:`crew-${index}`,alive:true,skills:{science:index,navigation:10-index,engineering:index*2,communications:index*3,medicine:index*4}}));
   const posts=Object.fromEntries(CREW_ROLES.map((post,index)=>[post,roster[index].id])) as CrewAssignments;
+  const available=roster.map(member=>({...member,vitality:100}));
+  const vacant=Object.fromEntries(CREW_ROLES.map(post=>[post,null])) as CrewAssignments;
+  const beforeRecommendations=JSON.stringify({available,vacant});
+  for(const [index,post] of CREW_ROLES.entries()) {
+    const expected=[10,0,10,0,0,0][index];
+    check(crewAssignmentValue(available[0],post)===expected,'Relevant role value including captain total');
+    check(!!crewAssignmentSkillLabel(post),'Every role has a readable skill label');
+    const expectedId=post==='Navigator'?'crew-0':'crew-7';
+    check(recommendedCrewForRole(available,vacant,post)===expectedId,'Highest relevant skill recommended');
+    check(recommendedCrewForRole(available.map(member=>({...member,alive:false})),vacant,post)===null,'No deceased recommendation');
+    check(recommendedCrewForRole(available.map(member=>({...member,vitality:0})),vacant,post)===null,'No unconscious recommendation');
+  }
+  check(recommendedCrewForRole(available,posts,'Science Officer')==='crew-7','Occupied officers excluded from recommendation');
+  let idReads=0;
+  const largeRoster=Array.from({length:256},(_,index)=>({
+    ...available[0],get id(){idReads++;return `large-${index}`;},
+  }));
+  check(recommendedCrewForRole(largeRoster,vacant,'Science Officer')==='large-0','Large roster preserves stable recommendation order');
+  check(idReads <= 8*largeRoster.length,'Recommendation examines a bounded number of crew IDs per candidate');
+  const duplicatedId=[{...available[0],alive:false,skills:{...available[0].skills,science:250}},available[0],available[1]];
+  check(recommendedCrewForRole(duplicatedId,vacant,'Science Officer')===available[1].id,'A deceased candidate cannot borrow another member\'s living status');
+  const dawes={id:'short',name:'Dawes',alive:true},anderson={id:'full',name:'Anderson Dawes',alive:true};
+  for(const members of [[dawes,anderson],[anderson,dawes]]) {
+    for(const role of CREW_ROLES)check(findCrewSpeaker(members,`${role} Anderson Dawes`)===anderson,'Resolve full speaker name independently of roster order');
+    check(findCrewSpeaker(members,'Doctor Dawes')===dawes,'Shorter name resolves to its own officer');
+    for(const speaker of ['Dawes','Visitor Anderson Dawes','Science Officer','Science Officer Other Dawes','Science Officer ']) {
+      check(!findCrewSpeaker(members,speaker),'Unknown or incomplete speaker omits the crew portrait');
+    }
+  }
+  check(!findCrewSpeaker([dawes,{...dawes,id:'other'}],'Doctor Dawes'),'Ambiguous same-name speaker omits the portrait');
+  check(!findCrewSpeaker([{...dawes,alive:false}],'Doctor Dawes'),'Do not show a deceased officer transmitting');
+  const tied=available.map(member=>({...member,skills:available[0].skills}));
+  check(recommendedCrewForRole(tied,posts,'Science Officer')==='crew-1','Current officer wins a tied skill');
+  check(recommendedCrewForRole(tied,vacant,'Science Officer')==='crew-0','Exact ties retain stable roster order');
+  check(recommendedCrewForRole(tied.map((member,index)=>({...member,vitality:index+1})),vacant,'Science Officer')==='crew-7','Higher vitality breaks other ties');
+  check(JSON.stringify({available,vacant})===beforeRecommendations,'Recommendation leaves roster and assignments untouched');
   check(certifiedCrewAssignments(roster,posts)===6,'Six different living crew clear all six roles');
   check(!hasDuplicateCrewAssignments(posts),'A fully staffed mission has no duplicate roles');
   for(const post of CREW_ROLES) {

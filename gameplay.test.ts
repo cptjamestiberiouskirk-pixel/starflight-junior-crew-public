@@ -527,8 +527,16 @@ export function runGameplayTests() {
   check(!storage.set('mission', 'new checkpoint'), 'Storage-full saves report that persistence failed');
   check(storage.get('mission') === 'new checkpoint', 'Failed saves remain available for export, ahead of an older disk copy');
   check(disk.get('mission') === 'old checkpoint', 'A failed save preserves the last durable checkpoint');
+  check(!storage.isPersisted('mission','new checkpoint'), 'Session fallback is not proof of a durable write');
+  check(storage.isPersisted('mission','old checkpoint'), 'Durability checks the actual previous disk bytes');
   full = false;
   check(storage.set('mission', 'recovered checkpoint') && disk.get('mission') === 'recovered checkpoint', 'Saving recovers once storage is writable');
   check(storage.get('mission') === 'recovered checkpoint', 'Recovered writes supersede the session fallback');
+  check(storage.isPersisted('mission','recovered checkpoint'), 'Recovered writes are verified on disk');
+  const silent=createSafeStorage(()=>({getItem:()=>null,setItem:()=>{}}));
+  check(!silent.set('mission','ignored')&&!silent.isPersisted('mission','ignored'),'Silent backend write loss cannot report durability');
+  check(silent.get('mission')==='ignored','Silently discarded writes remain available for session export');
+  const unreadable=createSafeStorage(()=>({getItem:()=>{throw new Error('blocked');},setItem:()=>{throw new Error('blocked');}}));
+  check(!unreadable.isPersisted('mission','unreadable'),'Blocked reads cannot establish persistence');
   return { passed, failed: 0, results: [] as string[] };
 }

@@ -13,11 +13,13 @@ try {
   console.log('Saved Playground configuration: PASS');
 
   for (const [file, entrypoint, label] of [
+    ['/gameplay-round2.test.ts','runGameplayRound2Tests','Artifact readings, held-key release and encounter flare origins'],
     ['/cinematic-audio.test.ts','runCinematicAudioTests','Launch audio failure responsiveness and game-clock playback (isolated mock Web Audio)'],
     ['/crew-names.test.ts','runCrewNameTests','Lore-inspired names, exact canonical categories and matching fictional portrait styles'],
     ['/crew-assignments.test.ts','runCrewAssignmentTests','Unique crew duties, legacy repair and casualty succession'],
     ['/presentation-polish.test.ts','runPresentationPolishTests','Contextual guidance and crowded navigation label bounds'],
     ['/save-validation.test.ts','runSaveValidationTests','Malformed and oversized save rejection with legacy compatibility'],
+    ['/save-manifest-update.test.ts','runSaveManifestUpdateTests','Targeted manifest updates preserve opaque backup entries exactly'],
     ['/save-render-safety.test.ts','runSaveRenderSafetyTests','Adversarial imported coordinates, bounded rendering and legacy save compatibility'],
     ['/playground-player-count.test.ts','runPlaygroundPlayerCountTests','Bounded development SDK player allocation'],
     ['/encounter-drive.test.ts','runEncounterDriveTests','Original encounter acceleration integer transitions and engine availability'],

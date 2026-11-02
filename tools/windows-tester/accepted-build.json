@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-DMj0CPl8.js",
-    "sha256": "fad111cb016cc826a2fbda80f5e59aec3ddd4cd1c20de9afd4088f44429d9c23"
+    "entry": "assets/index-BVZYtWwu.js",
+    "sha256": "4213decdbb0eadce15637cef67df262952fccda7dc142eef134be01028d7b911"
   },
-  "evidenceDate": "2026-11-01",
-  "scope": "Owner-requested private rebuild with the audio-load failure freeze fix and regression tests. Exact source passed 62,821 checks, 12 bounded audio regressions, four muted compiled-browser cases, typecheck, build and resource checks. Existing media, gameplay rules and save format unchanged. Extracted-package acceptance recorded separately.",
-  "evidence": "docs/VERIFICATION_2026-11-01-AUDIO.md"
+  "evidenceDate": "2026-11-02",
+  "scope": "Owner-requested private rebuild of the accepted deep-testing build, including crew, navigation, save-lifecycle and storage-recovery fixes. Exact game passed 63,138 source assertions, 253 muted compiled-browser cases, fresh earned victory/reload, typecheck and resource checks. Media and save format unchanged. Extracted-package acceptance recorded separately.",
+  "evidence": "docs/VERIFICATION_2026-11-02-PACKAGE.md"
 }

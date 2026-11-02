@@ -139,6 +139,7 @@ export function validSaveCollections(slot:unknown):boolean {
     hasGivenEllipsoid:bool,hasRefusedCrystalOrb:bool,uhlekSilenced:bool,elowanHostile:bool,
   })(s))return false;
   if(!s.crewRoster.every(shape({}, {color:str,quirk:str})))return false;
+  if(new Set(s.crewRoster.map(member=>member.id)).size!==s.crewRoster.length)return false;
   if(!s.artifactsInHold.every(artifact))return false;
   const comm=s.alienCommsState;
   if(comm!==undefined&&!shape({}, {

@@ -29,8 +29,39 @@ async function load(patch={},size={width:1440,height:1000}) {
 }
 async function openCrew(){await button('PAUSE').click();await button('Crew Assignments').click();await select('Captain').waitFor();}
 async function persist(){await button('Mission').click();await button('Save Mission (Slot E)').click();await page.waitForTimeout(100);return snapshot();}
-async function check(name,fn){console.log('START '+name);try{await fn();assert.deepEqual(errors,[]);report.cases.push({name,passed:true});}catch(error){report.cases.push({name,passed:false,error:String(error.stack??error),pageErrors:errors});await page?.screenshot({path:path.join(out,name+'-failed.png')}).catch(()=>{});}console.log(JSON.stringify(report.cases.at(-1)));await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));}
+async function check(name,fn){if(process.env.JUNIOR_CREW_CASE&&!name.includes(process.env.JUNIOR_CREW_CASE))return;console.log('START '+name);try{await fn();assert.deepEqual(errors,[]);report.cases.push({name,passed:true});}catch(error){report.cases.push({name,passed:false,error:String(error.stack??error),pageErrors:errors});await page?.screenshot({path:path.join(out,name+'-failed.png')}).catch(()=>{});}console.log(JSON.stringify(report.cases.at(-1)));await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));}
 try {
+  const skillRows=[['Captain','Total skills',null,250,5],['Science Officer','Science','science',200,0],['Navigator','Navigation','navigation',190,1],['Engineer','Engineering','engineering',180,2],['Communications','Communications','communications',170,3],['Doctor','Medicine','medicine',160,4]];
+  const statRoster=fixture.data.snapshot.crewRoster.map((member,index)=>{const {portraitId,...rest}=member;const skills={science:0,navigation:0,engineering:0,communications:0,medicine:0};if(index<5)skills[['science','navigation','engineering','communications','medicine'][index]]=200-index*10;else for(const key of Object.keys(skills))skills[key]=50;return{...rest,name:['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot'][index],race:'Human',vitality:100,skills};});
+  const vacant=Object.fromEntries(roles.map(role=>[role,null]));
+  await check('role-stat-values-and-recommendations-for-every-officer',async()=>{
+    await load({crewRoster:statRoster,assignedPosts:vacant});const before=await raw();
+    for(const [role,label,key,highest,index]of skillRows){
+      for(const member of statRoster){const value=key?member.skills[key]:Object.values(member.skills).reduce((a,b)=>a+b,0);const option=select(role).locator(`option[value="${member.id}"]`);assert((await option.innerText()).includes(label+': '+value),role+'/'+member.name+' displays the relevant value');}
+      const recommended=select(role).locator('option').filter({hasText:'(Recommended)'});assert.equal(await recommended.count(),1);assert.equal(await recommended.getAttribute('value'),statRoster[index].id);assert((await recommended.innerText()).includes(label+': '+highest));
+    }
+    assert.equal(await raw(),before,'Recommendations never auto-assign or save');await page.screenshot({path:path.join(out,'role-stat-values.png')});
+    await select('Science Officer').click();await page.screenshot({path:path.join(out,'science-options-expanded.png')});await page.keyboard.press('Escape');
+  });
+  await check('role-stat-deceased-unconscious-and-no-eligible-recommendation',async()=>{
+    const roster=statRoster.map((member,index)=>({...member,alive:index!==0,vitality:index===1?0:100}));
+    await load({crewRoster:roster,assignedPosts:vacant});
+    for(const role of roles){
+      const dead=select(role).locator(`option[value="${roster[0].id}"]`),unconscious=select(role).locator(`option[value="${roster[1].id}"]`);
+      assert(await dead.isDisabled());assert.match(await dead.innerText(),/Deceased/);assert.match(await unconscious.innerText(),/Unconscious/);
+      const recommended=select(role).locator('option').filter({hasText:'(Recommended)'});assert.equal(await recommended.count(),1);assert(![roster[0].id,roster[1].id].includes(await recommended.getAttribute('value')));
+    }
+    await load({crewRoster:roster.map(member=>({...member,vitality:0})),assignedPosts:vacant});
+    for(const role of roles)assert.equal(await select(role).locator('option').filter({hasText:'(Recommended)'}).count(),0);
+  });
+  await check('role-stat-recommendations-respect-occupied-posts-and-recompute',async()=>{
+    await load({crewRoster:statRoster,assignedPosts:{...vacant,Captain:statRoster[0].id}});
+    const alpha=select('Science Officer').locator(`option[value="${statRoster[0].id}"]`);assert(await alpha.isDisabled());assert(!(await alpha.innerText()).includes('(Recommended)'));
+    assert.equal(await select('Science Officer').locator('option').filter({hasText:'(Recommended)'}).getAttribute('value'),statRoster[5].id);
+    await select('Captain').selectOption('');assert.equal(await select('Science Officer').locator('option').filter({hasText:'(Recommended)'}).getAttribute('value'),statRoster[0].id);
+    await select('Science Officer').selectOption(statRoster[0].id);assert(await select('Captain').locator(`option[value="${statRoster[0].id}"]`).isDisabled());
+    await openCrew();assert((await select('Science Officer').locator(`option[value="${statRoster[0].id}"]`).innerText()).includes('Science: 200'));
+  });
   await check('six-distinct-roles-disabled-options-and-handler-guard',async()=>{
     await load();const posts=fixture.data.snapshot.assignedPosts;
     for(const role of roles) for(const other of roles) {

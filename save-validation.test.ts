@@ -65,6 +65,15 @@ export function runSaveValidationTests() {
   const planetSave=fresh();planetSave.data.snapshot!.currentSurfaceState=region;planetSave.data.snapshot!.planetSurfaces={'125-100-0':region};validate(planetSave,true,'Real multi-region surveyed surface');
   for(const key of ['minerals','ruins','lifeforms','droppedCargo']){const p=fresh();p.data.snapshot!.currentSurfaceState={...surface,[key]:[null]};validate(p,false,'Malformed current surface '+key);const saved=p.data.snapshot!.currentSurfaceState;p.data.snapshot!.currentSurfaceState=null;p.data.snapshot!.planetSurfaces={'125-100-0':saved!};validate(p,false,'Malformed retained surface '+key);}
   for(const patch of [{currentSurfaceState:{...surface,droppedCargo:[{...cargo,artifactRef:{id:null},x:0,y:0}]}},{activeEncounterGroup:{...fleets[0],ships:[{...createAlienShip('Spemin','Scout','s',0,0),loot:[null]}]}},{pendingRecommendations:[{...(cases.find(c=>c[0]==='pendingRecommendations')![1][0]),planet:{...samplePlanet,gases:[{}]}}]}]) {const p=fresh();Object.assign(p.data.snapshot!,patch);validate(p,false,'Nested renderable schema');}
+  const duplicateCrew=fresh(),originalOfficer=duplicateCrew.data.snapshot!.crewRoster[0];
+  duplicateCrew.data.snapshot!.crewRoster.unshift({...originalOfficer,name:'Memorial',alive:false,vitality:0});
+  validate(duplicateCrew,false,'Duplicate roster IDs cannot alias a living officer and a memorial');
+  const sharedName=fresh();
+  sharedName.data.snapshot!.crewRoster[1].name=sharedName.data.snapshot!.crewRoster[0].name;
+  validate(sharedName,true,'Distinct officers may share a name');
+  const legacyPosts=fresh();
+  legacyPosts.data.snapshot!.assignedPosts.Doctor=legacyPosts.data.snapshot!.assignedPosts.Captain;
+  validate(legacyPosts,true,'Legacy duplicate post assignments remain loadable for crew review');
   const missing=fresh();for(const key of ['settings','cinematicDuration','roverWaypoint','planetSurfaces','fleetChanges','surfaceRecording','planetaryScan'])delete (missing.data.snapshot as any)[key];for(const c of missing.data.snapshot!.crewRoster)delete c.portraitId;validate(missing,true,'Optional later-version fields and portraits remain absent');
   for(const alias of ['destroyedPlanetKeys','destroyedPlanets'])for(const location of ['In Orbit','Landing','On Planet','Terrain Vehicle']) {
     const p=fresh(),star=UNIVERSE.stars.find(st=>st.id===p.data.snapshot!.currentStarId)!;

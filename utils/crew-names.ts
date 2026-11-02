@@ -20,9 +20,31 @@ export function recruitNamePresentation(name:string,race:Species,style:NameStyle
  return known!=='neutral'?known:style==='auto'?'neutral':style;
 }
 const humanFirst={
- masculine:['Taren','Dalen','Corin','Bren','Kelan','Arlen','Joren','Marek'],
- feminine:['Alya','Mira','Nela','Sera','Talia','Lina','Rhea','Vela'],
- neutral:['Ari','Ren','Lane','Sage','Ash','Ryn','Aven','Kest'],
+ 'Star Trek':{
+  masculine:['Tovan','Ralen','Corven','Darik','Senvar','Jorren','Tavik','Elran'],
+  feminine:['Selara','Tavira','Alena','Rellia','Veyra','Nerisa','Valena','Serin'],
+  neutral:['Aven','Taren','Rell','Tal','Venn','Sorin','Arel','Neris'],
+ },
+ 'Star Wars':{
+  masculine:['Kavren','Daxen','Jarro','Torik','Veylo','Narek','Brenlo','Korrin'],
+  feminine:['Zayra','Kessia','Vesha','Nalya','Tirra','Jorali','Sennya','Avara'],
+  neutral:['Ryn','Vex','Kavi','Senn','Tavi','Zeen','Darro','Kael'],
+ },
+ 'The Expanse':{
+  masculine:['Mateo','Ilan','Nikol','Rafi','Tomas','Oren','Sandro','Pavel'],
+  feminine:['Amara','Nadia','Irena','Suri','Leona','Marta','Nika','Dalia'],
+  neutral:['Mika','Ari','Noa','Sasha','Remy','Jules','Alexi','Rene'],
+ },
+ 'Starflight 1':{
+  masculine:['Zaren','Mekar','Arthen','Phelan','Gorren','Velan','Farn','Kelmar'],
+  feminine:['Zarela','Arlena','Phelia','Garina','Velara','Mekira','Farela','Kelna'],
+  neutral:['Zar','Arth','Veln','Phel','Kelm','Garan','Merl','Fenn'],
+ },
+ 'Starflight 2':{
+  masculine:['Pharen','Lurion','Nixan','Jexor','Krelon','Toran','Luxar','Drevan'],
+  feminine:['Phalia','Lureli','Nixara','Jexa','Krelia','Tovela','Luxia','Drevna'],
+  neutral:['Phlo','Lux','Nix','Jex','Krel','Tov','Shyr','Astrel'],
+ },
 };
 const flavor={
  'Star Trek':{human:['Valen','Tavor','Selan','Rellan','Voss','Kest','Merin','Aster'],syllables:['el','or','an','ev','ur','al'],android:'AX'},
@@ -35,6 +57,13 @@ const alien={
  Velox:{first:['Pte','Rre','Vex','Kli','Phe','Xi','Tzi','Qe'],last:['tex','lixi','xi','nok','tik','pex']},
  Thrynn:{first:['Thy','Ssa',"N'qr",'Tyr','Rhys','Vra','Ssy','Qrr'],last:['ynn','la','iss','a','esh','ak']},
  Elowan:{first:['Ael','Fae','Bela','Cio','Syl','Luma','Elo','Vael'],last:['ion','ial','lia','iel','ara','eth']},
+};
+// Authored spelling styles, not claims about alien biology. Portraits for
+// unclassified species remain neutral even when the player chooses a name style.
+const alienEndings={
+ Velox:{masculine:['tor','kex','rith','zok','vex','tak'],feminine:['lixi','exa','iri','tza','nixi','kira'],neutral:['tex','xi','nok','tik','pex','qet']},
+ Thrynn:{masculine:['thar','rath','thyn','ssor','rakk','thok'],feminine:['ssia','thyra','ssara','ryss','thira','ssae'],neutral:['ynn','la','iss','a','esh','ak']},
+ Elowan:{masculine:['ion','or','en','ar','ial','on'],feminine:['ia','ara','lia','a','elle','ira'],neutral:['iel','aen','eth','ir','ae','un']},
 };
 function fraction(random:()=>number){const roll=random();return Number.isFinite(roll)?Math.min(.999999999,Math.max(0,roll)):0;}
 export function availableCrewNames(source:NameSource,occupied:readonly string[],style:NameStyle='auto'):string[]{
@@ -55,13 +84,17 @@ export function generateRecruitName(source:NameSource,mode:NameMode,race:Species
   return {name,presentation:canonicalNamePresentation(name)==='neutral'&&style!=='auto'?style:canonicalNamePresentation(name),source,mode,race};
  }
  const category=sources[Math.floor(fraction(random)*sources.length)],theme=flavor[category];
- const presentation:NamePresentation=race==='Velox'||race==='Thrynn'||race==='Android'?'neutral':style==='auto'?(['masculine','feminine','neutral'] as const)[Math.floor(fraction(random)*3)]:style;
+ const patternStyle:NamePresentation=style==='auto'?(race==='Human'||race==='Elowan'?(['masculine','feminine','neutral'] as const)[Math.floor(fraction(random)*3)]:'neutral'):style;
+ const presentation:NamePresentation=race==='Velox'||race==='Thrynn'?'neutral':patternStyle;
  const candidates:string[]=[];
- if(race==='Human')for(const first of humanFirst[presentation])for(const last of theme.human)candidates.push(`${first} ${last}`);
- else if(race==='Android')for(let n=101;n<=999;n++)candidates.push(`${theme.android}${n}-${String.fromCharCode(65+n%26)}`);
+ if(race==='Human')for(const first of humanFirst[category][patternStyle])for(const last of theme.human)candidates.push(`${first} ${last}`);
+ else if(race==='Android'){
+  if(patternStyle==='neutral')for(let n=101;n<=999;n++)candidates.push(`${theme.android}${n}-${String.fromCharCode(65+n%26)}`);
+  else for(const first of humanFirst[category][patternStyle])for(let n=101;n<=999;n++)candidates.push(`${first}-${theme.android}${n}`);
+ }
  else {
   const parts=alien[race];if(!parts)return null;
-  const endings=race==='Elowan'&&presentation==='feminine'?['ia','ara','iel','lia','a','elle']:race==='Elowan'&&presentation==='masculine'?['ion','eth','or','en','ar','ial']:parts.last;
+  const endings=alienEndings[race][patternStyle];
   for(const first of parts.first)for(const middle of theme.syllables)for(const last of endings)candidates.push(first+middle+last);
  }
  const start=Math.floor(fraction(random)*candidates.length);

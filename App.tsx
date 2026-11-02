@@ -194,7 +194,6 @@ import {
   LifeformSpecimen,
   MineralDeposit,
   PlanetSurfaceState,
-  RUIN_LORE_DATABASE,
   SurfaceRuin,
   TerrainElevation,
 } from './surface';
@@ -2359,8 +2358,15 @@ const LEGACY_SLOT_KEYS: Record<'A' | 'B' | 'C' | 'D' | 'E', string> = {
 
 const LAST_SLOT_KEY = 'starflight_last_save_slot';
 
-const { get: safeStorageGet, set: safeStorageSet } = createSafeStorage(() =>
+const { get: safeStorageGet, set: safeStorageSet, isPersisted: safeStorageIsPersisted } = createSafeStorage(() =>
   typeof localStorage === 'undefined' ? null : localStorage);
+
+// Keep unrecognized and quarantined entries intact, including manifest-only
+// backups. The slot's primary and legacy keys are independently restorable.
+function updateManifestSlot(serializedSlot: string) {
+  const updated = updatedSaveManifest(safeStorageGet(LOCAL_STORAGE_KEY), serializedSlot);
+  if (updated !== null) safeStorageSet(LOCAL_STORAGE_KEY, updated);
+}
 
 function checkLocalStorageWorks(): boolean {
   try {
@@ -2424,9 +2430,11 @@ function loadInitialSaveSlots(): {
   slots: SaveSlotData[];
   lastSlot: 'A' | 'B' | 'C' | 'D' | 'E';
   storageAvailable: boolean;
+  durableSlots: Record<SaveSlotData['slot'], boolean>;
 } {
   const slots: ('A' | 'B' | 'C' | 'D' | 'E')[] = ['A', 'B', 'C', 'D', 'E'];
   const storageAvailable = checkLocalStorageWorks();
+  const durableSlots = {A:false,B:false,C:false,D:false,E:false};
   let lastSlot: 'A' | 'B' | 'C' | 'D' | 'E' = 'A';
 
   try {
@@ -2440,6 +2448,7 @@ function loadInitialSaveSlots(): {
 
   // Parse manifest backup if present
   let manifestSlots: unknown[] = [];
+  let manifestDurable = false;
   let unsafeManifest=false;
   try {
     const rawManifest = safeStorageGet(LOCAL_STORAGE_KEY);
@@ -2447,6 +2456,7 @@ function loadInitialSaveSlots(): {
       const parsed = parseSaveManifest(rawManifest);
       if (Array.isArray(parsed)) {
         manifestSlots = parsed;
+        manifestDurable = safeStorageIsPersisted(LOCAL_STORAGE_KEY, rawManifest);
       } else unsafeManifest=true;
     }
   } catch (e) {}
@@ -2454,23 +2464,20 @@ function loadInitialSaveSlots(): {
   const loadedSlots = slots.map((slotKey) => {
     let unsafeStoredData=unsafeManifest;
     try {
-      const candidates = [
-        safeStorageGet(SLOT_KEYS[slotKey]),
-        safeStorageGet(LEGACY_SLOT_KEYS[slotKey]),
-        safeStorageGet(`starflight_save_slot_${slotKey.toLowerCase()}`),
-        safeStorageGet(`starflight_dispatch_slot_${slotKey.toLowerCase()}`),
-      ];
-      for (const cand of candidates) {
+      const candidates = [SLOT_KEYS[slotKey], LEGACY_SLOT_KEYS[slotKey],
+        `starflight_save_slot_${slotKey.toLowerCase()}`, `starflight_dispatch_slot_${slotKey.toLowerCase()}`];
+      for (const candidateKey of candidates) {
+        const cand = safeStorageGet(candidateKey);
         if (cand) {
           const parsed = restorableSaveSlot(parseSaveJSON(cand),slotKey);
-          if(parsed && !parsed.empty)return parsed;
+          if(parsed && !parsed.empty){durableSlots[slotKey]=safeStorageIsPersisted(candidateKey,cand);return parsed;}
           if(!parsed)unsafeStoredData=true;
         }
       }
       const fromManifest = manifestSlots.find((m) => m && typeof m==='object' && 'slot' in m && m.slot===slotKey && (!('empty' in m)||!m.empty));
       if (fromManifest) {
         const parsed=restorableSaveSlot(fromManifest,slotKey);
-        if(parsed)return parsed;
+        if(parsed){durableSlots[slotKey]=manifestDurable;return parsed;}
         unsafeStoredData=true;
       }
     } catch (e) {
@@ -2489,13 +2496,13 @@ function loadInitialSaveSlots(): {
     };
   });
 
-  return { slots: loadedSlots, lastSlot, storageAvailable };
+  return { slots: loadedSlots, lastSlot, storageAvailable, durableSlots };
 }
 
 export { encodeSaveToBase64, decodeSaveFromBase64 } from './utils/save-codec';
 
 function useGameInterfaceState() {
-  const heldKeysRef = useRef<Record<string, boolean>>({});
+  const [keysHeld] = useState(() => new HeldKeys());
   const missionEpochRef = useRef(0);
   const launchPreludePausedRef = useRef(true);
   const launchPreludeFrameTimeRef = useRef(0);
@@ -2656,7 +2663,7 @@ function useGameInterfaceState() {
     : 'Saves stay in this browser. Use Export Save to back up or transfer your mission.';
 
   // Active Save Slot (A-E)
-  const [activeSlot, setActiveSlot] = useState<'A' | 'B' | 'C' | 'D' | 'E'>(() => {
+  const [activeSlot, setSelectedSlot] = useState<SaveSlotData['slot']>(() => {
     try {
       const storedLast = safeStorageGet(LAST_SLOT_KEY);
       if (storedLast && ['A', 'B', 'C', 'D', 'E'].includes(storedLast)) {
@@ -2665,6 +2672,11 @@ function useGameInterfaceState() {
     } catch (e) {}
     return 'A';
   });
+  const activeSlotRef = useRef(activeSlot);
+  const setActiveSlot = useCallback((slot:SaveSlotData['slot']) => {
+    activeSlotRef.current = slot;
+    setSelectedSlot(slot);
+  },[]);
   const [devUsed, setDevUsed] = useState<boolean>(false);
   const [isDevPanelOpen, setIsDevPanelOpen] = useState<boolean>(false);
   const [devLabelsEnabled, setDevLabelsEnabled] = useState<boolean>(false);
@@ -2781,6 +2793,7 @@ function useGameInterfaceState() {
     type: 'success' | 'error';
     message: string;
     restoredSlot?: 'A' | 'B' | 'C' | 'D' | 'E';
+    durable?: boolean;
   } | null>(null);
 
   const [isQuitReminderOpen, setIsQuitReminderOpen] = useState<boolean>(false);
@@ -3742,26 +3755,6 @@ function useGameInterfaceState() {
     }
   }, [gameLocation, gameState.status, gameOverModal, gameWon]);
 
-  const persistSaveSlots = useCallback((updated: SaveSlotData[]) => {
-    setSaveSlots(updated);
-    updated.forEach((slotData) => {
-      try {
-        if (!slotData.empty) {
-          const serialized = JSON.stringify(slotData);
-          safeStorageSet(SLOT_KEYS[slotData.slot], serialized);
-          safeStorageSet(LEGACY_SLOT_KEYS[slotData.slot], serialized);
-        }
-      } catch (e) {
-        console.warn('Could not persist slot ' + slotData.slot, e);
-      }
-    });
-    try {
-      safeStorageSet(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('Could not persist slots manifest', e);
-    }
-  }, []);
-
   // Strict Silence Filter for Comedy
   const isSilenceFilterActive = useCallback(() => {
     if (!banterEnabled) return true;
@@ -4298,14 +4291,8 @@ function useGameInterfaceState() {
       console.log('[SAVE SYSTEM VERIFY] Readback:', verified);
 
       // Re-read storage so that any previously saved slots are preserved and accurately displayed!
-      setSaveSlots((prev) => {
-        const fresh = loadInitialSaveSlots().slots;
-        const updated = fresh.map((s) => (s.slot === slotKey ? newSlotData : s));
-        try {
-          safeStorageSet(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-        } catch (e) {}
-        return updated;
-      });
+      updateManifestSlot(serialized);
+      setSaveSlots(loadInitialSaveSlots().slots);
 
       setActiveSlot(slotKey);
 
@@ -4333,7 +4320,8 @@ function useGameInterfaceState() {
 
   const handleLoadFromSlot = useCallback(
     (slotKey: 'A' | 'B' | 'C' | 'D' | 'E') => {
-      const freshSlots = loadInitialSaveSlots().slots;
+      const loaded = loadInitialSaveSlots();
+      const freshSlots = loaded.slots;
       const target = freshSlots.find((s) => s.slot === slotKey) || saveSlots.find((s) => s.slot === slotKey);
       if(target?.loadError || target?.snapshot && !restorableSaveSlot(target,slotKey)) {
         setImportStatus({type:'error',message:`Slot ${slotKey} contains invalid or oversized saved mission data and cannot be resumed. The saved mission has not been changed. Import a valid backup or choose another slot.`});
@@ -4353,6 +4341,7 @@ function useGameInterfaceState() {
       // Work on a copy: surface mining and combat mutate their live models.
       // A loaded mission must never mutate the stored checkpoint in memory.
       const snap = structuredClone(target.snapshot);
+      setSaveDurable(loaded.durableSlots[slotKey]);
       const needsCrewReview=hasDuplicateCrewAssignments(snap.assignedPosts);
       crewAssignmentsNeedReviewRef.current=needsCrewReview;
       setCrewAssignmentsNeedReview(needsCrewReview);
@@ -4361,7 +4350,7 @@ function useGameInterfaceState() {
       resetLaunchTransporter();
       setSaveBlocked(false);
       blockedSalvageRef.current.clear();
-      heldKeysRef.current = {};
+      keysHeld.clear();
       voiceEngine.stopAllVoices();
       if (clampReleaseAnimIdRef.current !== null) cancelAnimationFrame(clampReleaseAnimIdRef.current);
       clampReleaseAnimIdRef.current = null;
@@ -4370,6 +4359,7 @@ function useGameInterfaceState() {
       setDevUsed(!!(target.isDev || snap.isDev));
       setActiveSlot(slotKey);
       setIntroPage(0);
+      if (!needsCrewReview) safeStorageSet(LAST_SLOT_KEY, slotKey);
       setGameLocation(snap.location);
       setPrevGameLocation(snap.prevLocation || 'Hyperspace');
       const concourseCanvas = getConcourseCanvas(assets);
@@ -4770,24 +4760,31 @@ function useGameInterfaceState() {
     const serialized = JSON.stringify(restoredSlotData);
     safeStorageSet(SLOT_KEYS[targetSlotKey], serialized);
     safeStorageSet(LEGACY_SLOT_KEYS[targetSlotKey], serialized);
-    safeStorageSet(LAST_SLOT_KEY, targetSlotKey);
-
-    setSaveSlots((prev) => {
-      const updated = prev.map((s) => (s.slot === targetSlotKey ? restoredSlotData : s));
-      try {
-        safeStorageSet(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-      } catch (e) {}
-      return updated;
-    });
-
-    setActiveSlot(targetSlotKey);
+    updateManifestSlot(serialized);
+    const loaded = loadInitialSaveSlots();
+    const durable = loaded.durableSlots[targetSlotKey];
+    setSaveSlots(loaded.slots);
+    if (gameStateRef.current.status === 'PLAYING') {
+      if (targetSlotKey === activeSlot) {
+        setIsImportModalOpen(false);
+        setImportStatus(null);
+        handleLoadFromSlot(targetSlotKey);
+        return;
+      }
+    } else {
+      setActiveSlot(targetSlotKey);
+      safeStorageSet(LAST_SLOT_KEY, targetSlotKey);
+    }
     setImportStatus({
       type: 'success',
-      message: `Mission restored to Slot ${targetSlotKey}! (${restoredSlotData.shipName || 'Unnamed'} • ${restoredSlotData.stardate})`,
+      message: durable
+        ? `Mission restored to Slot ${targetSlotKey}! (${restoredSlotData.shipName || 'Unnamed'} • ${restoredSlotData.stardate})`
+        : `Mission available in Slot ${targetSlotKey} for this session only. Browser storage could not preserve it. Export a backup before closing this tab.`,
       restoredSlot: targetSlotKey,
+      durable,
     });
     gameAudio.playPowerupChime();
-  }, [importCodeInput, importDestSlot]);
+  }, [importCodeInput, importDestSlot, activeSlot, handleLoadFromSlot]);
 
   const handleResumeImportedMission = useCallback(
     (slotKey: 'A' | 'B' | 'C' | 'D' | 'E') => {
@@ -4804,7 +4801,7 @@ function useGameInterfaceState() {
     resetLaunchTransporter();
     setSaveBlocked(false);
     blockedSalvageRef.current.clear();
-    heldKeysRef.current = {};
+    keysHeld.clear();
     voiceEngine.stopAllVoices();
     setPendingCheckpoint(null);
     setDevUsed(false);
@@ -5047,6 +5044,10 @@ function useGameInterfaceState() {
     const freshSlots = loadInitialSaveSlots().slots;
     const current = freshSlots.find(slot=>slot.slot===replacementMission.slot)!;
     if(replacementMode==='copy') {
+      if (gameStateRef.current.status === 'PLAYING' && copyTargetSlot === activeSlot) {
+        setReplacementStatus('Return to the title screen before copying into the running mission’s slot.');
+        return;
+      }
       const destination=freshSlots.find(slot=>slot.slot===copyTargetSlot)!;
       if(current.empty||!current.snapshot) {setReplacementStatus('The source slot is now empty. Cancel and choose an existing mission.');return;}
       if(!sameMissionVersion(current,replacementMission) || !copyDestination || !sameMissionVersion(destination,copyDestination)) {
@@ -5055,11 +5056,15 @@ function useGameInterfaceState() {
         return;
       }
       const copied=copyMissionSlot(current,copyTargetSlot);
-      persistSaveSlots(freshSlots.map(slot=>slot.slot===copyTargetSlot?copied:slot));
+      const serialized = JSON.stringify(copied);
+      safeStorageSet(SLOT_KEYS[copyTargetSlot], serialized);
+      safeStorageSet(LEGACY_SLOT_KEYS[copyTargetSlot], serialized);
+      updateManifestSlot(serialized);
+      setSaveSlots(loadInitialSaveSlots().slots);
       setReplacementMission(null);
       let durable=false;
-      try {durable=localStorage.getItem(SLOT_KEYS[copyTargetSlot])===JSON.stringify(copied);} catch {}
-      setSlotActionNotice(durable?`Copied Slot ${current.slot} to Slot ${copyTargetSlot}. Your active mission stays in Slot ${activeSlot}.`:`Slot ${copyTargetSlot} is copied for this session only. Export that slot before closing this tab.`);
+      try {durable=localStorage.getItem(SLOT_KEYS[copyTargetSlot])===serialized;} catch {}
+      setSlotActionNotice(durable?`Copied Slot ${current.slot} to Slot ${copyTargetSlot}.`:`Slot ${copyTargetSlot} is copied for this session only. Export that slot before closing this tab.`);
       replacementReturnFocusRef.current?.focus();
       return;
     }
@@ -5071,56 +5076,72 @@ function useGameInterfaceState() {
       return;
     }
     beginNewMission(replacementMission.slot);
-  }, [replacementMission,replacementMode,copyTargetSlot,copyDestination,persistSaveSlots,activeSlot,beginNewMission]);
+  }, [replacementMission,replacementMode,copyTargetSlot,copyDestination,activeSlot,beginNewMission]);
 
   const handleRequestSlotAction=useCallback((slotKey:SaveSlotData['slot'],mode:'copy'|'reset')=>{
-    writeCheckpoint(activeSlot);
+    if (mode === 'reset' && slotKey === activeSlot) writeCheckpoint(activeSlot);
     const freshSlots=loadInitialSaveSlots().slots;
     const source=freshSlots.find(slot=>slot.slot===slotKey)!;
     if(source.empty||!source.snapshot) return;
     replacementReturnFocusRef.current=document.activeElement as HTMLElement|null;
     setSaveSlots(freshSlots);setReplacementMode(mode);setReplacementStatus(null);setSlotActionNotice(null);
     if(mode==='copy') {
-      const destination=freshSlots.find(slot=>slot.slot!==slotKey&&slot.empty)??freshSlots.find(slot=>slot.slot!==slotKey)!;
+      const candidates=freshSlots.filter(slot=>slot.slot!==slotKey && (gameStateRef.current.status!=='PLAYING' || slot.slot!==activeSlot));
+      const destination=candidates.find(slot=>slot.empty)??candidates[0];
       setCopyTargetSlot(destination.slot);setCopyDestination(destination);
     }
     setReplacementMission(source);
   },[activeSlot,writeCheckpoint]);
 
-  const handleContinue = useCallback(() => {
-    const freshSlots = loadInitialSaveSlots().slots;
+  const handleContinue = useCallback((selectedSlot?: SaveSlotData['slot']) => {
+    const loaded = loadInitialSaveSlots();
+    const freshSlots = loaded.slots;
     const active = freshSlots.find((s) => s.slot === activeSlot && !s.empty) || saveSlots.find((s) => s.slot === activeSlot && !s.empty);
     const firstFilled = freshSlots.find((s) => !s.empty) || saveSlots.find((s) => !s.empty);
-    const target = active || firstFilled;
+    const target = selectedSlot ? freshSlots.find(s => s.slot === selectedSlot) : active || firstFilled;
     if (target && !target.empty) {
       if(target.loadError){handleLoadFromSlot(target.slot);return;}
       if (target.snapshot) {
         handleLoadFromSlot(target.slot);
       } else {
+        // Prototype cards have no roster, hull configuration, planet or fleet.
+        // Start with an isolated mission before applying the fields they contain.
+        startNewGame();
+        setSaveDurable(loaded.durableSlots[target.slot]);
         setActiveSlot(target.slot);
+        safeStorageSet(LAST_SLOT_KEY,target.slot);
         setIntroPage(0);
-        setGameLocation(target.location || 'Starport');
-        setActiveRoomIndex(null);
-        const concourseCanvas = getConcourseCanvas(assets);
-        const spawnPos = imageFracToCanvas(
-          CONCOURSE_SPAWN_U,
-          CONCOURSE_SPAWN_V,
-          viewDimensions.width,
-          viewDimensions.height,
-          concourseCanvas
-        );
-        setAstronautX(spawnPos.x);
-        setAstronautY(spawnPos.y);
-        setSystemMessages(target.bridgeLog ? JSON.parse(JSON.stringify(target.bridgeLog)) : []);
+        setCredits(target.credits);
+        setShipName(target.shipName);
+        const date = parseDateString(target.stardate);
+        const validDate = /^\d{1,2}-\d{1,2}-\d{4,5}$/.test(target.stardate)
+          && date.day >= 1 && date.day <= 30 && date.month >= 1 && date.month <= 10 && date.year >= 4620 && date.year <= 99999;
+        if (validDate) {
+          setStardateDay(date.day);setStardateMonth(date.month);setStardateYear(date.year);
+          const day = getAbsoluteDay(date.day,date.month,date.year);
+          previousStarHoursRef.current = day * 24;
+          setLastInterestAbsDay(day);
+        }
+        setBankLedger([{date:validDate ? target.stardate : '01-01-4620',desc:'Restored legacy balance',amount:target.credits,balance:target.credits}]);
+        setDevUsed(target.isDev === true);
+        setGameWon(target.gameWon === true);
+        const won = target.gameWon === true || target.flaresHalted === true;
+        setFlaresStopped(won);
+        if (won) setDestroyedPlanetKeys(['192-152-0']);
+        const location = target.location === 'Hyperspace' || target.location === 'Star System' ? target.location : 'Starport';
+        setGameLocation(location);
+        if (target.location === 'Docking Bay') setActiveRoomIndex(6);
+        const logs = structuredClone(target.bridgeLog ?? []);
+        if (location !== target.location && target.location !== 'Docking Bay') logs.unshift({
+          id:'legacy-berth',text:'This early mission record has no planet or encounter details. Your vessel has returned to Starport.',type:'info',
+        });
+        setSystemMessages(logs);
         setBanterLog([]);
-        setGameState({ status: 'PLAYING', score: 100, level: 1 });
-        setIsGameMenuOpen(false);
-        gameAudio.playPowerupChime();
       }
     } else {
-      beginNewMission(activeSlot);
+      beginNewMission(selectedSlot ?? activeSlot);
     }
-  }, [saveSlots, activeSlot, handleLoadFromSlot, beginNewMission]);
+  }, [saveSlots, activeSlot, handleLoadFromSlot, beginNewMission, startNewGame]);
 
   // Active Planets in Current Star System (Isolated per-game state)
   const currentPlanets = useMemo(() => {
@@ -6854,7 +6875,7 @@ function useGameInterfaceState() {
       setSystemZoom(8.0);
       setFluxFlashTimer(0.6); // deceleration warp flash
       setOrbitTransitionProgress(1.0);
-      for(const key of Object.keys(heldKeysRef.current))delete heldKeysRef.current[key];
+      keysHeld.clear();
       setActiveDirectionVector({dx:0,dy:0});
       combatInputBufferRef.current=null;
       setActiveConsoleMenu('Maneuver');
@@ -6901,7 +6922,7 @@ function useGameInterfaceState() {
     setShipVy(0);
     setFluxFlashTimer(0.8); // Warp flash & stretch
     setGrantedDroneClearanceUntilHyperspace(false);
-    for(const key of Object.keys(heldKeysRef.current))delete heldKeysRef.current[key];
+    keysHeld.clear();
     setActiveDirectionVector({dx:0,dy:0});
     combatInputBufferRef.current=null;
     setActiveConsoleMenu('Maneuver');
@@ -6943,7 +6964,7 @@ function useGameInterfaceState() {
         }
 
         if (hasCone) {
-          addMessage("The Crystal Cone has located the control nexus at 47N x 45E.", 'Science Officer', 'info');
+          addMessage(`The Crystal Cone has located the control nexus at ${CONTROL_NEXUS_COORDINATES}.`, 'Science Officer', 'info');
         }
       } else {
         gameAudio.playOrbitSweep();
@@ -7137,6 +7158,26 @@ function useGameInterfaceState() {
     gameAudio.playCrispClick();
   }, [viewDimensions, assets]);
 
+  // Crew can be reassigned from the pause menu at every stage of departure.
+  const checkDepartingCrew = useCallback(() => {
+    if (certifiedCrewAssignments(crewRosterFrameRef.current,assignedPostsLiveRef.current) === CREW_POSTS.length) return true;
+    const message = 'Launch cancelled. Report to Crew Assignment.';
+    setDockingBayWarnings([message]);
+    setIsReleasingClamps(false);
+    clampReleaseProgressRef.current = 0;
+    setClampReleaseProgress(0);
+    resetLaunchTransporter();
+    cinematicStateRef.current = 'none';
+    cinematicTimerRef.current = 0;
+    setCinematicState('none');
+    setCinematicTimer(0);
+    setGameLocation('Starport');
+    setActiveRoomIndex(6);
+    addMessage(message,undefined,'alert');
+    handleSaveToSlot(activeSlotRef.current,{location:'Starport',inRoom:true,starportRoomIndex:6,cinematicState:'none',cinematicRemaining:0});
+    return false;
+  },[addMessage,handleSaveToSlot,resetLaunchTransporter]);
+
   // Canonical Docking Bay Launch Check & Trigger (Rule 5)
   const handleDockingBayLaunch = useCallback(() => {
     if (clampReleaseAnimIdRef.current !== null || launchTransporterAnimIdRef.current !== null) return;
@@ -7243,6 +7284,7 @@ function useGameInterfaceState() {
           launchTransporterAnimIdRef.current = requestAnimationFrame(animateTransporter);
         } else {
           launchTransporterAnimIdRef.current = null;
+          if (!checkDepartingCrew()) return;
           setTransporterBeamProgress(0);
           startCinematic('launch', BAY_LAUNCH_SECONDS);
           triggerBanter('launch');
@@ -7279,6 +7321,7 @@ function useGameInterfaceState() {
       } else {
         clampReleaseAnimIdRef.current = null;
         setIsReleasingClamps(false);
+        if (!checkDepartingCrew()) return;
         // Only after the 0.7s clamp release completes does the existing launch sequence begin
         executeLaunchSequence();
       }
@@ -7288,6 +7331,7 @@ function useGameInterfaceState() {
   }, [
     evaluations,
     certifiedCrewCount,
+    checkDepartingCrew,
     assignedPosts,
     crewRoster,
     shipName,
@@ -7321,7 +7365,7 @@ function useGameInterfaceState() {
 
   // Complete Launch into Star System
   const completeLaunchToSpace = useCallback(() => {
-    if (cinematicCompletingRef.current) return;
+    if (cinematicCompletingRef.current || !checkDepartingCrew()) return;
     cinematicCompletingRef.current = true;
     cinematicStateRef.current = 'none';
     cinematicTimerRef.current = 0;
@@ -7346,7 +7390,7 @@ function useGameInterfaceState() {
     gameAudio.playPowerupChime();
     addMessage('Starport Arth: Starship cleared gantry and accelerated into orbit! Good luck, crew.', 'Captain', 'info');
     handleSaveToSlot(activeSlot,{location:'Star System',currentStarId:1,galaxyShipX:125,galaxyShipY:100,systemShipX:launchX,systemShipY:launchY,cinematicState:'none',cinematicRemaining:0});
-  }, [handleSaveToSlot, activeSlot, addMessage]);
+  }, [checkDepartingCrew, handleSaveToSlot, activeSlot, addMessage]);
 
   // Complete Docking from Star System
   const completeDockingToStarport = useCallback(() => {
@@ -10064,7 +10108,7 @@ function useGameInterfaceState() {
             explored: true,
             artifactId: 'art-crystal-cone',
             loreTitle: 'THE CRYSTAL SPIRE ARCHIVE',
-            loreMessage: 'Decrypted glyphs reveal the ancient planetary coordinate of the Master Nexus at 15N 30W on the Crystal World.',
+            loreMessage: `Decrypted glyphs reveal the ancient planetary coordinate of the Master Nexus at ${CONTROL_NEXUS_COORDINATES} on the Crystal World.`,
           });
         },
       },
@@ -10800,7 +10844,7 @@ function useGameInterfaceState() {
   }, [bayVideoPlayer,gameState.status,isSimulationPaused,cinematicState]);
   useEffect(() => {
     if (!isSimulationPaused) return;
-    for (const key of Object.keys(heldKeysRef.current)) delete heldKeysRef.current[key];
+    keysHeld.clear();
     combatInputBufferRef.current = null;
     encounterDriveRef.current = stoppedEncounterDrive();
     setActiveDirectionVector({ dx: 0, dy: 0 });
@@ -10823,9 +10867,7 @@ function useGameInterfaceState() {
       const next=advancePlanetScan(scan,dt);updatePlanetaryScan(next);
       if(scanReady(next)){
         const p=currentPlanets[orbitPlanetIndex!];
-        const ruinsKnown=hasRedCylinder?RUIN_LORE_DATABASE.filter(r=>r.starX===currentStar.x&&r.starY===currentStar.y&&r.planetOrderIndex===p.orderIndex):[];
-        let overlay=hasRedCylinder ? (ruinsKnown.length?' • RED CYLINDER OVERLAY: '+ruinsKnown.map(r=>`[${r.title} at ${r.lat!==undefined?`${r.lat}N ${r.long}W`:'Surface'}]`).join(', '):' • RED CYLINDER OVERLAY: No subterranean precursor ruins detected on this body.') : '';
-        if(hasCrystalCone&&currentStar.x===192&&currentStar.y===152&&p.orderIndex===0)overlay+=' • CRYSTAL CONE HARMONICS: Control Nexus pinpointed at 15N 30W!';
+        const overlay=ruinSensorOverlay(currentStar.x,currentStar.y,p.orderIndex,hasRedCylinder,hasCrystalCone);
         const text='SENSOR READING: '+p.name+' • '+planetSensorSummary(p)+overlay;
         setScienceReading(text);gameAudio.playDataChime();addMessage(text,'Science Officer','info');
       }
@@ -10860,8 +10902,6 @@ function useGameInterfaceState() {
 
   // Keyboard and Input Handling
   useEffect(() => {
-    const keysHeld = heldKeysRef.current;
-
     const updateDirectionFromKeys = () => {
       if (isSimulationPaused) return;
       const isSpaceManeuver =
@@ -10874,10 +10914,10 @@ function useGameInterfaceState() {
       let dx = 0;
       let dy = 0;
 
-      if (keysHeld['ArrowUp'] || keysHeld['w'] || keysHeld['W'] || keysHeld['8']) dy -= 1;
-      if (keysHeld['ArrowDown'] || keysHeld['s'] || keysHeld['S'] || keysHeld['2']) dy += 1;
-      if (keysHeld['ArrowLeft'] || keysHeld['a'] || keysHeld['A'] || keysHeld['4']) dx -= 1;
-      if (keysHeld['ArrowRight'] || keysHeld['d'] || keysHeld['D'] || keysHeld['6']) dx += 1;
+      if (keysHeld.has('ArrowUp','w','8')) dy -= 1;
+      if (keysHeld.has('ArrowDown','s','2')) dy += 1;
+      if (keysHeld.has('ArrowLeft','a','4')) dx -= 1;
+      if (keysHeld.has('ArrowRight','d','6')) dx += 1;
 
       if (dx !== 0 || dy !== 0) {
         setRoverWaypoint(null);
@@ -10924,8 +10964,7 @@ function useGameInterfaceState() {
       if (isSimulationPaused && !['p', 'P', 'Escape'].includes(e.key)) return;
       // A held key from the previous flight context must be released and pressed
       // again; browser auto-repeat cannot restart movement after a transition.
-      if(e.repeat&&!keysHeld[e.key])return;
-      if (!isSimulationPaused) keysHeld[e.key] = true;
+      if (!keysHeld.keyDown(e,!isSimulationPaused)) return;
 
       // Star System View Zoom Controls (+ / - keys)
       if (gameLocation === 'Star System') {
@@ -11065,10 +11104,10 @@ function useGameInterfaceState() {
 
         let vx = 0;
         let vy = 0;
-        if (keysHeld['ArrowLeft'] || keysHeld['a'] || keysHeld['A']) vx -= 220;
-        if (keysHeld['ArrowRight'] || keysHeld['d'] || keysHeld['D']) vx += 220;
-        if (keysHeld['ArrowUp'] || keysHeld['w'] || keysHeld['W']) vy -= 170;
-        if (keysHeld['ArrowDown'] || keysHeld['s'] || keysHeld['S']) vy += 170;
+        if (keysHeld.has('ArrowLeft','a')) vx -= 220;
+        if (keysHeld.has('ArrowRight','d')) vx += 220;
+        if (keysHeld.has('ArrowUp','w')) vy -= 170;
+        if (keysHeld.has('ArrowDown','s')) vy += 170;
 
         setAstronautVx(vx);
         setAstronautVy(vy);
@@ -11105,7 +11144,7 @@ function useGameInterfaceState() {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      delete keysHeld[e.key];
+      keysHeld.keyUp(e);
       const target = e.target as HTMLElement | null;
       const isInput =
         target &&
@@ -11117,14 +11156,13 @@ function useGameInterfaceState() {
         return;
       }
 
-      delete keysHeld[e.key];
       if (gameLocation === 'Starport' && activeRoomIndex === null) {
         let vx = 0;
         let vy = 0;
-        if (keysHeld['ArrowLeft'] || keysHeld['a'] || keysHeld['A']) vx -= 220;
-        if (keysHeld['ArrowRight'] || keysHeld['d'] || keysHeld['D']) vx += 220;
-        if (keysHeld['ArrowUp'] || keysHeld['w'] || keysHeld['W']) vy -= 170;
-        if (keysHeld['ArrowDown'] || keysHeld['s'] || keysHeld['S']) vy += 170;
+        if (keysHeld.has('ArrowLeft','a')) vx -= 220;
+        if (keysHeld.has('ArrowRight','d')) vx += 220;
+        if (keysHeld.has('ArrowUp','w')) vy -= 170;
+        if (keysHeld.has('ArrowDown','s')) vy += 170;
         setAstronautVx(vx);
         setAstronautVy(vy);
       }
@@ -11134,7 +11172,7 @@ function useGameInterfaceState() {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
     const clearHeldInput = () => {
-      for (const key of Object.keys(keysHeld)) delete keysHeld[key];
+      keysHeld.clear();
       setActiveDirectionVector({ dx: 0, dy: 0 });
       setAstronautVx(0);
       setAstronautVy(0);
@@ -11574,11 +11612,7 @@ function useGameInterfaceState() {
               if (prevStarHours < flareMoment && newStarHours >= flareMoment) {
                 // Star flare moment triggered
                 const inSystem =
-                  (gameLocation === 'Star System' ||
-                    gameLocation === 'In Orbit' ||
-                    gameLocation === 'Landing' ||
-                    gameLocation === 'On Planet' ||
-                    gameLocation === 'Terrain Vehicle') &&
+                  isInStarSystemAtFlare(gameLocation,prevGameLocation) &&
                   currentStar.x === star.x &&
                   currentStar.y === star.y;
 
@@ -16863,7 +16897,6 @@ function useGameInterfaceState() {
     autosaveToast,
     bankLedger,
     banterEnabled,
-    beginNewMission,
     breakOrbit,
     bulletins,
     buyDepotArtifact,
@@ -17057,7 +17090,6 @@ function useGameInterfaceState() {
     handleInitiateComms,
     handleInitiateDescent,
     handleLaunchFromPlanet,
-    handleLoadFromSlot,
     handleLogTelemetryOnly,
     handleOpenExportModal,
     handleOpenLandingScreen,
@@ -17198,7 +17230,6 @@ function useGameInterfaceState() {
     setActivePatientId,
     setActiveRepairTask,
     setActiveRoomIndex,
-    setActiveSlot,
     setAlienCommsState,
     setArmorClass,
     setArtifactStock,
@@ -17422,7 +17453,10 @@ function useGameInterfaceState() {
   };
 }
 
-import {controlOwnsKey} from './utils/keyboard-input';
+import {controlOwnsKey,HeldKeys} from './utils/keyboard-input';
+import {updatedSaveManifest} from './utils/save-manifest-update';
+import {CONTROL_NEXUS_COORDINATES,ruinSensorOverlay} from './utils/ruin-sensors';
+import {isInStarSystemAtFlare} from './utils/stellar-flares';
 
 export type GameInterfaceScope = ReturnType<typeof useGameInterfaceState>;
 

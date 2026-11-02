@@ -28,6 +28,13 @@ is supplied privately by the maintainer; no public binary download or hosted
 game is included. See [release readiness](docs/RELEASE_READINESS.md) for remaining
 package, device and independent-machine checks.
 
+The November 2 update adds crew identity and recommendation corrections,
+navigation and save-lifecycle repairs, and persistent recovery guidance when
+browser storage cannot preserve a checkpoint. See the
+[deep feature results](docs/VERIFICATION_2026-11-02-DEEP-FEATURES.md) and
+[latest private tester verification](docs/VERIFICATION_2026-11-02-PACKAGE.md).
+The dated records below describe earlier builds.
+
 The October 31 tester includes clearer contextual buttons, Elowan portrait and
 communications fixes, stationary Maneuver entry/exit, home-course guidance,
 thin planetary atmosphere rims and Kepler-based orbital speeds. It retains
@@ -53,6 +60,9 @@ The [unique crew-role update](docs/VERIFICATION_2026-11-01-CREW-ASSIGNMENTS.md)
 requires a different living officer for each of the six launch posts. Crew
 assignments are available from Pause throughout a mission, and older saves with
 duplicate duties receive a paused review before any checkpoint is replaced.
+Assignment dropdowns show every officer's relevant skill and mark a recommended
+available officer. See [choosing bridge officers](docs/CREW_ASSIGNMENTS.md) for
+the role values and recommendation rules.
 
 The latest source adds clearer navigation, optional crew guidance, surface contact
 contrast, equipment comparisons, recorded-speaker subtitles and a smaller lossless
