@@ -1,6 +1,7 @@
-// Temporary, checksum-bound mitigation for SNYK-JS-PICOMATCH-21248802.
-// There is no fixed upstream release as of 2026-10-26. Do not disguise its version
-// or suppress the advisory. Reject ambiguous repeat globs rather
+// Checksum-bound defense in depth originally added for SNYK-JS-PICOMATCH-21248802.
+// Snyk revoked the advisory (verified 2026-11-04); retain the tested guard pending
+// a deliberate review. Do not disguise its version or suppress scanner results.
+// Reject ambiguous repeat globs rather
 // than silently interpreting them as literals. Ordinary repo globs are unchanged.
 import fs from 'node:fs';
 import path from 'node:path';

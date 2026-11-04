@@ -2,7 +2,7 @@
 
 This developer-only audit inventories JSX buttons and tests the actual game controller and renderer with fictional state. The instrumented build adds stable source IDs and a state bridge. It is distinct from ordinary player acceptance: it can deliberately select boundary states that are difficult to encounter naturally.
 
-**Never publish the instrumented output or use it on an owner's game origin.** Output is restricted to ignored `artifacts/` directories, and the audit server rejects the owner's standard port 4174. It binds to loopback. The normal Vite build does not load the instrumentation plugin.
+**Never publish the instrumented output or use it on an owner's game origin.** Output is restricted to ignored `artifacts/` directories, and the audit server rejects both the preview port 4174 and the Windows tester port 4188. It binds to loopback. Choose a separate port for any other owner origin. The normal Vite build does not load the instrumentation plugin. Run `node tools/button-audit/serve.test.mjs` to check the protected ports without binding them.
 
 Requirements: the project's normal Node dependencies and optional Playwright with Edge. Set `PLAYWRIGHT_MODULE_PATH` to an absolute `playwright/index.mjs` path if Playwright is not installed as a local optional tool. No media generation, account connection, or paid service is involved.
 

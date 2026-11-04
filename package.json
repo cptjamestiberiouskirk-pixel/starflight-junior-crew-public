@@ -12,7 +12,7 @@
     "prebuild": "node scripts/guard-picomatch.mjs",
     "pretest": "node scripts/guard-picomatch.mjs",
     "prepreview": "node scripts/guard-picomatch.mjs",
-    "check:security": "node scripts/guard-picomatch.mjs && node tools/security/dependency-guard.test.mjs && node tools/security/source-size.test.mjs && node tools/windows-tester/server-limits.test.mjs",
+    "check:security": "node scripts/guard-picomatch.mjs && node tools/security/dependency-guard.test.mjs && node tools/security/source-size.test.mjs && node tools/windows-tester/server-limits.test.mjs && node tools/button-audit/serve.test.mjs",
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "typecheck": "tsc --noEmit",
     "test": "node scripts/test.mjs",
