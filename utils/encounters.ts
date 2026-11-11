@@ -1,5 +1,7 @@
 import type { AlienGroup } from '../alien';
 
+export const ENCOUNTER_ESCAPE_DISTANCE = 22;
+
 export interface FlightContext {
   location: string;
   x: number;

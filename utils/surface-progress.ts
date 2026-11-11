@@ -38,7 +38,9 @@ export function refillPlanetSurface(previous:PlanetSurfaceState,starX:number,sta
     fresh=preparePlanetSurface(fresh,starX,starY,planet,latBand*5-87.5,lonBand*5-177.5);
   }
   fresh=preparePlanetSurface(fresh,starX,starY,planet,latitude,longitude);
-  const fixed=previous.ruins.filter(r=>r.id.startsWith('ruin-canonical-') || r.lat!==undefined || r.isControlNexus);
+  // A recorded site keeps its position and recovery state when ordinary resources refill.
+  const recordedSites=new Set(previous.survey?.contacts.filter(c=>c.kind==='ruin'||c.kind==='installation').map(c=>c.id));
+  const fixed=previous.ruins.filter(r=>recordedSites.has(r.id) || r.id.startsWith('ruin-canonical-') || r.lat!==undefined || r.isControlNexus);
   const fixedIds=new Set(fixed.map(r=>r.id));
   // DPART refills ordinary resources, but a retained fixed structure may be far
   // from the new generation origin. Keep its new cache beside that structure.

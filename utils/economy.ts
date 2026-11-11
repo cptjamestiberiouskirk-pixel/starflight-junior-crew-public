@@ -1,3 +1,5 @@
+export const DISTRESS_TOW_FEE = 15_000;
+
 export interface TradeCommodity {
   name: string;
   symbol: string;

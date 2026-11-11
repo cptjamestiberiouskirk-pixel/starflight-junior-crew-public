@@ -207,3 +207,17 @@ export function alienDiplomaticStrength(ships:AlienShip[]) {
     return total+Math.trunc(vessel.strength*(Math.max(0,ship.armor)+Math.max(0,ship.shields))/(vessel.armor+vessel.shields));
   },0);
 }
+
+const commTopics: Record<number,string> = {
+  1:'Incoming hail', 2:'Greeting', 5:'Unsolicited transmission', 6:'Waiting for response',
+  7:'Themselves', 8:'Other Races', 9:'General Info', 10:'The Old Empire', 11:'The Ancients',
+  13:'Unsolicited statement', 14:'Question from contact', 15:'Farewell', 16:'Special transmission',
+};
+export function commTopicLabel(subject:number) {
+  return commTopics[subject] ?? 'Unsolicited transmission';
+}
+
+export function diplomaticCrewConflict(race:string, crew: {alive:boolean; race:string}[]) {
+  const rival = race === 'Elowan' ? 'Thrynn' : race === 'Thrynn' ? 'Elowan' : undefined;
+  return rival && crew.some(member => member.alive && member.race === rival) ? rival : undefined;
+}

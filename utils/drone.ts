@@ -1,10 +1,13 @@
+export type DroneDenial = 'incorrect' | 'timeout' | 'closed' | 'hostile';
 /** Original VPROBE# / Velox probe encounter: six numbers, not a trivia quiz. */
 export interface DroneChallenge {
   status: 'waiting' | 'asking' | 'granted' | 'denied';
   correct: number;
   number: number | null;
   remaining: number;
+  debrief?: DroneDenial;
 }
+export const DRONE_CALIBRATION = 'Probe calibration: accepts 6, 12 and 18. Rejects 3, 8 and 16.';
 export const newDroneChallenge = (): DroneChallenge => ({status:'waiting',correct:0,number:null,remaining:.5});
 export function denyDroneOrbit(test: DroneChallenge) {
   test.status='denied';test.number=null;test.remaining=0;

@@ -45,6 +45,7 @@ function validFleet(group: unknown) {
     if(group.race!=='Veloxi Drone'||!record(test)||!['waiting','asking','granted','denied'].includes(test.status)
       ||!Number.isInteger(test.correct)||test.correct<0||test.correct>6
       ||!finite(test.remaining)||test.remaining<0||test.remaining>15
+      ||(test.debrief!==undefined && (test.status!=='denied'||!['incorrect','timeout','closed','hostile'].includes(test.debrief)))
       ||(test.status==='asking' ? !Number.isInteger(test.number)||test.number<1||test.number>99||test.correct===6
         : test.number!==null)
       ||(test.status==='granted'&&test.correct!==6)
@@ -160,6 +161,7 @@ export function isPlayableSave(data: unknown): data is SaveSlotData {
   }
   const star = UNIVERSE.stars.find(st => st.id === s.currentStarId);
   if (!star) return false;
+  if (s.orbitalDepositId != null && (typeof s.orbitalDepositId !== 'string' || s.orbitalDepositId.length > 200)) return false;
   for (const [key,min,max] of [['landingLat',-90,90],['landingLong',-180,180]] as const) {
     if (s[key]!==undefined && (!finite(s[key]) || s[key]<min || s[key]>max)) return false;
   }

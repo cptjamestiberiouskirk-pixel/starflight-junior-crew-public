@@ -1,9 +1,9 @@
 {
   "build": {
-    "entry": "assets/index-BVZYtWwu.js",
-    "sha256": "4213decdbb0eadce15637cef67df262952fccda7dc142eef134be01028d7b911"
+    "entry": "assets/index-C_vWg3IU.js",
+    "sha256": "45a135db37cce8d6bbcdb8c37813368ae26b4e76bdc5582a520cab8789ff35cf"
   },
-  "evidenceDate": "2026-11-02",
-  "scope": "Owner-requested private rebuild of the accepted deep-testing build, including crew, navigation, save-lifecycle and storage-recovery fixes. Exact game passed 63,138 source assertions, 253 muted compiled-browser cases, fresh earned victory/reload, typecheck and resource checks. Media and save format unchanged. Extracted-package acceptance recorded separately.",
-  "evidence": "docs/VERIFICATION_2026-11-02-PACKAGE.md"
+  "evidenceDate": "2026-11-08",
+  "scope": "Maintainer's accepted private tester: completed exploration, guidance and persistence fixes. Source passed 63,148 assertions, typecheck and build-resource checks. November 11 docked stability and cold restart passed. This identifies an optimized private build, not a public Windows download; fresh source builds without the optional image cache use PNG originals and may have a different entry hash.",
+  "evidence": "docs/VERIFICATION_2026-11-11-SOURCE.md"
 }

@@ -73,6 +73,8 @@ button, input, select, textarea { font: inherit; }
 .mining-targets { border-left:1px solid #14506a; padding-left:12px; }
 .mining-targets button { display:flex; justify-content:space-between; align-items:center; gap:8px; width:100%; padding:6px 8px; margin-top:4px; border-radius:7px; font-size:12px; text-align:left; border:1px solid #17415b; background:#002437; }
 .mining-targets button[aria-pressed=true] { border-color:#36d7e5; background:#06475a; }.mining-targets small { display:block; color:#8abfce; font-size:10px; }
+.mining-targets button[data-orbital-target] { border-left:3px solid #ffd780; }
+.mining-targets small.mining-orbit-label { color:#ffdf99; font-weight:700; }
 @media(max-width:650px) { .mining-console {padding:8px;} .mining-layout {grid-template-columns:1fr;gap:8px;} .mining-targets {display:flex;gap:4px;border-left:0;padding:0;overflow-x:auto;} .mining-targets>.mining-label{display:none;} .mining-targets button {min-width:130px;margin:0;} .mining-source strong{font-size:17px;} .mining-source img{width:32px;height:32px;} }
 @keyframes crew-portrait-blink {
   0%, 92%, 100% { background-position: 0% 0%; }
@@ -162,7 +164,7 @@ button, input, select, textarea { font: inherit; }
 .survey-symbol-key [aria-pressed="false"]{opacity:.4}
 .survey-symbol-key p{border-top:1px solid #194256;padding-top:10px!important;font-size:11px!important;line-height:1.5!important}
 .survey-map-area{display:flex;flex-direction:column;min-height:0;min-width:0}
-.survey-map-toolbar{display:flex;justify-content:space-between;gap:6px;flex:none;margin-bottom:4px}
+.survey-map-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;flex:none;margin-bottom:4px}
 .survey-map-toolbar>div{display:flex;gap:4px}
 .survey-map-workspace .survey-map-toolbar button{font-size:12px;min-height:32px;padding:5px 9px}
 .survey-map-workspace button[aria-pressed="true"]{border-color:#33c8dc;background:#093a4d}

@@ -1,3 +1,7 @@
+import {compassBearing} from './utils/presentation-polish';
+import {ENCOUNTER_ESCAPE_DISTANCE} from './utils/encounters';
+import { DISTRESS_TOW_FEE } from './utils/economy';
+import { analysisReading } from './utils/planet-scans';
 import FlightGuidance from './components/FlightGuidance';
 import type {NameMode,NameStyle} from './utils/crew-names';
 import {findCrewSpeaker} from './utils/crew-speakers';
@@ -23,7 +27,7 @@ import SurveyPanel from './components/SurveyPanel';
 import SurveyLegend from './components/SurveyLegend';
 import {planetTopography,ELEVATION_COLORS,prepareTerrainArt} from './utils/planet-topography';
 import ShipDiagnostics from './components/ShipDiagnostics';
-import {surveyPlanet,visibleSurveyContacts,rememberLocalContacts,drawSurveyContacts,localContactPosition} from './utils/planet-survey';
+import {surfaceSiteKind,nextSurfaceSite,recordedRuin,surveyPlanet,visibleSurveyContacts,rememberLocalContacts,drawSurveyContacts,localContactPosition} from './utils/planet-survey';
 import {diagnosticStatus} from './utils/ship-diagnostics';
 import {drawConfiguredShip,prepareConfiguredShip,configuredLaserEmitters} from './utils/ship-art';
 import {shipExhaustNozzles} from './utils/space-rendering';
@@ -33,7 +37,8 @@ import {drawLandingGear,drawLandingRamp} from './utils/landing-gear';
 import { MINERAL_CATALOG, marketCommodities, clampPurchaseQuantity, saleQuantity, interestCheckpoint, type TradeCommodity } from './utils/economy';
 import {encounterDriveStep,stoppedEncounterDrive,enginesAvailable} from './utils/encounter-drive';
 import { thrynnFuelOffer, exchangeArtifactForFuel, payFuelTribute } from './utils/diplomacy-rules';
-import {newDroneChallenge,answerDroneNumber,advanceDroneChallenge,denyDroneOrbit} from './utils/drone';
+import {diplomaticCrewConflict} from './utils/communications';
+import {DRONE_CALIBRATION,newDroneChallenge} from './utils/drone';
 import { restoreSettings, scenePixelRatio, type GameSettings, type GraphicsQuality } from './utils/settings';
 import { encodeSaveToBase64, decodeSaveFromBase64, parseSaveJSON, parseSaveManifest, restorableSaveSlot, type ExportSavePayload } from './utils/save-codec';
 import {importTextWithinBudget,MAX_SAVE_FILE_BYTES} from './utils/save-validation';
@@ -239,7 +244,7 @@ import {
   generateInterstelTowingInvoice,
   getRandomCaptainAside,
   CAPTAIN_ASIDES,
-  MILESTONE_MEMOS,
+  MILESTONE_MEMOS, SPHEXI_SEARCH_AREA,
   DOCKER_NICKNAMES,
 } from './banter';
 import {
@@ -258,6 +263,14 @@ import {controlOwnsKey} from './utils/keyboard-input';
 import type { GameInterfaceScope, BridgeConsoleSubmenu, CrewMember, CrewPost, GameLocation, SaveSlotData, Skills, Species, SubsystemKey } from './App';
 
 // Presentation only. State, hooks, simulation and save ownership stay in App.
+const surveyWorlds = new Map(UNIVERSE.stars.flatMap(star => star.planets.map(planet =>
+  [planetKey(star.x, star.y, planet.orderIndex), planet] as const)));
+const akteron = UNIVERSE.stars.find(star => star.x === 165 && star.y === 84)!;
+const arth = UNIVERSE.stars.find(star => star.x === 125 && star.y === 100)!;
+const sphexi = UNIVERSE.stars.find(star => star.x === 132 && star.y === 165)!;
+const flareSource = UNIVERSE.stars.find(star => star.x === 192 && star.y === 152)!;
+const borderSignal = UNIVERSE.stars.find(star => star.x === 143 && star.y === 115)!;
+
 export function renderGameInterface(scope: GameInterfaceScope) {
   const {
     buttonActions,
@@ -447,6 +460,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     depotSale,
     describedCargoItem,
     destroyedPlanetKeys,
+    detonationSequence,
     devActiveTab,
     devAlienRace,
     devAlienShipCount,
@@ -490,7 +504,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     diplomaticStrengthDifference,
     dockWithStarport,
     dockingBayCanvasRef,
-    dockingBayWarnings,
+    departureWarnings,
     drawSurveyContacts,
     elowanHostile,
     encounterShipPos,
@@ -686,6 +700,8 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     questionCountdownTimer,
     questionTotalTime,
     recommendedPlanets,
+    loggedTelemetryPlanets,
+    loggedTelemetryReadings,
     renderGantryShipCanvas,
     repairBreakdown,
     repairPercentageRate,
@@ -818,8 +834,8 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     setIsStarmapOpen,
     setIsSurfaceMapOpen,
     setIsTrainingSkillModal,
-    setLandingLat,
-    setLandingLong,
+    chooseLandingSite,
+    orbitalDepositId,
     setLaserClass,
     setMedicalMode,
     setMiningMessage,
@@ -943,6 +959,102 @@ export function renderGameInterface(scope: GameInterfaceScope) {
     weaponsArmed,
     zoomStarChart
   } = scope;
+  const reviewSurveys = isShipsLogOpen || gameLocation === 'Starport' || gameLocation === 'Docking Bay';
+  const ruinWorld = reviewSurveys && Object.entries(planetSurfacesRef.current).find(([key, surface]) =>
+    surveyWorlds.has(key) && !surveyWorlds.get(key)?.destroyed && !destroyedPlanetKeys.includes(key) && recordedRuin(surface));
+  const surveyLead = ruinWorld ? 'Optional survey lead • ' + surveyWorlds.get(ruinWorld[0])!.name +
+    '. In orbit, scan and analyze in Science, then choose Select recorded ruin → Set landing site.' : undefined;
+  const stationKey = planetKey(akteron.x,akteron.y,5);
+  const stationRecord = planetSurfacesRef.current[stationKey]?.ruins.find(site => site.explored && site.name === 'Akteron Solar Flare Telemetry Station');
+  const eggDiscovery = hasBlackEgg || (reviewSurveys && Object.values(planetSurfacesRef.current).some(surface =>
+    surface.ruins.some(site => site.artifactId === 'black-egg' && site.explored && site.artifactRecovered !== false)));
+  const report = MILESTONE_MEMOS.flare_telemetry;
+  const filed = bulletins.some(b => b.id === report.id);
+  const investigation = (eggDiscovery || filed) && !flaresStopped;
+  const sourceKey = planetKey(flareSource.x,flareSource.y,flareSource.planets[0].orderIndex);
+  const sourceLogged = loggedTelemetryPlanets.includes(sourceKey) && (!!loggedTelemetryReadings[sourceKey] || !!planetSurfacesRef.current[sourceKey]?.survey);
+  const returnToReport = !!stationRecord && sourceLogged && !filed;
+  const sanctuarySearch = filed && !hasCrystalOrb && !flaresStopped && gameLocation==='In Orbit' && currentStar.id===sphexi.id && orbitPlanetIndex===0;
+  const sanctuaryAdvice = 'Use Science to scan and analyze Planet 1. Select the recorded ruin if detected, or open the sanctuary search area from the Veloxi archive and use Look from the rover.';
+  const sourceMission = filed && hasCrystalOrb && !flaresStopped && currentStar.id === flareSource.id && orbitPlanetIndex === 0;
+  const sourceSurface = sourceMission ? planetSurfacesRef.current[sourceKey] : undefined;
+  const nexus = sourceSurface?.ruins.find(site => site.isControlNexus);
+  const exactNexus = nexus?.explored && nexus.lat !== undefined && nexus.long !== undefined ? {lat:nexus.lat, lon:nexus.long} :
+    nexus && sourceSurface?.survey?.contacts.find(contact => contact.id === nexus.id && contact.uncertaintyKm === 0);
+  const sourceOrbitAdvice = 'Compare a Science scan with the filed flare telemetry. Choose Analyze reading, then Open flare search area. Ore signals mark mining sites.';
+  const sourceGroundAdvice = 'Use rover Look for the harmonic structure’s bearing and range. If no site is nearby, board the ship, launch and use the flare search area in Science.';
+  const sourceChargeAdvice = 'The Nexus inscription identifies the Black Egg as a charge. At the structure, open rover Cargo → Drop, then choose Drop & Arm for the Egg. Return to the ship, board and launch to orbit.';
+  const sourceArmed = sourceSurface?.droppedCargo.some(item => item.isArmed);
+  const sourceAdvice = detonationSequence ? 'Black Egg countdown in progress. Stay in orbit and monitor the bridge transmissions.' :
+    sourceArmed ? 'Charge deployed. Return to the ship, board and launch to orbit to trigger the countdown.' :
+    nexus?.explored ? sourceChargeAdvice : gameLocation === 'Terrain Vehicle' || gameLocation === 'On Planet' ? sourceGroundAdvice : sourceOrbitAdvice;
+  const borderLead = !eggDiscovery && !filed && !flaresStopped;
+  const caseDestination = borderLead ? borderSignal : filed ? (hasCrystalOrb ? flareSource : sphexi) : returnToReport ? arth : stationRecord ? flareSource : akteron;
+  const orbitAdvice = returnToReport && buttonActions.thermalDescentBlocked
+    ? 'The readings are already logged. Choose Leave Orbit and report to Corporate Operations at Arth [125, 100].'
+    : !buttonActions.sensors ? 'Sensors are offline. Choose Leave Orbit and repair them in Engineering before surveying again.'
+    : 'Scan in Science, record the readings with Command → Log Planet, then choose Leave Orbit.';
+  const atBoardingRange = Math.hypot(vehicleX, vehicleY) <= 1.5;
+  const leadNote = <>
+    {(investigation || borderLead) && <details key={borderLead ? 'border' : filed ? 'filed' : returnToReport ? 'report' : 'investigate'} open={gameLocation==='Starport' && activeRoomIndex===0 && (borderLead || returnToReport || filed) ? true : undefined} className="border-l-2 border-amber-400 bg-slate-950 px-3 py-2 text-xs text-amber-100">
+      <summary className="font-bold cursor-pointer">Operations case file · {borderLead ? 'Unidentified border signal' : 'Black Egg and the stellar flares'}</summary>
+      {borderLead ? <>
+        <p className="mt-2">Arth Observatory picked up a repeating signal from Veloxi territory. Trace it to Planet 1 at [143, 115]. In that system, select Planet 1 in Navigation focus. Use Navigation → Maneuver and follow its bearing until the nearby Orbit action names Planet 1. A Veloxi drone patrols the approach. If it intercepts you, choose Comms → Hail for orbit clearance.</p>
+        <p className="mt-2">Once in orbit, scan and analyze the planet in Science. Look for an installation signal, set a landing site and use rover Look to locate its transmitter. The last transmission came from near 27°N, 5°E.</p>
+      </> : filed ? <p className="mt-2">{sourceMission ? sourceAdvice : hasCrystalOrb ? 'Thermal protection aboard. Return to the flare source on Planet 1 at [192, 152] and investigate the surface.' : report.paragraphs.join(' ')}</p> : returnToReport ? <>
+        <p className="mt-2">Flare-source telemetry recorded. Report to Corporate Operations at Starport Arth [125, 100] and submit the readings for analysis.</p>
+        {gameLocation === 'Starport' && activeRoomIndex === 0 && !isShipsLogOpen && <button className="mt-2 mr-2 rounded-lg bg-amber-500 px-3 py-1.5 font-bold text-slate-950" onClick={() => {
+          setBulletins(prev => prev.some(b => b.id === report.id) ? prev : [{...report,date:formattedStardate,read:false},...prev]);
+          handleSaveToSlot(activeSlot);
+          gameAudio.playConfirmSelect();
+        }}>Submit flare telemetry</button>}
+      </> : stationRecord ? <p className="mt-2">Field report recovered at Akteron: {stationRecord.loreMessage}</p> :
+        <p className="mt-2">The Black Egg establishes what the Precursors could build. To investigate the flares themselves, recover readings from
+          the Akteron Solar Flare Telemetry Station on Planet 6, system [{akteron.x}, {akteron.y}].
+          Retrieve its measurements to learn where the flares originate. In orbit, use Science to scan and analyze,
+          then select the installation signal and set a landing site. On the surface, use Look to locate the station.</p>}
+      <button type="button" disabled={fluxDisorientationTimer > 0}
+        title={fluxDisorientationTimer > 0 ? 'Starmap unavailable until the navigator recovers bearings' : undefined}
+        onClick={() => {
+          setStarmapSelectedStarId(caseDestination.id);
+          setStarmapHoverStarId(null);
+          setStarmapCenter({x:caseDestination.x, y:caseDestination.y});
+          setStarmapZoom(4);
+          setIsStarmapOpen(true);
+          gameAudio.playConfirmSelect();
+        }}
+        className="mt-2 rounded-lg border border-amber-500 px-3 py-1.5 font-bold disabled:opacity-40">
+        Show on starmap
+      </button>
+    </details>}
+    {surveyLead && <p className="border-l-2 border-cyan-500 bg-slate-950 px-3 py-2 text-xs text-cyan-100">{surveyLead}</p>}</>;
+  const rivalCrew = gameLocation === 'Encounter' && activeEncounterGroup && !activeEncounterGroup.isHomeworldFleet
+    ? diplomaticCrewConflict(activeEncounterGroup.race,getCrewAboard()) : undefined;
+  const uhlekEncounter = gameLocation === 'Encounter' && activeEncounterGroup?.race === 'Uhlek';
+  const uhlekShips = uhlekEncounter ? activeEncounterGroup.ships.filter(ship => !ship.isWreck && ship.hullIntegrity > 0) : [];
+  const uhlekWarships = uhlekShips.filter(ship => ship.hasPlasmaBolts).length;
+  const uhlekContactsInRange = uhlekEncounter ? activeEncounterGroup.ships.filter(ship =>
+    Math.hypot(ship.x - encounterShipPos.x, ship.y - encounterShipPos.y) <= ENCOUNTER_ESCAPE_DISTANCE).length : 0;
+  const closestUhlek = uhlekEncounter ? activeEncounterGroup.ships.reduce((closest, ship) =>
+    !closest || Math.hypot(ship.x - encounterShipPos.x, ship.y - encounterShipPos.y) <
+      Math.hypot(closest.x - encounterShipPos.x, closest.y - encounterShipPos.y) ? ship : closest,
+    activeEncounterGroup.ships[0]) : undefined;
+  const hostileSpaceAdvice = !uhlekSilenced && <aside aria-label="Hostile space preparation" className="rounded-xl border border-amber-700 bg-slate-950 p-3 text-xs text-amber-100 space-y-1">
+    <strong>Prepare for hostile space</strong>
+    <p>Uhlek attack without answering hails. Their patrols can reach beyond the marked territories. Fit armor and shields in Ship Configuration at Arth and repair the ship before departing. A stronger engine and lighter cargo help you accelerate away.</p>
+    <p>Uhlek warships fire tracking plasma bolts with a 4,000-point yield. Even fitted defenses can be overwhelmed. Avoid larger groups when possible and keep an earlier save so you can change route or refit.</p>
+    <p>Armor class {armorClass} · Shields class {shieldClass} · Engines {Math.round(subsystems.Engines)}%{inoperativeSystems.Engines ? ' offline' : ''}. In space, use Navigation → Raise Shields before approaching hostile space.</p>
+    <p>Keep an earlier save. Pause → Mission → Save Mission, then Save Slots → Copy your active slot into an empty slot. Encounters autosave into the active slot.</p>
+  </aside>;
+  const examination = gameLocation === 'Terrain Vehicle' && currentSurfaceState
+    ? nextSurfaceSite(currentSurfaceState.ruins, vehicleX, vehicleY) : undefined;
+  const focusPlanet = gameLocation === 'Star System' && systemFocusIndex !== null ? currentPlanets[systemFocusIndex] : null;
+  let focusReading = '';
+  if (focusPlanet) {
+    const dx = focusPlanet.currentX - systemShipXFrameRef.current;
+    const dy = focusPlanet.currentY - systemShipYFrameRef.current;
+    focusReading = 'Bearing ' + compassBearing(dx, dy) + ' • Range ' + Math.hypot(dx, dy).toFixed(1) + ' system units';
+  }
   return (
     <DevLabelsContext.Provider value={devLabelsEnabled}>
       {/* OUTER LETTERBOX / PILLARBOX HOST CONTAINER */}
@@ -1152,7 +1264,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
           )}
 
           {gameLocation === 'In Orbit' && (
-            <button disabled={!buttonActions.landingScreen}
+            <button disabled={!buttonActions.landingScreen} title={buttonActions.landingReason}
               onClick={handleOpenLandingScreen}
               className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 rounded text-xs font-black flex items-center gap-1 shadow-lg animate-pulse"
             >
@@ -1198,7 +1310,21 @@ export function renderGameInterface(scope: GameInterfaceScope) {
       </header>
 
       {/* MAIN VIEWPORT CONTAINER */}
-      <FlightGuidance location={gameLocation} fuel={enduriumFuel} engines={engineClass} hull={hullIntegrity} nearby={nearbyPlanet} mining={!!miningSession} missingPosts={CREW_POSTS.length-certifiedCrewCount} unreadBulletins={bulletins.filter(b=>!b.read).length} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)}/>
+      {gameLocation==='In Orbit' && buttonActions.thermalDescentBlocked && <aside role="note" className="bg-red-950 px-4 py-2 text-xs text-red-100">
+        <strong>Thermal radiation is damaging ship systems in orbit. Descent requires thermal protection. </strong>
+        {Object.entries(subsystems)
+          .filter(([name]) => (name!=='Shields' || shieldClass>0) && (name!=='Missiles' || missileClass>0) && (name!=='Lasers' || laserClass>0))
+          .map(([name,health]) => name+' '+Math.round(health)+'%'+(inoperativeSystems[name as SubsystemKey] || health<=0 ? ' offline' : '')).join(' · ')}
+      </aside>}
+      <FlightGuidance uhlekEncounter={uhlekEncounter} borderApproach={borderLead && currentStar.id === borderSignal.id} awaitingDroneHail={activeEncounterGroup?.race === 'Veloxi Drone' && !activeEncounterGroup.droneChallenge} surfaceLead={sourceMission ? sourceAdvice : undefined} orbitLead={sourceMission ? sourceAdvice : sanctuarySearch ? sanctuaryAdvice : undefined} landingReason={buttonActions.landingReason && buttonActions.landingReason+' '+orbitAdvice} investigation={!!investigation} surveyLead={surveyLead} scanStage={planetaryScan?.analysis?'analyzed':scanReady(planetaryScan)?'ready':planetaryScan?'scanning':undefined} location={gameLocation} fuel={enduriumFuel} engines={engineClass} hull={hullIntegrity} nearby={nearbyPlanet} mining={!!miningSession} missingPosts={CREW_POSTS.length-certifiedCrewCount} unreadBulletins={bulletins.filter(b=>!b.read).length} readyToUnload={atBoardingRange && vehicleHold.length > 0} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)}/>
+      {uhlekEncounter && <aside aria-label="Uhlek escape guidance" className="shrink-0 border-y border-red-800 bg-red-950 px-4 py-2 text-xs text-red-100">
+        <strong>{uhlekShips.length > 0 ? 'Uhlek attack without answering hails. ' : 'No active Uhlek hostiles remain. Wrecks still count as contacts for disengagement. '}</strong>
+        <span>{uhlekShips.length} hostile ships · {uhlekWarships} plasma-armed warships. </span>
+        Pause to read and plan. To escape, choose Navigation → Maneuver and hold arrow keys or WASD away from the contacts. Leave Combat view and get more than {ENCOUNTER_ESCAPE_DISTANCE} tactical units from every contact to disengage.
+        {closestUhlek && <p>{uhlekContactsInRange} contacts still within disengagement range. Nearest contact {Math.hypot(closestUhlek.x - encounterShipPos.x, closestUhlek.y - encounterShipPos.y).toFixed(1)} units away. Steer away from it toward {compassBearing(encounterShipPos.x - closestUhlek.x, encounterShipPos.y - closestUhlek.y)}. Watch the other contacts as you move.</p>}
+        {uhlekWarships > 0 && <p>Tracking plasma can overwhelm fitted defenses. Survival depends on your ship and incoming fire. After a loss, an earlier save lets you avoid this group or refit at Arth.</p>}
+        {!enginesAvailable(engineClass, subsystems.Engines, inoperativeSystems.Engines, enduriumFuel) && <p>Your drive cannot propel the ship. Check fuel and Engineering → Repair, or restore an earlier save after a loss.</p>}
+      </aside>}
       <main className="flex-1 w-full min-h-0 relative flex flex-col md:flex-row overflow-hidden">
         {/* STARPORT CONCOURSE */}
         {gameLocation === 'Starport' && activeRoomIndex === null && (
@@ -1278,6 +1404,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               />
             </div>
 
+            {leadNote}
             {/* CONCOURSE BOTTOM INTERACTIVE NAVIGATION BAR */}
             <div className="w-full glass-panel p-2.5 flex flex-wrap items-center justify-between gap-2 z-10 shrink-0 text-xs relative">
               <DevUiTag id="#concourse-nav-bar" color="yellow" />
@@ -1562,6 +1689,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </span>
                   </div>
 
+                  {leadNote}
                   {/* 1A. CORPORATE BULLETINS & MEMOS (STABLE PAGINATED READER) */}
                   {opsSubTab === 'bulletins' && (() => {
                     const totalBulletins = bulletins.length;
@@ -2750,6 +2878,11 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                         newArmor = PART_TABLES.armor[mod.curLvl]?.armor || 500;
                                         setPlayerArmorPoints(newArmor);
                                       }
+                                      let newShields = playerShieldPoints;
+                                      if (mod.key === 'shielding') {
+                                        newShields = Math.round((PART_TABLES.shielding[mod.curLvl]?.shield || 0) * (subsystems.Shields / 100));
+                                        setPlayerShieldPoints(newShields);
+                                      }
                                       triggerHangarSparks();
                                       gameAudio.playLevelUpStinger();
                                       setShipConfigMessage(`Upgraded ${mod.label} to Class ${nextLvl} (-${nextPart.buy.toLocaleString()} M.U.).`);
@@ -2757,6 +2890,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                         credits: nextCreds,
                                         [mod.key === 'engines' ? 'engineClass' : mod.key === 'shielding' ? 'shieldClass' : mod.key === 'armor' ? 'armorClass' : mod.key === 'missiles' ? 'missileClass' : 'laserClass']: nextLvl,
                                         playerArmorPoints: newArmor,
+                                        playerShieldPoints: newShields,
                                       });
                                     }}
                                     className="bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1 rounded-lg font-black text-xs shadow"
@@ -2872,7 +3006,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                 All ship systems fully operational. Nothing to repair.
                               </strong>
                               <p className="text-slate-400 text-xs">
-                                Hull, armor, engines, sensors, transceivers, shields and weapon systems are at 100% nominal integrity.
+                                The hull and fitted ship systems are at full integrity.
                               </p>
                             </div>
                           ) : (
@@ -3050,7 +3184,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 const totalHold = 50 + 50 * cargoPods;
                 const totalUsedCargo = shipCargoVolume(enduriumFuel, cargoHold, artifactsInHold, specimensInHold);
                 const freeHoldSpace = Math.max(0, totalHold - totalUsedCargo);
-                const tradeStatus = systemMessages.find(message => message.text.startsWith('Trade Depot:'));
+                const reportTrade = (message: string, type: 'alert' | 'info' = 'info') => {
+                  setTradeDepotMessage(message);
+                  addMessage(message, undefined, type);
+                };
 
                 const handleBuyCommodity = (comm: TradeCommodity, rawQty: number) => {
                   if (rawQty <= 0) return;
@@ -3058,9 +3195,9 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                   if (stepQty <= 0) {
                     if (freeHoldSpace < 0.1) {
-                      addMessage('Trade Depot: Cargo hold is full. Install cargo pods in Ship Configuration.', undefined, 'alert');
+                      reportTrade('Trade Depot: Cargo hold is full. Install cargo pods in Ship Configuration.', 'alert');
                     } else {
-                      addMessage(`Trade Depot: Insufficient funds to purchase ${comm.name} (${comm.buyPrice.toLocaleString()} M.U./m³).`, undefined, 'alert');
+                      reportTrade(`Trade Depot: Insufficient funds to purchase ${comm.name} (${comm.buyPrice.toLocaleString()} M.U./m³).`, 'alert');
                     }
                     gameAudio.playErrorBuzz();
                     return;
@@ -3086,7 +3223,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                   gameAudio.playCoinPickup();
                   triggerBanter('buy_mineral');
-                  addMessage(`Trade Depot: Purchased ${stepQty.toFixed(1)} m³ ${comm.name} (-${totalCost.toLocaleString()} M.U.).`, undefined, 'info');
+                  reportTrade(`Trade Depot: Purchased ${stepQty.toFixed(1)} m³ ${comm.name} (-${totalCost.toLocaleString()} M.U.).`, 'info');
                   handleSaveToSlot(activeSlot, { credits: nextCreds, enduriumFuel: nextFuel, cargoHold: nextHold });
                 };
 
@@ -3096,7 +3233,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   const stepQty = saleQuantity(rawQty, available);
 
                   if (stepQty <= 0) {
-                    addMessage(`Trade Depot: No ${comm.name} aboard vessel to sell.`, undefined, 'alert');
+                    reportTrade(`Trade Depot: No ${comm.name} aboard vessel to sell.`, 'alert');
                     gameAudio.playErrorBuzz();
                     return;
                   }
@@ -3121,17 +3258,13 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                   gameAudio.playCoinPickup();
                   triggerBanter('sell_mineral');
-                  addMessage(`Trade Depot: Sold ${stepQty.toFixed(1)} m³ ${comm.name} (+${totalPayout.toLocaleString()} M.U.).`, undefined, 'info');
+                  reportTrade(`Trade Depot: Sold ${stepQty.toFixed(1)} m³ ${comm.name} (+${totalPayout.toLocaleString()} M.U.).`, 'info');
                   handleSaveToSlot(activeSlot, { credits: nextCreds, enduriumFuel: nextFuel, cargoHold: nextHold });
                 };
 
                 return (
                   <div className="space-y-4 text-xs">
-                    {tradeStatus && (
-                      <div role="status" className={`p-2.5 rounded-xl border font-bold ${tradeStatus.type === 'alert' ? 'bg-red-950/80 border-red-500 text-red-200' : 'bg-emerald-950/80 border-emerald-600 text-emerald-200'}`}>
-                        {tradeStatus.text}
-                      </div>
-                    )}
+                    {tradeDepotMessage && <p role="status" className="rounded-xl border border-cyan-800 bg-slate-950 p-2 text-cyan-100">{tradeDepotMessage}</p>}
                     {/* Hold Status Bar */}
                     <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-950/90 p-3 rounded-2xl border border-cyan-800/80 shadow-inner">
                       <div className="flex items-center gap-3">
@@ -3232,7 +3365,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                       setSpecimensInHold(nextSpecimens);
                                       addBankTransaction(`Sold Specimen (${spec.name})`, payout);
                                       gameAudio.playCoinPickup();
-                                      addMessage(`Trade Depot: Sold specimen ${spec.name} for ${payout.toLocaleString()} M.U. bounty grant.`, undefined, 'info');
+                                      reportTrade(`Trade Depot: Sold specimen ${spec.name} for ${payout.toLocaleString()} M.U. bounty grant.`);
                                       handleSaveToSlot(activeSlot, { credits: nextCreds, specimensInHold: nextSpecimens });
                                     }}
                                     className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg font-black text-[11px]"
@@ -3311,7 +3444,6 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     {tradeSubTab === 'artifacts' && (
                       <div className="space-y-3">
                         <h3 className="text-xs font-black uppercase tracking-wider text-cyan-300">Available from the depot</h3>
-                        {tradeDepotMessage && <p role="status" className="rounded-xl border border-cyan-800 bg-slate-950 p-2 text-xs text-cyan-100">{tradeDepotMessage}</p>}
                         {artifactStock.length===0 ? <p className="text-xs text-slate-400">No artifacts in depot stock. Sold artifacts remain available to buy back.</p> : (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {artifactStock.map(entry=>(
@@ -3363,7 +3495,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                         if(art.appraised) return;
                                         if (creditsLiveRef.current < 500) {
                                           gameAudio.playErrorBuzz();
-                                          addMessage('Trade Depot: Insufficient funds for artifact appraisal (500 M.U. required).', undefined, 'alert');
+                                          reportTrade('Trade Depot: Insufficient funds for artifact appraisal (500 M.U. required).', 'alert');
                                           return;
                                         }
                                         addBankTransaction(`Artifact Appraisal (${art.codeName})`, -500);
@@ -3372,6 +3504,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                         setArtifactsInHold(nextArts);
                                         gameAudio.playLevelUpStinger();
                                         triggerBanter('appraise_artifact');
+                                        reportTrade(`Appraised ${art.realName} for 500 M.U. • Value ${art.basePrice.toLocaleString()} M.U.`);
                                         handleSaveToSlot(activeSlot, { credits: creditsLiveRef.current, artifactsInHold: nextArts });
                                       }}
                                       className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-lg font-bold text-[11px]"
@@ -3396,6 +3529,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                                       setArtifactsInHold(nextArts);
                                       gameAudio.playCoinPickup();
                                       triggerBanter('sell_artifact');
+                                      reportTrade(`Sold ${art.realName} for ${payout.toLocaleString()} M.U.`);
                                       handleSaveToSlot(activeSlot, { credits: creditsLiveRef.current, artifactsInHold: nextArts });
                                     }}
                                     className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg font-black text-[11px]"
@@ -3479,15 +3613,16 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </div>
                   </div>
 
+                  {hostileSpaceAdvice}
                   {/* Red Warning Box displayed right above Launch button (Rule 5) */}
-                  {dockingBayWarnings.length > 0 && (
+                  {buttonActions.departureReason && (
                     <div className="p-2.5 bg-red-950/95 border-2 border-red-500 rounded-xl text-red-200 font-bold space-y-1 shadow-[0_0_15px_#ef444440] animate-pulse">
                       <div className="flex items-center gap-1.5 text-yellow-300 font-black text-xs uppercase border-b border-red-800 pb-0.5">
                         <AlertTriangle size={14} className="text-red-400" />
                         LAUNCH CLEARANCE DENIED
                       </div>
                       <ul className="space-y-0.5 text-[11px]">
-                        {dockingBayWarnings.map((msg, i) => (
+                        {departureWarnings.map((msg, i) => (
                           <li key={i} className="flex items-start gap-1">
                             <span className="text-red-400 font-bold">▶</span>
                             <span>{msg}</span>
@@ -3560,8 +3695,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                       const point=landingMapPoint(curW,curH,clickX,clickY);
                       if (point) {
-                        setLandingLong(point.lon);
-                        setLandingLat(point.lat);
+                        chooseLandingSite(point.lat,point.lon);
                         gameAudio.playCrispClick();
                       }
                     }
@@ -3577,7 +3711,8 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     <option value="">All planets</option>
                     {currentStar.planets.filter(p=>!destroyedPlanetKeys.includes(planetKey(currentStar.x,currentStar.y,p.orderIndex))).map((p,i)=><option key={p.orderIndex} value={i}>{p.name}</option>)}
                   </select>
-                  <span>{nearbyPlanet?`${nearbyPlanet.name}: ${nearbyPlanet.isHomeworld?'Dock':'Orbit'} available`:'Approach a planet for Orbit / Dock'}</span>
+                  {focusReading && <span>{focusReading}</span>}
+                  <span>Nearby action • {nearbyPlanet?`${nearbyPlanet.name}: ${nearbyPlanet.isHomeworld?'Dock':'Orbit'} available`:'Approach a planet for Orbit / Dock'}</span>
                 </div>}
                 {/* Star System Zoom Controls (+ / - buttons and zoom indicator) */}
                 {gameLocation === 'Star System' && (
@@ -3686,25 +3821,25 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
                         <button disabled={landingLat>=90}
-                          onClick={() => setLandingLat((l) => Math.min(90, l + 5))}
+                          onClick={() => chooseLandingSite(Math.min(90, landingLat + 5),landingLong)}
                           className="bg-slate-900 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded text-xs font-bold hover:bg-slate-800"
                         >
                           +5° Lat ▲
                         </button>
                         <button disabled={landingLat<=-90}
-                          onClick={() => setLandingLat((l) => Math.max(-90, l - 5))}
+                          onClick={() => chooseLandingSite(Math.max(-90, landingLat - 5),landingLong)}
                           className="bg-slate-900 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded text-xs font-bold hover:bg-slate-800"
                         >
                           -5° Lat ▼
                         </button>
                         <button
-                          onClick={() => setLandingLong((l) => (l - 5 < -180 ? 175 : l - 5))}
+                          onClick={() => chooseLandingSite(landingLat,landingLong - 5 < -180 ? 175 : landingLong - 5)}
                           className="bg-slate-900 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded text-xs font-bold hover:bg-slate-800"
                         >
                           -5° Long ◀
                         </button>
                         <button
-                          onClick={() => setLandingLong((l) => (l + 5 > 180 ? -175 : l + 5))}
+                          onClick={() => chooseLandingSite(landingLat,landingLong + 5 > 180 ? -175 : landingLong + 5)}
                           className="bg-slate-900 border border-slate-700 text-cyan-300 px-2.5 py-1 rounded text-xs font-bold hover:bg-slate-800"
                         >
                           +5° Long ▶
@@ -3730,7 +3865,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         </button>
                       </div>
                     </div>
-                    {orbitPlanetIndex!==null&&<details className="survey-global-details"><summary>Recorded survey contacts · choose a landing target</summary><SurveyPanel contacts={visibleSurveyContacts(planetSurfacesRef.current[planetKey(currentStar.x,currentStar.y,currentPlanets[orbitPlanetIndex].orderIndex)])} seed={(currentStar.x*73856093)^(currentStar.y*19349663)^(currentPlanets[orbitPlanetIndex].slot*83492791)} water={currentPlanets[orbitPlanetIndex].hydrospherePercent} type={currentPlanets[orbitPlanetIndex].type} target={{lat:landingLat,lon:landingLong}} sampledRegions={planetSurfacesRef.current[planetKey(currentStar.x,currentStar.y,currentPlanets[orbitPlanetIndex].orderIndex)]?.survey?.sampledRegions??0} onSelect={c=>{setLandingLat(c.lat);setLandingLong(c.lon);}}/></details>}
+                    {orbitPlanetIndex!==null&&<details className="survey-global-details"><summary>Recorded survey contacts · choose a landing target</summary><SurveyPanel contacts={visibleSurveyContacts(planetSurfacesRef.current[planetKey(currentStar.x,currentStar.y,currentPlanets[orbitPlanetIndex].orderIndex)])} seed={(currentStar.x*73856093)^(currentStar.y*19349663)^(currentPlanets[orbitPlanetIndex].slot*83492791)} water={currentPlanets[orbitPlanetIndex].hydrospherePercent} type={currentPlanets[orbitPlanetIndex].type} target={{lat:landingLat,lon:landingLong}} sampledRegions={planetSurfacesRef.current[planetKey(currentStar.x,currentStar.y,currentPlanets[orbitPlanetIndex].orderIndex)]?.survey?.sampledRegions??0} onSelect={c=>chooseLandingSite(c.lat,c.lon,c.kind==='mineral'?c.id:null)}/></details>}
                   </div>
                 )}
 
@@ -3795,6 +3930,8 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
+                        {examination &&
+                          <button disabled={vehicleDestroyed} onClick={()=>handlePickUpNearby(true)} className="rounded-lg border border-purple-500 bg-purple-950 px-3 py-1">Examine {surfaceSiteKind(examination)}</button>}
                         <button onClick={returnToShip} disabled={!returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)} className="rounded-lg border border-cyan-700 px-3 py-1 disabled:opacity-40">Return to ship</button>
                         <button onClick={()=>{if(miningSessionRef.current){stopMining();setMiningOpen(true);}else setMiningOpen(open=>!open);}} aria-expanded={miningOpen} className="rounded-lg border border-cyan-500 bg-cyan-950 px-3 py-1 text-cyan-100">Mine [G]</button>
                         <button
@@ -3810,7 +3947,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       </div>
                     </div>
 
-                    {miningOpen&&<MiningConsole deposits={currentSurfaceState?.minerals??[]} x={vehicleX} y={vehicleY} used={vehicleHold.reduce((sum,item)=>sum+item.volume,0)} fuel={vehicleFuel} selectedId={miningTargetId} session={miningSession} lastExtracted={lastMiningExtracted} message={miningMessage} onSelect={id=>{setMiningTargetId(id);setMiningMessage('');}} onReturn={returnToShip} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)} onStart={startMining} onStop={()=>stopMining()} onClose={()=>{stopMining();setMiningOpen(false);}} onApproach={target=>{
+                    {miningOpen&&<MiningConsole deposits={currentSurfaceState?.minerals??[]} x={vehicleX} y={vehicleY} used={vehicleHold.reduce((sum,item)=>sum+item.volume,0)} fuel={vehicleFuel} orbitalDepositId={orbitalDepositId} selectedId={miningTargetId} session={miningSession} lastExtracted={lastMiningExtracted} message={miningMessage} onSelect={id=>{setMiningTargetId(id);setMiningMessage('');}} onReturn={returnToShip} canReturn={returnToShipAvailable(vehicleX,vehicleY,vehicleFuel,vehicleDestroyed)} onStart={startMining} onStop={()=>stopMining()} onClose={()=>{stopMining();setMiningOpen(false);}} onApproach={target=>{
                       stopMining();setMiningTargetId(target.id);const dx=vehicleX-target.x,dy=vehicleY-target.y,d=Math.hypot(dx,dy)||1;
                       setRoverWaypoint({x:target.x+dx/d*4.5,y:target.y+dy/d*4.5});setMiningMessage('Approaching deposit. Manual steering cancels auto-drive; start mining when in range.');
                     }}/ >}
@@ -3984,7 +4121,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           Emergency Recovery
                         </button>
                       )}
-                      {Math.hypot(vehicleX, vehicleY) <= 1.5 && (
+                      {atBoardingRange && (
                         <button
                           onClick={handleBoardStarship}
                           className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-2 rounded-xl font-black shadow-lg flex items-center justify-center gap-1"
@@ -4122,7 +4259,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 {activeConsoleMenu === 'Command' && (
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {gameLocation === 'In Orbit' && (
-                      <button disabled={!buttonActions.landingScreen}
+                      <button disabled={!buttonActions.landingScreen} title={buttonActions.landingReason}
                         onClick={handleOpenLandingScreen}
                         className="bg-amber-600 hover:bg-amber-500 border border-amber-300 text-slate-950 p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1 animate-pulse"
                       >
@@ -4246,11 +4383,22 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     </div>}
 
                     {gameLocation==='In Orbit' && orbitPlanetIndex!==null && <PlanetarySensors
-                      landingAvailable={buttonActions.landingScreen}
+                      flareSearch={sourceMission && !detonationSequence && buttonActions.landingScreen ? {
+                        exact: !!exactNexus,
+                        open: () => {
+                          chooseLandingSite(exactNexus?.lat ?? 46, exactNexus?.lon ?? 44);
+                          handleOpenLandingScreen();
+                        }
+                      } : undefined}
+                      onOpenSanctuarySearch={sanctuarySearch && buttonActions.landingScreen ? () => {
+                        chooseLandingSite(SPHEXI_SEARCH_AREA.lat,SPHEXI_SEARCH_AREA.lon);
+                        handleOpenLandingScreen();
+                      } : undefined}
+                      landingAvailable={buttonActions.landingScreen} landingReason={buttonActions.landingReason && buttonActions.landingReason+' '+orbitAdvice}
                       planet={currentPlanets[orbitPlanetIndex]} scan={planetaryScan} onScan={handleScanSensors}
                       onAnalyze={handlePlanetAnalysis} officer={scienceOfficer??undefined} sensorHealth={inoperativeSystems.Sensors?0:subsystems.Sensors}
                       surface={planetSurfacesRef.current[planetKey(currentStar.x,currentStar.y,currentPlanets[orbitPlanetIndex].orderIndex)]} planetSeed={(currentStar.x*73856093)^(currentStar.y*19349663)^(currentPlanets[orbitPlanetIndex].slot*83492791)}
-                      target={{lat:landingLat,lon:landingLong}} onSelect={c=>{setLandingLat(c.lat);setLandingLong(c.lon);}} onOpenLanding={handleOpenLandingScreen}
+                      target={{lat:landingLat,lon:landingLong}} onSelect={c=>chooseLandingSite(c.lat,c.lon,c.kind==='mineral'?c.id:null)} onOpenLanding={handleOpenLandingScreen}
                       shipStatus={{hull:hullIntegrity,shields:playerShieldPoints,armor:playerArmorPoints,fuel:enduriumFuel}}
                       outfitting={{cargoPods,armorClass,laserClass,missileClass,shieldClass,shieldsRaised}}
                       planetImage={assets[getPlanetMapAssetKey(currentPlanets[orbitPlanetIndex],currentStar.x,currentStar.y).assetKey??'']?.src}
@@ -4535,9 +4683,18 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 {/* 5. COMMUNICATIONS (COMMUNICATIONS OFFICER) CONSOLE */}
                 {activeConsoleMenu === 'Communications' && (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {activeEncounterGroup?.race === 'Veloxi Drone' && <p className="col-span-full text-xs text-cyan-200">
+                      {activeEncounterGroup.droneChallenge?.status==='denied'
+                        ? 'Orbit denied. Use Navigation → Maneuver to fly away, then approach the planet again for a new challenge.'
+                        : DRONE_CALIBRATION+' Hail to review the test before starting.'}
+                    </p>}
+                    {rivalCrew && <p role="note" className="col-span-full text-xs text-amber-300">
+                      Communications advisory: {activeEncounterGroup?.race} vessels may attack if they identify {rivalCrew} crew aboard.
+                      To withdraw before making contact, choose Navigation → [Maneuver] and fly away.
+                    </p>}
                     <button
                       onClick={handleInitiateComms}
-                      disabled={!spaceActions.hail}
+                      disabled={!spaceActions.hail || activeEncounterGroup?.droneChallenge?.status==='denied'}
                       className="bg-pink-700 hover:bg-pink-600 border border-pink-400 text-white p-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-1.5"
                     >
                       <Radio size={14} />
@@ -4954,10 +5111,45 @@ export function renderGameInterface(scope: GameInterfaceScope) {
       </main>
 
       {/* ALIEN COMMUNICATIONS & FULL-VIEW TRANSMISSION SCREEN MODAL (G5 OVERHAUL) */}
+      {gameLocation==='Encounter' && activeEncounterGroup?.droneChallenge?.debrief && !gameOverModal && (
+        <MenuOverlay tone="danger" zIndex={80}>
+          <section className="w-full max-w-lg rounded-2xl border border-amber-500 bg-slate-950 p-5 text-slate-100 space-y-3">
+            <h2 className="font-bold text-amber-200">Orbit clearance denied</h2>
+            <p>{{incorrect:'The drone rejected that answer.',timeout:'Time ran out before the drone received an answer.',closed:'Closing the link ended the test.',hostile:'The drone has turned hostile.'}[activeEncounterGroup.droneChallenge.debrief]}</p>
+            <p>Flight is paused. Choose Maneuver, then use the arrow keys or WASD to fly away from the drone until you leave the encounter. Approach the planet and hail again for a fresh test.</p>
+            <button className="rounded-lg bg-amber-300 px-4 py-2 font-bold text-slate-950" onClick={()=>{
+              delete activeEncounterGroup.droneChallenge!.debrief;
+              setActiveConsoleMenu('Navigation');
+              handleStartManeuver();
+              handleSaveToSlot(activeSlot);
+            }}>Maneuver to escape</button>
+          </section>
+        </MenuOverlay>
+      )}
       {(alienCommsState.active || alienCommsState.connected) && activeEncounterGroup && (
         <MenuOverlay tone="neutral" zIndex={80}>
           {(() => {
             const race = activeEncounterGroup.race;
+            if(race==='Veloxi Drone' && !activeEncounterGroup.droneChallenge) return (
+              <section className="w-full max-w-lg rounded-2xl border border-cyan-500 bg-slate-950 p-5 text-slate-100 space-y-3">
+                <h2 className="font-bold text-cyan-200">Veloxi orbit clearance</h2>
+                <p>{DRONE_CALIBRATION}</p>
+                <p>Answer Yes for a number the probe accepts and No for one it rejects. Answer six correctly to enter orbit. Each number allows 15 seconds. The timer starts when you choose Begin test.</p>
+                <div className="flex gap-3">
+                  <button className="rounded-lg bg-cyan-300 px-4 py-2 font-bold text-slate-950" onClick={()=>{
+                    if(activeEncounterGroup.droneChallenge)return;
+                    activeEncounterGroup.droneChallenge=newDroneChallenge();
+                    setAlienCommsState(prev=>({...prev,pendingAlienQuestion:null,lastCaptainText:''}));
+                    handleSaveToSlot(activeSlot);
+                  }}>Begin test</button>
+                  <button className="rounded-lg border border-slate-500 px-4 py-2" onClick={()=>{
+                    stopAlienVoice();
+                    setAlienCommsState(prev=>({...prev,active:false,connected:false}));
+                    handleSaveToSlot(activeSlot);
+                  }}>Back to communications</button>
+                </div>
+              </section>
+            );
             const themeColors: Record<AlienRace, { border: string; bg: string; text: string; glow: string }> = {
               Elowan: { border: '#10b981', bg: 'rgba(6, 78, 59, 0.92)', text: '#34d399', glow: '#10b981' },
               Thrynn: { border: '#f59e0b', bg: 'rgba(120, 53, 15, 0.92)', text: '#fbbf24', glow: '#f59e0b' },
@@ -4975,6 +5167,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
             const theme = themeColors[race] || themeColors.Veloxi;
             const nowS = performance.now() / 1000;
+            const awaitingReply = activeEncounterGroup?.conversation?.pendingSubject !== undefined;
             const displayText = alienCommsState.lastAlienSpeakerText || 'Awaiting transmission...';
             // 30ms per character (33.3 chars per second), instant if textSpeed is Instant
             const charRate = textSpeed === 'Instant' ? 9999 : textSpeed === 'Fast' ? 60 : textSpeed === 'Slow' ? 18 : 33.3;
@@ -5008,7 +5201,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         SUBSPACE TRANSMISSION • {race.toUpperCase()}
                       </h2>
                       <span className="text-[11px] text-slate-400">
-                        Disposition: <strong className="text-yellow-400">{alienCommsState.alienPosture}</strong> • Mood Index: {alienCommsState.alienMood}/100
+                        Disposition: <strong className="text-yellow-400">{alienCommsState.alienPosture}</strong> • Mood Index: {Math.round(alienCommsState.alienMood)}/100
                       </span>
                     </div>
                   </div>
@@ -5046,7 +5239,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     <button
                       onClick={() => {
                         if(activeEncounterGroup?.race==='Veloxi Drone' && activeEncounterGroup.droneChallenge?.status!=='granted') {
-                          resolveDroneOrbit(false);handleSaveToSlot(activeSlot);return;
+                          resolveDroneOrbit(false,'closed');handleSaveToSlot(activeSlot);return;
                         }
                         if (alienCommsState.pendingPriorityBusiness) {
                           handleAnswerPriorityBusiness(false);
@@ -5704,15 +5897,15 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         <span>TRANSMISSION DECODER • COMMS SKILL: {commsSkill}</span>
                         <span className="flex items-center gap-1">
                           <span>FIDELITY: {calculateTranslationStrength(commsSkill, getCrewAboard(), commsOfficer?.race || null, hasWhiningOrb, race)}/250</span>
-                          {visibleChars < displayText.length && (
+                          {!awaitingReply && visibleChars < displayText.length && (
                             <span className="text-yellow-400 text-[9px] underline">[Click to skip]</span>
                           )}
                         </span>
                       </div>
-                      <p aria-label="Alien transmission subtitle" className="dialogue-subtitle text-base md:text-lg leading-relaxed text-slate-100 font-mono font-medium select-text">
+                      {awaitingReply ? <p role="status" className="text-cyan-300 text-xs">Question transmitted. Awaiting reply.</p> : <p aria-label="Alien transmission subtitle" className="dialogue-subtitle text-base md:text-lg leading-relaxed text-slate-100 font-mono font-medium select-text">
                         "{typedSubstr}"
                         {visibleChars < displayText.length && <span className="animate-pulse text-yellow-400">▍</span>}
-                      </p>
+                      </p>}
                     </div>
 
                     {/* Pending Priority Opening Business (Thrynn Artifact Offer / Veloxi Demand / Tribute) */}
@@ -5818,7 +6011,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                           })()}
                           <div>
                             <span className="text-amber-300 font-bold block">
-                              {alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft===0&&questionCountdownTimer<=0?'The aliens have lost patience.':isQuestionReminderActive||alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft<2?'The aliens are waiting for your reply:':'Alien expects immediate response:'}
+                              {race==='Veloxi Drone' ? 'Classification test. YES: 6, 12, 18. NO: 3, 8, 16. Does this number belong in the YES group?' : alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft===0&&questionCountdownTimer<=0?'The aliens have lost patience.':isQuestionReminderActive||alienCommsState.pendingAlienQuestion.id!==undefined&&alienCommsState.pendingAlienQuestion.remindersLeft<2?'The aliens are waiting for your reply:':'Alien expects immediate response:'}
                             </span>
                             <span className="text-[10px] text-slate-400 font-mono">
                               {Math.ceil(questionCountdownTimer)}s remaining
@@ -5848,7 +6041,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
                 {/* Bottom Interactive Command Buttons: Postures & Dialogue Topics */}
                 <div className="flex flex-col gap-2.5 z-10 text-xs" style={{display:activeEncounterGroup&&['Veloxi Drone','Minstrels','Nomad','Mysterions','Derelict'].includes(activeEncounterGroup.race)?'none':undefined}} inert={!!alienCommsState.pendingAlienQuestion||!!alienCommsState.pendingPriorityBusiness}>
-                  {activeEncounterGroup?.conversation?.pendingSubject!==undefined&&<p role="status" className="text-cyan-300 text-xs">Question transmitted. Awaiting reply.</p>}
+
                   {/* Diplomatic Postures */}
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-slate-400 font-bold uppercase text-[10px]">Diplomatic Posture:</span>
@@ -5949,15 +6142,15 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               </div>
               <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-left">
                 <span className="text-slate-400 block text-[10px]">Stars Explored</span>
-                <strong className="text-emerald-300 text-sm font-mono">{visitedStarIds.length} Systems</strong>
+                <strong className="text-emerald-300 text-sm font-mono">{visitedStarIds.length}</strong>
               </div>
               <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-left">
                 <span className="text-slate-400 block text-[10px]">Worlds Logged</span>
-                <strong className="text-purple-300 text-sm font-mono">{recommendedPlanets.length} Worlds</strong>
+                <strong className="text-purple-300 text-sm font-mono">{new Set([...loggedTelemetryPlanets, ...recommendedPlanets]).size}</strong>
               </div>
               <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-left">
-                <span className="text-slate-400 block text-[10px]">Precursor Relics</span>
-                <strong className="text-pink-300 text-sm font-mono">{artifactsInHold.length} Relics</strong>
+                <span className="text-slate-400 block text-[10px]">Precursor Relics Aboard</span>
+                <strong className="text-pink-300 text-sm font-mono">{artifactsInHold.length}</strong>
               </div>
               <div className="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-left">
                 <span className="text-slate-400 block text-[10px]">Crew Casualties</span>
@@ -6075,7 +6268,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       Astronomical observatories on Arth have registered subtle, unexplained solar fluctuations in Arth's star.
                     </p>
                     <p className="text-slate-300 leading-relaxed">
-                      While scientific teams monitor the anomaly, your mission is to explore the galaxy, log planetary habitability, recover historical artifacts, and report all findings back to Starport Operations.
+                      For a first lead, read the unidentified border signal case file in Operations or your Ship’s Log. You can also survey colonies and recover historical artifacts independently.
                     </p>
                   </div>
                 </div>
@@ -6160,6 +6353,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               </button>
             </div>
 
+            {leadNote}
             {/* 4 Navigation Tabs */}
             <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800 pb-2 text-xs">
               <button
@@ -6230,7 +6424,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 <Globe size={14} className={shipsLogTab === 'planets' ? 'text-yellow-300' : 'text-emerald-400'} />
                 <span>4. Planetary Survey Registry</span>
                 <span className="bg-slate-950 px-1.5 py-0.2 rounded-full text-[10px] font-mono border border-emerald-800">
-                  {evaluations.length}
+                  {evaluations.length+loggedTelemetryPlanets.length}
                 </span>
               </button>
             </div>
@@ -6394,7 +6588,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                     <Radio size={32} className="text-pink-400 animate-pulse" />
                     <strong className="text-sm font-black text-white">NO ALIEN TRANSMISSIONS RECORDED YET</strong>
                     <p className="text-slate-300 max-w-md">
-                      When your starship intercepts alien vessels in deep space or orbit, open subspace communications (<strong className="text-cyan-300">Comms ➔ Hail Subspace</strong>) to record diplomatic transcripts into your log.
+                      When your starship intercepts alien vessels in deep space or orbit, open subspace communications (<strong className="text-cyan-300">Comms → [Hail], or [Respond] for an incoming transmission</strong>) to record diplomatic transcripts into your log.
                     </p>
                   </div>
                 );
@@ -6459,22 +6653,12 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                         {/* Translated Dialogue Text */}
                         <div className="space-y-2">
                           <strong className="text-[11px] text-cyan-300 uppercase block font-mono">
-                            Decrypted Subspace Message:
+                            Recorded translation:
                           </strong>
                           <p className="bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-slate-100 text-xs font-mono leading-relaxed select-text">
                             "{currentEntry.text}"
                           </p>
                         </div>
-
-                        {/* Raw Dialect Text */}
-                        {currentEntry.rawText && currentEntry.rawText !== currentEntry.text && (
-                          <div className="space-y-1 text-[11px]">
-                            <span className="text-slate-400 font-mono block">Original Alien Transmission Carrier:</span>
-                            <p className="bg-slate-950 p-2 rounded-lg border border-slate-900 text-slate-400 font-mono text-[10px] truncate">
-                              "{currentEntry.rawText}"
-                            </p>
-                          </div>
-                        )}
 
                         <div className="p-2.5 bg-pink-950/40 rounded-xl border border-pink-800/60 text-pink-300 text-[11px] italic flex items-start gap-2">
                           <span className="text-yellow-400 font-bold not-italic shrink-0">📝</span>
@@ -6557,6 +6741,14 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             )}
 
             {/* TAB 4: PLANETARY SURVEY & COLONY REGISTRY */}
+            {shipsLogTab === 'planets' && loggedTelemetryPlanets.length > 0 && <section className="space-y-2 rounded-xl bg-slate-950 p-3 text-xs">
+              <h3 className="font-bold text-cyan-300">Orbital telemetry ({loggedTelemetryPlanets.length})</h3>
+              {loggedTelemetryPlanets.map(key => {
+                const world = surveyWorlds.get(key);
+                const reading = loggedTelemetryReadings[key] ?? (world && planetSurfacesRef.current[key]?.survey ? planetSensorSummary(world) : 'Coordinates only. Scan this world and log the readings to update this record.');
+                return <details key={key}><summary className="cursor-pointer">{world?.name ?? key}</summary><p className="mt-2">{reading}</p></details>;
+              })}
+            </section>}
             {shipsLogTab === 'planets' && (() => {
               const total = evaluations.length;
               const safeIdx = total > 0 ? Math.min(Math.max(0, shipsLogPlanetIdx), total - 1) : 0;
@@ -6569,7 +6761,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 return (
                   <div className="bg-slate-950/90 p-8 rounded-2xl border border-emerald-900/80 flex flex-col items-center text-center gap-3 text-xs">
                     <Globe size={32} className="text-emerald-400 animate-pulse" />
-                    <strong className="text-sm font-black text-white">NO PLANETARY SURVEYS RECORDED YET</strong>
+                    <strong className="text-sm font-black text-white">NO COLONY EVALUATIONS YET</strong>
                     <p className="text-slate-300 max-w-md">
                       While established in orbit around an uncharted world, select <strong className="text-amber-400">Command ➔ Log Planet</strong> to evaluate habitability and claim exploratory discovery grants.
                     </p>
@@ -6582,7 +6774,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                   {/* Left List */}
                   <div className="bg-slate-950/90 p-3 rounded-2xl border border-emerald-900/80 flex flex-col gap-2">
                     <span className="text-[11px] font-bold text-emerald-300 border-b border-slate-800 pb-1">
-                      LOGGED WORLDS ({total})
+                      COLONY EVALUATIONS ({total})
                     </span>
                     <div className="space-y-1.5 max-h-72 overflow-y-auto pr-1">
                       {evaluations.map((ev, idx) => {
@@ -6728,6 +6920,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             <AlertTriangle size={40} className="text-red-400 animate-bounce" />
             <h2 className="text-xl font-black text-red-200 tracking-wide">{gameOverModal.title}</h2>
             <p className="text-xs text-slate-300 leading-relaxed font-sans">{gameOverModal.desc}</p>
+            <p className="text-xs text-slate-200 leading-relaxed">Return to the title screen to recover. Continue Mission loads your active save, which may resume this fight. Choose an earlier copied slot under Mission Save Slots to try a different route or refit at Arth. Use Import Save if you exported a backup.</p>
             <div className="p-3.5 bg-red-950/80 border border-red-700/80 rounded-2xl text-amber-300 italic text-xs font-mono shadow-inner">
               "{gameOverModal.poignantLine}"
             </div>
@@ -6902,7 +7095,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
 
       {/* HOLOGRAPHIC STARMAP INTERACTIVE MODAL */}
       {isStarmapOpen && (
-        <MenuOverlay tone="neutral" zIndex={60}>
+        <MenuOverlay tone="neutral" zIndex={isShipsLogOpen ? 76 : 60}>
           <div role="dialog" aria-modal="true" aria-label="Holographic starmap" className="starmap-dialog w-full max-w-4xl glass-panel rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col gap-4 text-slate-100 border border-cyan-400/40">
             {/* Starmap Header */}
             <div className="flex flex-wrap justify-between items-center gap-3 border-b border-cyan-900/60 pb-2">
@@ -6941,6 +7134,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               </p>
               <button disabled={isArthDestroyed||fluxDisorientationTimer>0} onClick={()=>{const home=UNIVERSE.stars.find(s=>s.x===125&&s.y===100);if(home){setStarmapSelectedStarId(home.id);setStarmapZoom(1);setStarmapCenter({x:125,y:110});}}} className="rounded-lg border border-amber-500 px-3 py-2 text-amber-300 disabled:opacity-40">Plot course home</button>
             </div>
+            {hostileSpaceAdvice}
             <div className="starmap-chart w-full bg-[#030617] rounded-2xl border border-cyan-900/80 p-2 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
               <canvas
                 width={800}
@@ -7194,8 +7388,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               }
 
               const dist = Math.hypot(activeTarget.x - galaxyShipX, activeTarget.y - galaxyShipY);
-              const fuelCost = +(dist * activeFuelBurnRate).toFixed(2);
+              const directCost = dist * activeFuelBurnRate;
+              const fuelCost = +directCost.toFixed(2);
               const canReach = fuelCost <= enduriumFuel;
+              const returnShortfall = 2 * directCost - enduriumFuel;
 
               return (
                 <div className="p-3 bg-slate-950/90 rounded-2xl border border-cyan-800 flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -7223,12 +7419,19 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                       <strong className="text-cyan-300 font-mono">{dist.toFixed(1)} Light Years</strong>
                     </div>
                     <div className="text-right">
-                      <span className="text-slate-400 text-[11px] block">Endurium Warp Cost:</span>
+                      <span className="text-slate-400 text-[11px] block">Endurium Warp Cost · one way</span>
                       <strong className={canReach ? 'text-amber-400 font-mono' : 'text-red-400 font-mono font-bold'}>
                         {fuelCost} m³ {canReach ? '(AFFORDABLE)' : '(INSUFFICIENT)'}
                       </strong>
                     </div>
                   </div>
+                  {dist > 0 && <div className="basis-full text-slate-200">
+                    <p>{enduriumFuel.toFixed(2)} m³ aboard · {canReach ? `Estimated on arrival: ${Math.max(0, enduriumFuel - directCost).toFixed(2)} m³` : `Outward leg needs ${(directCost - enduriumFuel).toFixed(2)} m³ more`}.</p>
+                    <p>Direct round trip: {(2 * directCost).toFixed(2)} m³ {returnShortfall > 0
+                      ? `· short by ${returnShortfall.toFixed(2)} m³`
+                      : `· ${(-returnShortfall).toFixed(2)} m³ spare after returning here`}. Allow extra for detours and surface trips.</p>
+                    {returnShortfall > 0 && <p className="text-amber-200">Buy Endurium at Arth’s Trade Depot (Minerals). In the field, scan and analyze in Science. Choose Select Endurium, set the landing site, mine it and board the ship. If none is detected, survey another world or keep enough fuel to return to Arth and sell ore for fuel.</p>}
+                  </div>}
                 </div>
               );
             })()}
@@ -7863,13 +8066,17 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             {surfaceRuinModal.artifactId && (
               <div className="p-3 bg-purple-950/60 border border-purple-500/60 rounded-xl flex items-center justify-between text-xs">
                 <div>
-                  <strong className="text-yellow-400 block">{surfaceRuinModal.artifactRecovered === false ? 'Precursor Relic Remains at Site' : 'Precursor Relic Recovered!'}</strong>
+                  <strong className="text-yellow-400 block">{surfaceRuinModal.artifactRecovered === false ? 'Precursor Relic Remains at Site' : surfaceRuinModal.recoveredThisVisit ? 'Precursor Relic Recovered!' : 'Relic recovered on an earlier visit'}</strong>
                   <span className="text-slate-300 text-[11px]">
                     {CANONICAL_ARTIFACTS.find((a) => a.id === surfaceRuinModal.artifactId)?.codeName || 'Ancient Artifact'}
                   </span>
                 </div>
                 <span className="bg-purple-800 text-white px-2.5 py-1 rounded font-bold text-[10px]">
-                  {surfaceRuinModal.artifactRecovered === false ? 'FREE ROVER CARGO SPACE AND RETURN' : 'RECOVERY LOGGED'}
+                  {surfaceRuinModal.artifactRecovered === false
+                    ? (CANONICAL_ARTIFACTS.find((a) => a.id === surfaceRuinModal.artifactId)?.volume ?? 0) > 50
+                      ? 'TOO LARGE FOR THE 50 m³ ROVER HOLD'
+                      : 'FREE ROVER CARGO SPACE AND RETURN'
+                    : surfaceRuinModal.recoveredThisVisit ? 'ADDED TO ROVER HOLD' : 'ARCHIVED REPORT'}
                 </span>
               </div>
             )}
@@ -7901,7 +8108,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
             <div className="bg-slate-950/90 p-4 rounded-2xl border border-red-900/60 text-xs space-y-2 text-slate-300">
               <div className="flex justify-between border-b border-slate-800 pb-1">
                 <span>01. Subspace Tow Tractor Base Mobilization:</span>
-                <span className="text-red-400 font-bold">15,000 M.U.</span>
+                <span className="text-red-400 font-bold">{DISTRESS_TOW_FEE.toLocaleString('en-US')} M.U.</span>
               </div>
               <div className="flex justify-between">
                 <span>02. Administrative Dignity Surcharge:</span>
@@ -7917,9 +8124,11 @@ export function renderGameInterface(scope: GameInterfaceScope) {
               </div>
               <div className="flex justify-between border-t border-slate-800 pt-1 font-bold text-white">
                 <span>TOTAL DEDUCTED FROM OPERATING FUNDS:</span>
-                <span className="text-red-400 font-black">15,000 M.U.</span>
+                <span className="text-red-400 font-black">{DISTRESS_TOW_FEE.toLocaleString('en-US')} M.U.</span>
               </div>
               <div className="text-[10px] text-slate-400 italic pt-1">
+                <p className="text-sm text-white">Balance after tow: {(credits - DISTRESS_TOW_FEE).toLocaleString('en-US')} M.U. (currently {credits.toLocaleString('en-US')} M.U.)</p>
+                {credits < DISTRESS_TOW_FEE && <p className="text-amber-200">Rescue is available on credit. Confirming will leave the ship in debt.</p>}
                 Authorized Signature: V. P. Pen-Pusher, Committee on Unplanned Hull Depressurization
               </div>
             </div>
@@ -7935,7 +8144,7 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 onClick={handleExecuteDistressTow}
                 className="flex-1 bg-linear-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white py-3 rounded-xl font-black shadow-xl"
               >
-                [EXECUTE TOW (-15,000 M.U.)]
+                [EXECUTE TOW (-{DISTRESS_TOW_FEE.toLocaleString('en-US')} M.U.)]
               </button>
             </div>
           </div>
@@ -8007,11 +8216,10 @@ export function renderGameInterface(scope: GameInterfaceScope) {
                 </div>
 
                 <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px] text-slate-300 space-y-1">
-                  <div>Survey Target: <strong className="text-white">{currentPlanets[orbitPlanetIndex].name}</strong> ({currentPlanets[orbitPlanetIndex].type})</div>
-                  <div>Coordinates: <strong className="text-yellow-400">[{currentStar.x}, {currentStar.y}]</strong> • Gravity: <strong className="text-cyan-300">{currentPlanets[orbitPlanetIndex].gravity}g</strong></div>
-                  <div>Atmosphere: <strong className="text-cyan-300">{currentPlanets[orbitPlanetIndex].atmosphereDensity}</strong> ({currentPlanets[orbitPlanetIndex].gases?.join(', ') || 'None'})</div>
-                  <div>Temperature: <strong className="text-cyan-300">{currentPlanets[orbitPlanetIndex].temperatureRange || currentPlanets[orbitPlanetIndex].temperature}</strong> • Weather: <strong className="text-cyan-300">{currentPlanets[orbitPlanetIndex].weather}</strong></div>
-                  <div>Hydrosphere: <strong className="text-cyan-300">{currentPlanets[orbitPlanetIndex].hydrosphereCompound}</strong> • Bio Density: <strong className="text-cyan-300">{currentPlanets[orbitPlanetIndex].bioDensity}%</strong></div>
+                  <div>Survey Target: <strong className="text-white">{currentPlanets[orbitPlanetIndex].name}</strong></div>
+                  <div>Coordinates: <strong className="text-yellow-400">[{currentStar.x}, {currentStar.y}]</strong></div>
+                  {planetAnalysisFields(currentPlanets[orbitPlanetIndex]).map((field,i) => <div key={field.label}>{field.label}: <strong>{analysisReading(field.value,planetaryScan,i)}</strong></div>)}
+                  {scanReady(planetaryScan) && <p>{planetSensorSummary(currentPlanets[orbitPlanetIndex])}</p>}
                 </div>
 
                 <div className="flex gap-3 text-xs pt-1">

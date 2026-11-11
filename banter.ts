@@ -1674,7 +1674,17 @@ export function getRandomCaptainAside(category: keyof typeof CAPTAIN_ASIDES = 'g
 // ----------------------------------------------------------------------------
 // 5. GRUDGING INTERSTEL COMMENDATION MEMOS
 // ----------------------------------------------------------------------------
+// Approximate archive position. The rover must locate the site on the surface.
+export const SPHEXI_SEARCH_AREA = {lat:45,lon:15};
 export const MILESTONE_MEMOS = {
+  flare_telemetry: {
+    id: 105, date: '', title: 'Flare-source telemetry · Veloxi thermal protection',
+    author: 'Interstel Science Directorate',
+    paragraphs: [
+      'The readings identify crystalline thermal radiation. Ordinary armor cannot shield a descent.',
+      'Investigate the Veloxi thermal sanctuary on Sphexi, Planet 1 at [132, 165]. In Science, scan and analyze the planet for an ancient ruin. Select the ruin and set a landing site. If the ruin does not appear, open the sanctuary search area in Science. The Veloxi archive places it near 45°N, 15°E. Use the rover’s Look command to follow the bearing.',
+    ],
+  },
   first_alien_contact: {
     id: 101,
     date: '12-03-4620',
@@ -1694,6 +1704,7 @@ export const MILESTONE_MEMOS = {
     paragraphs: [
       'Telemetry confirms the recovery of an authenticated Precursor quantum relic aboard your vessel.',
       'Please refrain from using ancient alien quantum matrices to level wobbly dining tables or as paperweights in the briefing room. Such devices are prone to collapsing local space-time when exposed to synthetic coffee spills.',
+      'For identification and valuation, take the relic to the Trade Depot and select Precursor Relics. Appraisal costs 500 M.U.',
     ],
   },
   first_colony_bonus: {

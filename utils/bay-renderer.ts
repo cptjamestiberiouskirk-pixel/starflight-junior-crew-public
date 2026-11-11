@@ -28,7 +28,7 @@ function material(name:string){
   if(materials.has(name))return materials.get(name)!;
   const m=(manifest.palette as any)[name]??{color:[.3,.4,.5],unlit:false};
   const color=new THREE.Color(...m.color);
-  const map=m.texture?textures.get(m.texture):undefined;
+  const map=m.texture?(textures.get(m.texture)??null):null;
   const value=m.unlit?new THREE.MeshBasicMaterial({color,map}):new THREE.MeshToonMaterial({color,map});
   if(m.proceduralNebula){
     const sky=new THREE.ShaderMaterial({vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
@@ -148,7 +148,7 @@ async function loadBay(){
     error='';
     try{
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
-      renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+      renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
       loadModel((await new GLTFLoader().loadAsync(new URL('../assets/models/docking-bay.glb',import.meta.url).href)).scene);
     }catch(e){
       error=String(e);renderer?.dispose();renderer=null;

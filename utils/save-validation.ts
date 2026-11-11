@@ -128,7 +128,7 @@ export function validSaveCollections(slot:unknown):boolean {
     banterLog:array(shape({speaker:str,text:str,post:posts})),vehicleHold:array(cargo),specimensInHold:array(cargo),
     bulletins:array(bulletin),evaluations:array(evaluation),bankLedger:array(bank),pendingRecommendations:array(pending),
     visitedStarIds:array(integer),traversedFluxIds:array(integer),usedFluxes:array(integer),recommendedPlanets:array(str),
-    loggedTelemetryPlanets:array(str),destroyedPlanetKeys:array(str),destroyedPlanets:array(str),sterilizedPlanets:array(str),discoveredSpecies:array(str),
+    loggedTelemetryPlanets:array(str),loggedTelemetryReadings:map(str),destroyedPlanetKeys:array(str),destroyedPlanets:array(str),sterilizedPlanets:array(str),discoveredSpecies:array(str),
     projectiles:array(projectile),commLineUsage:map(nonnegative),speciesBaseMoods:map(num),
     armedDetonationTracker:nullable(target),encounterShotsFired:shape({laser:nonnegative,missile:nonnegative}),
     prevLocation:oneOf('Starport','Docking Bay','Star System','Hyperspace','In Orbit','Landing','On Planet','Terrain Vehicle','Encounter'),

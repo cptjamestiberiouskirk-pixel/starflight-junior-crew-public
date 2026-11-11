@@ -3,7 +3,7 @@ import type {MineralDeposit} from '../surface';
 import {MINING_RANGE,type MiningSession} from '../utils/mining';
 
 interface Props {
-  deposits:MineralDeposit[];x:number;y:number;used:number;fuel:number;selectedId:string|null;
+  deposits:MineralDeposit[];x:number;y:number;used:number;fuel:number;selectedId:string|null;orbitalDepositId:string|null;
   session:MiningSession|null;lastExtracted:number;message:string;onSelect:(id:string)=>void;onStart:()=>void;
   onReturn:()=>void;canReturn:boolean;onStop:()=>void;onApproach:(target:MineralDeposit)=>void;onClose:()=>void;
 }
@@ -11,6 +11,8 @@ interface Props {
 export default function MiningConsole(p:Props) {
   const nearby=p.deposits.filter(d=>!d.taken&&d.volume>0).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y));
   const target=nearby.find(d=>d.id===p.selectedId)??nearby[0];
+  const orbital=nearby.find(d=>d.id===p.orbitalDepositId);
+  const listed=orbital ? [orbital,...nearby.filter(d=>d!==orbital).slice(0,3)] : nearby.slice(0,4);
   const distance=target?Math.hypot(target.x-p.x,target.y-p.y):0;
   const inRange=!!target&&distance<=MINING_RANGE;
   return <section className="mining-console" aria-label="Mining console">
@@ -19,7 +21,7 @@ export default function MiningConsole(p:Props) {
       <div className="mining-main">
         <div className="mining-source">
           <img src="assets/images/mining-selected-cutout-81.png" alt="" width="48" height="40"/>
-          <div><span className="mining-label">SELECTED DEPOSIT</span><strong>{target?.name??'No deposits detected'}</strong></div>
+          <div><span className="mining-label">{orbital && target===orbital?'SELECTED IN ORBIT':'SELECTED DEPOSIT'}</span><strong>{target?.name??'No deposits detected'}</strong></div>
           <div className="mining-distance">{target?`${distance.toFixed(1)} km`:'—'}<small>{inRange?'Within laser range':target?'Approach to 6 km':'Scan or explore the surface'}</small></div>
         </div>
         <div className="mining-actions">
@@ -36,7 +38,7 @@ export default function MiningConsole(p:Props) {
       </div>
       <div className="mining-targets" aria-label="Nearby mineral deposits">
         <span className="mining-label">NEARBY DEPOSITS</span>
-        {nearby.slice(0,4).map(d=><button key={d.id} aria-pressed={target?.id===d.id} disabled={!!p.session} onClick={()=>p.onSelect(d.id)}><span>{d.name}<small>{d.volume.toFixed(1)} m³</small></span><strong>{Math.hypot(d.x-p.x,d.y-p.y).toFixed(1)} km</strong></button>)}
+        {listed.map(d=><button key={d.id} data-deposit-id={d.id} data-orbital-target={d===orbital || undefined} aria-pressed={target?.id===d.id} disabled={!!p.session} onClick={()=>p.onSelect(d.id)}><span>{d.name}{d===orbital && <small className="mining-orbit-label">Orbital target</small>}<small>{d.volume.toFixed(1)} m³</small></span><strong>{Math.hypot(d.x-p.x,d.y-p.y).toFixed(1)} km</strong></button>)}
         {!nearby.length&&<p>No uncollected deposits in this survey region.</p>}
       </div>
     </div>

@@ -5,6 +5,8 @@ import {localSurfacePosition,surfaceCoordinates,wrapLongitude,SURFACE_DEGREES_PE
 export const CONTACT_KINDS=['mineral','lifeform','ruin','installation','artifact'] as const;
 export type ContactKind=typeof CONTACT_KINDS[number];
 export type SurveyContact={id:string;kind:ContactKind;label:string;lat:number;lon:number;uncertaintyKm:number;source:'orbital'|'surface'|'artifact'};
+/** A bare map position or a chosen survey contact. */
+export type SurveyLandingSite = SurveyContact | {lat:number;lon:number;kind?:never;id?:never};
 export type PlanetSurvey={version:1;scienceSkill:number;sampledRegions:number;contacts:SurveyContact[]};
 export const CONTACT_COLORS:Record<ContactKind,string>={mineral:'#ffca70',lifeform:'#85eeb0',ruin:'#c4a4ff',installation:'#50ddfa',artifact:'#f1f7ff'};
 export const CONTACT_SYMBOLS:Record<ContactKind,string>={mineral:'◇',lifeform:'○',ruin:'□',installation:'⬡',artifact:'✧'};
@@ -19,16 +21,30 @@ export function validPlanetSurvey(value:unknown):value is PlanetSurvey {
    &&Number.isFinite(c.lon)&&c.lon>=-180&&c.lon<180&&Number.isFinite(c.uncertaintyKm)&&c.uncertaintyKm>=0&&c.uncertaintyKm<=20
    &&['orbital','surface','artifact'].includes(c.source));
 }
+export function surveyContactLabel(contact: SurveyContact) {
+ if (contact.kind !== 'ruin') return contact.label;
+ if (contact.label === 'Structural anomaly') return 'Ancient ruin';
+ return /ruin/i.test(contact.label) ? contact.label : 'Ruin · ' + contact.label;
+}
+export function recordedRuin(surface?: PlanetSurfaceState | null) {
+ return surface?.survey?.contacts.find(c => c.kind === 'ruin' && surface.ruins.some(r =>
+  r.id === c.id && (!r.explored || r.artifactRecovered === false && !!r.artifactId)));
+}
 export const contactCoordinates=(c:SurveyContact)=>`${Math.abs(c.lat).toFixed(2)}°${c.lat<0?'S':'N'}, ${Math.abs(c.lon).toFixed(2)}°${c.lon<0?'W':'E'}`;
 /** Existing authored facilities remain ordinary recoverable/explorable sites.
  * This classifies their physical structures; it creates no new installation. */
 export const surfaceSiteKind=(r:SurfaceRuin):'installation'|'ruin'=>/Outpost|Laboratory|Assembly Core|Command Archive|Physics Lab|Armory|Telemetry Station|Observatory|Research Base|Weapons Cache|Weapon Vault|Subspace Beacon|Hyperspace Fold Vault/i.test(r.name)?'installation':'ruin';
+export function nextSurfaceSite(ruins: SurfaceRuin[], x: number, y: number) {
+ const nearby = ruins.map(site => ({site, distance: Math.hypot(site.x-x, site.y-y)}))
+  .filter(entry => entry.distance <= 2.5).sort((a,b) => a.distance-b.distance);
+ return (nearby.find(({site}) => !site.explored || !!site.artifactId && site.artifactRecovered === false) ?? nearby[0])?.site;
+}
 type Observation=Omit<SurveyContact,'uncertaintyKm'|'source'>&{x:number;y:number;nexus:boolean;revealed:boolean};
 function observations(s:PlanetSurfaceState):Observation[]{
  const at=(x:number,y:number)=>surfaceCoordinates(s.originLat??0,s.originLong??0,x,y);
  const ruins:Observation[]=s.ruins.flatMap(r=>{
   const kind=surfaceSiteKind(r),position=r.lat!==undefined&&r.long!==undefined?{lat:r.lat,lon:wrapLongitude(r.long)}:at(r.x,r.y);
-  const site:Observation={id:r.id,kind,label:r.explored?r.name:kind==='installation'?'Installation signal':'Structural anomaly',...position,x:r.x,y:r.y,nexus:!!r.isControlNexus,revealed:r.explored};
+  const site:Observation={id:r.id,kind,label:r.explored?r.name:kind==='installation'?'Installation signal':'Ancient ruin',...position,x:r.x,y:r.y,nexus:!!r.isControlNexus,revealed:r.explored};
   const a=CANONICAL_ARTIFACTS.find(a=>a.id===r.artifactId);
   return r.artifactId&&!r.artifactRecovered?[site,{...site,id:'artifact:'+r.id,kind:'artifact' as const,label:r.explored?(a?.codeName??'Discovered artifact'):'Artifact signal'}]:[site];
  });
@@ -69,7 +85,14 @@ export function visibleSurveyContacts(s:PlanetSurfaceState|null|undefined,rover?
  if(!s)return [];
  const live=observations(s),ids=new Set(live.map(o=>o.id));
  const contacts=new Map((s.survey?.contacts??[]).filter(c=>ids.has(c.id)).map(c=>[c.id,c]));
+ // An examined site is a confirmed surface observation, including in older saves.
+ for(const site of live)if(site.revealed && (site.kind==='ruin'||site.kind==='installation')){
+  const ruin=s.ruins.find(r=>r.id===site.id);
+  const status=ruin?.artifactRecovered===false?'relic remains':'explored';
+  contacts.set(site.id,{id:site.id,kind:site.kind,label:site.label+' ('+status+')',lat:site.lat,lon:site.lon,uncertaintyKm:0,source:'surface'});
+ }
  if(rover)for(const o of live)if((o.kind!=='artifact'||o.revealed)&&Math.hypot(o.x-rover.x,o.y-rover.y)<=2){
+  if(o.revealed && (o.kind==='ruin'||o.kind==='installation'))continue;
   contacts.set(o.id,{id:o.id,kind:o.kind,label:o.label,lat:o.lat,lon:o.lon,uncertaintyKm:0,source:'surface'});
  }
  return [...contacts.values()];

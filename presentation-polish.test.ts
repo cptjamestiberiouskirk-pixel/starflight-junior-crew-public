@@ -8,10 +8,12 @@ export function runPresentationPolishTests(){
   check(nextActionHint({...base,nearby:{name:'Survey world'}})==='Orbit is available near Survey world.','Current nearby world enables the orbit hint');
   check(nextActionHint({...base,location:'Terrain Vehicle',canReturn:true}).startsWith('Return'),'Ground hint respects the actual return gate');
   check(nextActionHint({...base,location:'Terrain Vehicle',mining:true}).includes('Stop'),'Active mining has a stop hint');
-  check(nextActionHint({...base,location:'In Orbit'}).includes('survey'),'Orbit guidance has no undiscovered mission destinations');
+  check(nextActionHint({...base,location:'In Orbit'}).includes('Science → Scan planet'),'Orbit guidance has no undiscovered mission destinations');
   check(nextActionHint({...base,fuel:0}).includes('depleted'),'Zero fuel does not suggest flying onward');
   check(nextActionHint({...base,location:'Starport',missingPosts:1}).includes('Personnel'),'Vacant posts get a commissioning hint');
-  check(nextActionHint({...base,location:'Starport',unreadBulletins:2}).includes('bulletins'),'Known mission leads point to available bulletins');
+  check(nextActionHint({...base,location:'Starport',unreadBulletins:2}).includes('bulletin'),'Unread updates point to Operations');
+  check(nextActionHint({...base,location:'In Orbit',scanStage:'analyzed'}).includes('Log Planet'),'Completed analysis distinguishes landing from colony nomination');
+  check(nextActionHint({...base,location:'Starport',investigation:true,surveyLead:'Optional survey',unreadBulletins:1}).includes('Black Egg case file'),'An earned flare investigation takes priority over routine notices and survey leads');
   for(const width of [320,700,1440]){
     const occupied:LabelBox[]=[{x:8,y:8,width:120,height:60}];
     for(let i=0;i<20;i++){

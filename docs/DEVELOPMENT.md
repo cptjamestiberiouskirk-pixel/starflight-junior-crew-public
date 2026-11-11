@@ -23,6 +23,11 @@ larger than a typical source-only JavaScript project.
 
 ## Validate and preview
 
+The [November 11 source verification](VERIFICATION_2026-11-11-SOURCE.md) records
+the current checks and their limits. A fresh clone uses the approved PNG ship
+images unless you generate the optional optimized cache described below. Both
+build paths are supported; their bundle filenames need not match.
+
 ~~~sh
 npm run typecheck
 npm run check:security

@@ -1,20 +1,30 @@
 import {drawSensorSweep} from '../utils/scan-effects';
 import React,{useEffect,useRef,useState} from 'react';
-import {CONTACT_KINDS,CONTACT_NAMES,CONTACT_COLORS,CONTACT_SYMBOLS,contactCoordinates,drawSurveyContacts,type SurveyContact,type ContactKind} from '../utils/planet-survey';
+import {CONTACT_KINDS,CONTACT_NAMES,CONTACT_COLORS,CONTACT_SYMBOLS,surveyContactLabel,contactCoordinates,drawSurveyContacts,type SurveyContact,type SurveyLandingSite,type ContactKind} from '../utils/planet-survey';
 import {planetTopography} from '../utils/planet-topography';
 import {wrapLongitude} from '../utils/planet-coordinates';
 import type {PlanetType} from '../galaxy';
 const keyArt:Partial<Record<ContactKind,string>>={mineral:new URL('../assets/ui/science/mineral-key.webp',import.meta.url).href,installation:new URL('../assets/ui/science/installation-key.webp',import.meta.url).href,artifact:new URL('../assets/ui/science/artifact-key.webp',import.meta.url).href};
 
-type Props={contacts:SurveyContact[];seed:number;water:number;type:PlanetType;target:{lat:number;lon:number};sampledRegions:number;scienceSkill?:number;onSelect?:(c:{lat:number;lon:number})=>void;onOpenLanding?:()=>void;locked?:boolean;scanning?:boolean;scanProgress?:number};
+type Props={ruinId?:string;contacts:SurveyContact[];seed:number;water:number;type:PlanetType;target:{lat:number;lon:number};sampledRegions:number;scienceSkill?:number;onSelect?:(c:SurveyLandingSite)=>void;onOpenLanding?:()=>void;locked?:boolean;scanning?:boolean;scanProgress?:number};
 /** 12UI candidate B and its converted map state: symbol legend, dominant map,
  * stable selected-contact footer. All map pixels and facts come from the game. */
-export default function SurveyPanel({contacts,seed,water,type,target,sampledRegions,scienceSkill,onSelect,onOpenLanding,locked=false,scanning=false,scanProgress=0}:Props){
+export default function SurveyPanel({contacts,ruinId,seed,water,type,target,sampledRegions,scienceSkill,onSelect,onOpenLanding,locked=false,scanning=false,scanProgress=0}:Props){
  const [artRevision,setArtRevision]=useState(0);
  useEffect(()=>{const ready=()=>setArtRevision(n=>n+1);window.addEventListener('terrain-art-ready',ready);return()=>window.removeEventListener('terrain-art-ready',ready);},[]);
  const canvas=useRef<HTMLCanvasElement>(null),[region,setRegion]=useState(false),[page,setPage]=useState(0),[list,setList]=useState(false),[legendOpen,setLegendOpen]=useState(false),[selectedId,setSelectedId]=useState<string|null>(null);
  const [visible,setVisible]=useState<Record<ContactKind,boolean>>({mineral:true,lifeform:true,ruin:true,installation:true,artifact:true});
  const filtered=locked?[]:contacts.filter(c=>visible[c.kind]),signature=JSON.stringify(filtered),selected=filtered.find(c=>c.id===selectedId)??null;
+ const fuelContacts = locked ? [] : contacts.filter(contact => contact.kind === 'mineral' && contact.label === 'Endurium');
+ const selectFuel = () => {
+   if (!fuelContacts.length) return;
+   const current = fuelContacts.findIndex(contact => contact.id === selectedId);
+   setSelectedId(fuelContacts[(current + 1) % fuelContacts.length].id);
+   setVisible(previous => ({...previous, mineral: true}));
+   setList(false);
+   setRegion(false);
+   setLegendOpen(false);
+ };
  const pages=Math.max(1,Math.ceil(filtered.length/4)),currentPage=Math.min(page,pages-1);
  const centerLon=region?target.lon:0,centerLat=region?Math.max(-85,Math.min(85,target.lat)):0,spanLon=region?20:360,spanLat=region?10:180;
  const project=(c:{lat:number;lon:number;uncertaintyKm?:number})=>({x:42+(wrapLongitude(c.lon-centerLon)+spanLon/2)/spanLon*636,y:16+(centerLat+spanLat/2-c.lat)/spanLat*304,radius:(c.uncertaintyKm??0)*.2/spanLon*636});
@@ -38,17 +48,21 @@ export default function SurveyPanel({contacts,seed,water,type,target,sampledRegi
  const selectNext=()=>{if(filtered.length)setSelectedId(filtered[(Math.max(-1,filtered.findIndex(c=>c.id===selectedId))+1)%filtered.length].id);};
  return <section className="survey-panel survey-map-workspace" aria-label="Recorded planetary survey" data-survey-locked={locked}>
   <header><p>{locked?'Scan and analyze this reading to reveal contact locations.':`${sampledRegions} sampled regions${scienceSkill!==undefined?` · Science ${scienceSkill}`:''} · unmarked areas are unexplored.`}</p><span data-survey-count={filtered.length}>{filtered.length} known contacts</span></header>
-  <div className="survey-map-toolbar"><div role="group" aria-label="Map extent"><button aria-pressed={!region} onClick={()=>setRegion(false)}>Whole planet</button><button aria-pressed={region} onClick={()=>setRegion(true)}>Landing region</button></div><div><button aria-pressed={list} onClick={()=>{setList(!list);setLegendOpen(false);}}>{list?'Show map':'Contact list'}</button><button className="survey-mobile-legend-button" aria-pressed={legendOpen} onClick={()=>setLegendOpen(!legendOpen)}>{legendOpen?'Close legend':'Legend'}</button></div></div>
+  <div className="survey-map-toolbar"><div role="group" aria-label="Map extent"><button aria-pressed={!region} onClick={()=>setRegion(false)}>Whole planet</button><button aria-pressed={region} onClick={()=>setRegion(true)}>Landing region</button></div>
+    {!locked && (fuelContacts.length && onSelect
+      ? <button onClick={selectFuel}>{fuelContacts.some(contact => contact.id === selectedId) && fuelContacts.length > 1 ? 'Next' : 'Select'} Endurium ({fuelContacts.length})</button>
+      : <span className="self-center text-xs">{fuelContacts.length ? 'Endurium detected · landing unavailable' : 'No Endurium detected'}</span>)}
+    <div><button aria-pressed={list} onClick={()=>{setList(!list);setLegendOpen(false);}}>{list?'Show map':'Contact list'}</button><button className="survey-mobile-legend-button" aria-pressed={legendOpen} onClick={()=>setLegendOpen(!legendOpen)}>{legendOpen?'Close legend':'Legend'}</button></div></div>
   <div className="survey-map-layout" data-legend-open={legendOpen}>
    <aside className="survey-symbol-key" aria-label="Contact categories">{CONTACT_KINDS.map(k=><button key={k} aria-pressed={visible[k]} onClick={()=>{setVisible({...visible,[k]:!visible[k]});setPage(0);}}><b style={{color:CONTACT_COLORS[k]}}>{keyArt[k]?<img src={keyArt[k]} alt=""/>:CONTACT_SYMBOLS[k]}</b><span>{CONTACT_NAMES[k]}</span><small>{locked?'—':contacts.filter(c=>c.kind===k).length}</small></button>)}<p>◌ Approximate location<br/>Markers use this legend; select one for details.</p></aside>
    <div className="survey-map-area">
-    {list?<div className="survey-contact-page"><ol>{filtered.slice(currentPage*4,currentPage*4+4).map(c=><li key={c.id}><button data-contact-id={c.id} onClick={()=>{setSelectedId(c.id);setList(false);}}><b style={{color:CONTACT_COLORS[c.kind]}}>{CONTACT_SYMBOLS[c.kind]}</b><span>{c.label}<small>{contactCoordinates(c)}{c.uncertaintyKm?' · approximate':''}</small></span></button></li>)}</ol>{!filtered.length&&<p>No recorded contacts available in these categories.</p>}<nav aria-label="Contact pages"><button disabled={currentPage===0} onClick={()=>setPage(currentPage-1)}>Previous</button><span>{currentPage+1} / {pages}</span><button disabled={currentPage+1>=pages} onClick={()=>setPage(currentPage+1)}>Next</button></nav></div>:
+    {list?<div className="survey-contact-page"><ol>{filtered.slice(currentPage*4,currentPage*4+4).map(c=><li key={c.id}><button data-contact-id={c.id} onClick={()=>{setSelectedId(c.id);setList(false);}}><b style={{color:CONTACT_COLORS[c.kind]}}>{CONTACT_SYMBOLS[c.kind]}</b><span>{surveyContactLabel(c)}<small>{contactCoordinates(c)}{c.uncertaintyKm?' · approximate':''}</small></span></button></li>)}</ol>{!filtered.length&&<p>No recorded contacts available in these categories.</p>}<nav aria-label="Contact pages"><button disabled={currentPage===0} onClick={()=>setPage(currentPage-1)}>Previous</button><span>{currentPage+1} / {pages}</span><button disabled={currentPage+1>=pages} onClick={()=>setPage(currentPage+1)}>Next</button></nav></div>:
      <div className="survey-canvas-fit"><canvas ref={canvas} width={720} height={360} data-survey-contacts={signature} data-planet-seed={seed} aria-label={region?'Landing region with recorded findings':'Whole planet with recorded findings'} tabIndex={0} onKeyDown={e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();selectNext();}}} onClick={e=>{const box=e.currentTarget.getBoundingClientRect(),x=(e.clientX-box.left)/box.width*720,y=(e.clientY-box.top)/box.height*360;
       const hit=filtered.map(c=>({c,d:Math.hypot(project(c).x-x,project(c).y-y)})).sort((a,b)=>a.d-b.d)[0];
       if(hit&&hit.d<=16)setSelectedId(hit.c.id);else if(onSelect&&x>=42&&x<=678&&y>=16&&y<=320)onSelect({lon:wrapLongitude(centerLon+((x-42)/636-.5)*spanLon),lat:Math.max(-89.9,Math.min(89.9,centerLat+(.5-(y-16)/304)*spanLat))});
      }}/></div>}
    </div>
   </div>
-  <footer className="survey-selected-contact" role="region" aria-label="Selected survey contact"><div><b style={{color:selected?CONTACT_COLORS[selected.kind]:'#a2c6d6'}}>{selected?`${CONTACT_SYMBOLS[selected.kind]} ${selected.label}`:'Select a map symbol'}</b><small>{selected?`${contactCoordinates(selected)} · ${selected.uncertaintyKm?`Search within ${selected.uncertaintyKm.toFixed(1)} km`:'Position confirmed'}`:locked?'Locations stay hidden until scan and analysis complete.':'Contact details appear here without changing the map size.'}</small>{selected&&<small>{selected.source==='surface'?'Rover observation':selected.source==='artifact'?'Artifact-assisted detection':'Orbital analysis'}{selected.kind==='lifeform'?' · last observed position':''}</small>}</div><div className="survey-contact-actions"><button disabled={!filtered.length} onClick={selectNext}>Next contact</button>{onSelect&&<button disabled={!selected} onClick={()=>{if(selected){onSelect(selected);setRegion(true);}}}>Set landing site</button>}{onOpenLanding&&<button onClick={onOpenLanding}>Open landing map</button>}</div></footer>
+  <footer className="survey-selected-contact" role="region" aria-label="Selected survey contact"><div><b style={{color:selected?CONTACT_COLORS[selected.kind]:'#a2c6d6'}}>{selected?`${CONTACT_SYMBOLS[selected.kind]} ${surveyContactLabel(selected)}`:'Select a map symbol'}</b><small>{selected?`${contactCoordinates(selected)} · ${selected.uncertaintyKm?`Search within ${selected.uncertaintyKm.toFixed(1)} km`:'Position confirmed'}`:locked?'Locations stay hidden until scan and analysis complete.':'Contact details appear here without changing the map size.'}</small>{selected&&<small>{selected.source==='surface'?'Rover observation':selected.source==='artifact'?'Artifact-assisted detection':'Orbital analysis'}{selected.kind==='lifeform'?' · last observed position':''}</small>}</div><div className="survey-contact-actions">{!locked && ruinId && <button onClick={()=>{setVisible(v=>({...v,ruin:true}));setSelectedId(ruinId);setList(false);}}>Select recorded ruin</button>}<button disabled={!filtered.length} onClick={selectNext}>Next contact</button>{onSelect&&<button disabled={!selected} onClick={()=>{if(selected){onSelect(selected);setRegion(true);}}}>Set landing site</button>}{onOpenLanding&&<button onClick={onOpenLanding}>Open landing map</button>}</div></footer>
  </section>;
 }

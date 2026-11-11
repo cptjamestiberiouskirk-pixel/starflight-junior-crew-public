@@ -1,6 +1,6 @@
 # Release readiness
 
-**November 2, 2026: source-available preview; Windows package remains a private tester.**
+**November 11, 2026: updated source-available preview; Windows package remains a private tester.**
 
 The docs are written for a new player. Public availability, rights clearance and
 independent technical acceptance remain separate decisions.
@@ -12,12 +12,12 @@ independent technical acceptance remain separate decisions.
 | Controls/support | Dedicated controls, FAQ, Windows guide and private bug-report template. |
 | Screenshots | Actual current-build fictional mission captures with provenance; no owner saves. |
 | Source/build | Fresh-history source preview at cptjamestiberiouskirk-pixel/starflight-junior-crew-public; original development repository remains private. Source/build/package instructions available. |
-| Local verification | The accepted November 2 game passed typecheck, 63,138 source assertions, 253 compiled-game browser cases, fresh earned victory/reload and build/resource checks. Independent-review crew, save and navigation repairs and storage-failure recovery have documented coverage. [Deep feature scope](VERIFICATION_2026-11-02-DEEP-FEATURES.md). Prior campaign/button audits retain their dated build scopes. |
-| Windows ZIP | November 2 rebuild includes the latest verified repairs, unique crew assignments, Science graphics and the visible expedition clock. Extracted-package acceptance is recorded in the [current package scope](VERIFICATION_2026-11-02-PACKAGE.md). ZIP stays private; no public binary release or site deployment. |
+| Local verification | Updated source passed typecheck, 63,148 source assertions and production build/resource checks. [November 11 summary](VERIFICATION_2026-11-11-SOURCE.md). Earlier November 2 coverage includes 253 compiled-game browser cases and earned victory/reload; those results retain their [dated scope](VERIFICATION_2026-11-02-DEEP-FEATURES.md). |
+| Windows ZIP | Latest accepted private tester is November 8, with exploration/guidance fixes, earned equipment persistence, oversized-relic feedback and controlled-loss recovery checks. [Scope and limitations](VERIFICATION_2026-11-11-SOURCE.md). ZIP stays private; no public binary release or site deployment. |
 | Security | November 4 Snyk, npm audit and OSV dependency checks found zero vulnerabilities. Snyk Code's 13 alerts were source-reviewed with no validated reportable issue. Picomatch advisory revoked; tested guard retained. App source size exclusion removed. [Limits](SECURITY_MITIGATIONS.md). |
-| Clean Windows machine | Pending independent machine/clean VM launch, first voyage, online/offline behavior, save/import, updates and shutdown. Development-PC checks do not close this item. |
-| Devices/accessibility/audio | Partial: small-screen emulation, keyboard and software fallback checked; physical devices, screen-reader output and human listening remain separate coverage. |
-| Final packaged campaign/soak | A fresh November 2 extracted-package campaign through earned victory and reload passed. Longer unattended soaks remain unverified. [Package scope](VERIFICATION_2026-11-02-PACKAGE.md). |
+| Clean Windows machine | November 5 normal-user clean Windows checks covered the November 2 tester's launch, voyage, save/import, restart, updates and shutdown. Later noninteractive guest checks do not renew normal-user Edge or audible-audio acceptance. [Dated coverage](VERIFICATION_2026-11-11-SOURCE.md). |
+| Devices/accessibility/audio | Small-screen emulation, keyboard controls, software fallback and representative audio playback/decoding checks exist. Physical devices, screen-reader speech and human listening remain open. |
+| Final packaged campaign/soak | November 2 earned victory/reload retains its [dated package scope](VERIFICATION_2026-11-02-PACKAGE.md). November 11 added a 30-minute docked session, 40 menu cycles, eight checkpoint checks and full browser/server restart on the November 8 tester. [Stability and limits](VERIFICATION_2026-11-11-SOURCE.md). Broader flight/progression and longer soaks remain unverified. |
 | Licensing/credits | October 28: maintainer authorizes proceeding on the basis that licensing issues are resolved. LICENSE.md permits personal noncommercial play/study and private modifications; redistribution/commercial reuse requires permission. Third-party rights and notices remain separate. This is the maintainer's release decision, not a claim of independently verified rights clearance. |
 | Download/support route | Owner authorized public source at starflight-junior-crew-public under the personal-use license. Public Issues accepts nonsensitive bug reports. No public binary download is supplied. |
 | Website | Not deployed; Pages remains manual-only. |
@@ -37,6 +37,7 @@ Git installed. Use only the tester ZIP supplied by the maintainer.
 8. Exit and remove the extracted folder; check for orphan tester processes.
 9. Record failures as well as successes; do not weaken Windows protections.
 
-This procedure is not a claim that clean-VM, device or rights checks passed.
-The owner authorized public source separately from package acceptance.
-Source publication does not close portable-package acceptance gaps.
+The dated checks above cover specific builds and environments. This procedure
+remains useful for independent acceptance on another machine. Public source
+updates do not publish the Windows package or close device, audio or rights
+acceptance gaps. Pages remains undeployed and manual-only.

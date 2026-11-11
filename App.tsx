@@ -1,4 +1,4 @@
-import {placePlanetLabel,type LabelBox} from './utils/presentation-polish';
+import {compassBearing,placePlanetLabel,type LabelBox} from './utils/presentation-polish';
 import { renderGameInterface } from './GameInterface';
 import {uniqueCrewAssignments,hasDuplicateCrewAssignments,certifiedCrewAssignments,crewAssignmentAllowed} from './utils/crew-assignments';
 import {concourseDanceSprite} from './utils/concourse-sprites';
@@ -20,7 +20,7 @@ import SurveyPanel from './components/SurveyPanel';
 import SurveyLegend from './components/SurveyLegend';
 import {planetTopography,ELEVATION_COLORS,prepareTerrainArt} from './utils/planet-topography';
 import ShipDiagnostics from './components/ShipDiagnostics';
-import {surveyPlanet,visibleSurveyContacts,rememberLocalContacts,drawSurveyContacts,localContactPosition} from './utils/planet-survey';
+import {surfaceSiteKind,nextSurfaceSite,surveyPlanet,visibleSurveyContacts,rememberLocalContacts,drawSurveyContacts,localContactPosition} from './utils/planet-survey';
 import {diagnosticStatus} from './utils/ship-diagnostics';
 import {drawConfiguredShip,prepareConfiguredShip,configuredLaserEmitters} from './utils/ship-art';
 import {shipExhaustNozzles,projectileColor} from './utils/space-rendering';
@@ -30,7 +30,8 @@ import {drawLandingGear,drawLandingRamp} from './utils/landing-gear';
 import { MINERAL_CATALOG, marketCommodities, clampPurchaseQuantity, saleQuantity, interestCheckpoint, type TradeCommodity } from './utils/economy';
 import {encounterDriveStep,stoppedEncounterDrive,enginesAvailable} from './utils/encounter-drive';
 import { thrynnFuelOffer, exchangeArtifactForFuel, payFuelTribute } from './utils/diplomacy-rules';
-import {newDroneChallenge,answerDroneNumber,advanceDroneChallenge,denyDroneOrbit} from './utils/drone';
+import {commTopicLabel, diplomaticCrewConflict} from './utils/communications';
+import {newDroneChallenge,answerDroneNumber,advanceDroneChallenge,denyDroneOrbit,type DroneDenial} from './utils/drone';
 import { restoreSettings, scenePixelRatio, type GameSettings, type GraphicsQuality } from './utils/settings';
 import { encodeSaveToBase64, decodeSaveFromBase64, parseSaveJSON, parseSaveManifest, restorableSaveSlot, isPlayableSave, type ExportSavePayload } from './utils/save-codec';
 import {importTextWithinBudget,MAX_SAVE_FILE_BYTES,saveJSONTextWithinBudget} from './utils/save-validation';
@@ -137,7 +138,8 @@ import {MINING_RANGE,miningStep,type MiningSession} from './utils/mining';
 import MiningConsole from './components/MiningConsole';
 import PlanetarySensors from './components/PlanetarySensors';
 import {captureAlienScan,alienSensorText,alienAnalysis,scienceContext,visibleScienceReading,type AlienSensorScan,type ScienceReading} from './utils/science-sensors';
-import {beginPlanetScan,advancePlanetScan,analyzePlanetScan,scanReady,scanPlanetKey,planetAnalysisFields,planetSensorSummary,type PlanetaryScanState} from './utils/planet-scans';
+import { DISTRESS_TOW_FEE } from './utils/economy';
+import {analysisReading,beginPlanetScan,advancePlanetScan,analyzePlanetScan,scanReady,scanPlanetKey,planetAnalysisFields,planetSensorSummary,type PlanetaryScanState} from './utils/planet-scans';
 import { copyMissionSlot, sameMissionVersion } from './utils/save-actions';
 import { lifeformTraits, resolveWildlifeAttack, recordLifeform, emptySurveyKnowledge, RECORDING_SECONDS, RECORDING_ENERGY, RECORDING_RANGE, recordingFollowTarget, type SurveyKnowledge, type SurfaceRecording } from './utils/wildlife';
 import { surfaceCoordinates } from './utils/planet-coordinates';
@@ -227,7 +229,7 @@ import {
   VesselClass,
 } from './alien';
 import { distressCallPass, DISTRESS_PASS_SECONDS, updateFleetSurrender, fleetPosture, markFleetAttacked, fleetCanFire, beginFleetVisit } from './utils/reinforcements';
-import { flightEncounter, trackFleets } from './utils/encounters';
+import { ENCOUNTER_ESCAPE_DISTANCE, flightEncounter, trackFleets } from './utils/encounters';
 import { selectFleetCommLine } from './utils/fleet-comms';
 import {ALIEN_PERSONALITIES,moodDecides,encounterDisposition,postureMoodEffect,rememberedRaceMood,phraseLimit,hailRefusalMessage,impatientMoodDelta,alienQuestionDelta,originalCommCandidates,questionWait,newConversationClock,afterPlayerPhrase,playerDiplomaticStrength,alienDiplomaticStrength,clampMood} from './utils/communications';
 import {restoreConversationClock,closeConversation,hailPostureEffect,playerPhraseEffect,nextUnansweredHail,responseSubject,nextLoreLine,nextTransmission,conversationEvent} from './utils/communications';
@@ -1956,6 +1958,7 @@ export interface SaveSlotData {
     planetaryScan?: PlanetaryScanState | null;
     crystalHeatTicks?: number;
     crystalHeatRemainder?: number;
+    orbitalDepositId?: string | null;
     landingLat?: number;
     landingLong?: number;
     credits: number;
@@ -1974,6 +1977,7 @@ export interface SaveSlotData {
     unsuitableCount: number;
     recommendedPlanets: string[];
     loggedTelemetryPlanets?: string[];
+    loggedTelemetryReadings?: Record<string,string>;
     pendingRecommendations: PendingColonyRec[];
     shipName: string;
     engineClass: number;
@@ -2854,6 +2858,7 @@ function useGameInterfaceState() {
 
   // Colony Recommendation Pipeline State
   const [recommendedPlanets, setRecommendedPlanets] = useState<string[]>([]);
+  const [loggedTelemetryReadings, setLoggedTelemetryReadings] = useState<Record<string,string>>({});
   const [loggedTelemetryPlanets, setLoggedTelemetryPlanets] = useState<string[]>([]);
   const [pendingRecommendations, setPendingRecommendations] = useState<PendingColonyRec[]>([]);
   const [isPromptingColonyRec, setIsPromptingColonyRec] = useState<boolean>(false);
@@ -2977,8 +2982,17 @@ function useGameInterfaceState() {
   const [bankAmountInput, setBankAmountInput] = useState<number>(500);
 
   // Trade Depot tab
-  const [tradeSubTab, setTradeSubTab] = useState<'minerals' | 'artifacts' | 'specimens' | 'endurium'>('minerals');
-  const [tradeDepotMessage,setTradeDepotMessage]=useState<string|null>(null);
+  type TradeTab = 'minerals' | 'artifacts' | 'specimens' | 'endurium';
+  const [{tab:tradeSubTab, message:tradeDepotMessage},setTradeView] = useState<{
+    tab: TradeTab; message: string | null;
+  }>({tab:'minerals', message:null});
+  const setTradeSubTab = useCallback((tab: TradeTab) => {
+    setTradeView(view => view.tab === tab ? view : {tab, message:null});
+  }, []);
+  const setTradeDepotMessage = useCallback((message: string | null) => {
+    setTradeView(view => view.message === message ? view : {...view, message});
+  }, []);
+  useEffect(()=>setTradeDepotMessage(null),[gameLocation,activeRoomIndex,setTradeDepotMessage]);
   const [tradeQuantity, setTradeQuantity] = useState<number>(5);
 
   // Ship Attributes
@@ -3186,8 +3200,14 @@ function useGameInterfaceState() {
   const [orbitPlanetIndex, setOrbitPlanetIndex] = useState<number | null>(null);
 
   // Planet Landing and Surface State
+  const [orbitalDepositId,setOrbitalDepositId]=useState<string|null>(null);
   const [landingLat, setLandingLat] = useState<number>(15);
   const [landingLong, setLandingLong] = useState<number>(-30);
+  const chooseLandingSite = (lat: number, lon: number, depositId: string | null = null) => {
+    setLandingLat(lat);
+    setLandingLong(lon);
+    setOrbitalDepositId(depositId);
+  };
   const [gameOverModal, setGameOverModal] = useState<{ title: string; desc: string; poignantLine: string } | null>(null);
 
   // Terrain Vehicle & Surface State
@@ -3218,7 +3238,8 @@ function useGameInterfaceState() {
   const [surfaceRecording, setSurfaceRecording, surfaceRecordingFrameRef] = useFrameState<SurfaceRecording|null>(null,markFrameUIDirty);
   const [miningSession,setMiningSession,miningSessionRef]=useFrameState<MiningSession|null>(null,markFrameUIDirty);
   const [miningOpen,setMiningOpen]=useState(false);
-  const [miningTargetId,setMiningTargetId]=useState<string|null>(null);
+  const [roverDepositId,setMiningTargetId]=useState<string|null>(null);
+  const miningTargetId=roverDepositId ?? orbitalDepositId;
   const [miningMessage,setMiningMessage]=useState('');
   const [lastMiningExtracted,setLastMiningExtracted]=useState(0);
   const [currentSurfaceState, setCurrentSurfaceState] = useState<PlanetSurfaceState | null>(null);
@@ -3239,7 +3260,7 @@ function useGameInterfaceState() {
   const [surfaceWeaponBeam, setSurfaceWeaponBeam,surfaceWeaponBeamRef] = useFrameState<{ active: boolean; type: 'stunner' | 'laser'; startX: number; startY: number; endX: number; endY: number; timer: number } | null>(null,markFrameUIDirty);
   const [tractorBeamFx, setTractorBeamFx, tractorBeamFxFrameRef] = useFrameState<{ active: boolean; x: number; y: number; timer: number; color: string } | null>(null);
   const [isSurfaceMapOpen, setIsSurfaceMapOpen] = useState<boolean>(false);
-  const [surfaceRuinModal, setSurfaceRuinModal] = useState<SurfaceRuin | null>(null);
+  const [surfaceRuinModal, setSurfaceRuinModal] = useState<(SurfaceRuin & {recoveredThisVisit?:boolean}) | null>(null);
   const [roverSuspensionBounce, setRoverSuspensionBounce, roverSuspensionBounceFrameRef] = useFrameState<number>(0);
   const [isRoverMoving, setIsRoverMoving] = useState<boolean>(false);
   const [redVignetteFlash, setRedVignetteFlash, redVignetteFlashFrameRef] = useFrameState<number>(0);
@@ -3584,10 +3605,11 @@ function useGameInterfaceState() {
     const missingHull = Math.max(0, 250 - hullIntegrity);
     const missingSensors = Math.max(0, 100 - subsystems.Sensors);
     const missingComms = Math.max(0, 100 - subsystems.Comms);
-    const missingEngines = Math.max(0, 100 - subsystems.Engines);
-    const missingShields = Math.max(0, 100 - subsystems.Shields);
-    const missingMissiles = Math.max(0, 100 - subsystems.Missiles);
-    const missingLasers = Math.max(0, 100 - subsystems.Lasers);
+    const missingEngines = engineClass>0 ? Math.max(0, 100 - subsystems.Engines) : 0;
+    const fitted:Record<SubsystemKey,boolean> = {Engines:engineClass>0, Sensors:true, Comms:true, Shields:shieldClass>0, Missiles:missileClass>0, Lasers:laserClass>0};
+    const missingShields = fitted.Shields ? Math.max(0, 100 - subsystems.Shields) : 0;
+    const missingMissiles = fitted.Missiles ? Math.max(0, 100 - subsystems.Missiles) : 0;
+    const missingLasers = fitted.Lasers ? Math.max(0, 100 - subsystems.Lasers) : 0;
 
     const armorCost = missingArmor * 4; // 4 M.U. per point
     const hullCost = missingHull * 250; // 250 M.U. per point
@@ -3608,7 +3630,7 @@ function useGameInterfaceState() {
       missilesCost +
       lasersCost;
 
-    const resetSystems = Object.entries(inoperativeSystems).filter(([, failed]) => failed).map(([system]) => system);
+    const resetSystems = Object.entries(inoperativeSystems).filter(([key,failed]) => fitted[key as SubsystemKey] && failed).map(([system]) => system);
     const isFullyRepaired = totalCost === 0 && resetSystems.length === 0;
 
     return {
@@ -3632,7 +3654,7 @@ function useGameInterfaceState() {
       isFullyRepaired,
       resetSystems,
     };
-  }, [maxArmorCapacity, playerArmorPoints, hullIntegrity, subsystems, inoperativeSystems]);
+  }, [maxArmorCapacity, playerArmorPoints, hullIntegrity, subsystems, inoperativeSystems, engineClass, shieldClass, missileClass, laserClass]);
 
   const commsOfficer = useMemo(() => {
     const commId = assignedPosts.Communications;
@@ -3933,6 +3955,7 @@ function useGameInterfaceState() {
         ? structuredClone(planetaryScanRef.current) : null,
       crystalHeatTicks:crystalHeatTicksFrameRef.current,
       crystalHeatRemainder:crystalHeatAccumulatorRef.current,
+      orbitalDepositId,
       landingLat,
       landingLong,
       credits,
@@ -3951,6 +3974,7 @@ function useGameInterfaceState() {
       unsuitableCount: unsuitablePlanetsRecommendedCount,
       recommendedPlanets: [...recommendedPlanets],
       loggedTelemetryPlanets: [...loggedTelemetryPlanets],
+      loggedTelemetryReadings,
       pendingRecommendations: JSON.parse(JSON.stringify(pendingRecommendations)),
       shipName,
       engineClass,
@@ -4056,6 +4080,7 @@ function useGameInterfaceState() {
     hyperZoom,
     shipHeading,
     orbitPlanetIndex,
+    orbitalDepositId,
     landingLat,
     landingLong,
     credits,
@@ -4070,6 +4095,7 @@ function useGameInterfaceState() {
     unsuitablePlanetsRecommendedCount,
     recommendedPlanets,
     loggedTelemetryPlanets,
+    loggedTelemetryReadings,
     pendingRecommendations,
     shipName,
     engineClass,
@@ -4310,6 +4336,19 @@ function useGameInterfaceState() {
     setPendingCheckpoint(null);
   }, [pendingCheckpoint, writeCheckpoint]);
 
+  // Closing a tab between drone answers should preserve the live countdown.
+  // Use the last committed snapshot without restarting the listener on every tick.
+  const droneExitSave = useRef<(() => void) | null>(null);
+  React.useLayoutEffect(() => {
+    droneExitSave.current = gameState.status === 'PLAYING' && gameLocation === 'Encounter' && activeEncounterGroup?.race === 'Veloxi Drone'
+      ? () => writeCheckpoint(activeSlot) : null;
+  }, [gameState.status, gameLocation, activeEncounterGroup, activeSlot, writeCheckpoint]);
+  useEffect(() => {
+    const saveOnExit = () => droneExitSave.current?.();
+    window.addEventListener('pagehide', saveOnExit);
+    return () => window.removeEventListener('pagehide', saveOnExit);
+  }, []);
+
   useEffect(() => {
     if(gameState.status!=='PLAYING') return;
     const released=releaseNotices<CorporateBulletin>(bulletins,FULL_NOTICES_CATALOG,currentAbsDay);
@@ -4393,6 +4432,7 @@ function useGameInterfaceState() {
       setOrbitPlanetIndex(snap.orbitPlanetIndex ?? null);
       updatePlanetaryScan(snap.planetaryScan?structuredClone(snap.planetaryScan):null);
       scienceEpochRef.current++;alienScanRef.current=null;setScienceReading(null);
+      setOrbitalDepositId(snap.orbitalDepositId ?? null);
       setLandingLat(snap.landingLat ?? 15);
       setLandingLong(snap.landingLong ?? -30);
       setShipVx(0);
@@ -4422,6 +4462,7 @@ function useGameInterfaceState() {
       setLastInterestAbsDay(snap.lastInterestAbsDay ?? snap.lastInterestStardateDays ?? 0);
       setUnsuitablePlanetsRecommendedCount(snap.unsuitablePlanetsRecommendedCount ?? snap.unsuitableCount ?? 0);
       setRecommendedPlanets(snap.recommendedPlanets ?? []);
+      setLoggedTelemetryReadings(snap.loggedTelemetryReadings ?? {});
       setLoggedTelemetryPlanets(snap.loggedTelemetryPlanets ?? []);
       setPendingRecommendations(snap.pendingRecommendations ?? []);
       setTraversedFluxIds(snap.traversedFluxIds ?? snap.usedFluxes ?? []);
@@ -4818,6 +4859,7 @@ function useGameInterfaceState() {
       const date = parseDateString(b.date);
       return getAbsoluteDay(date.day, date.month, date.year) <= 0;
     }).map(b => ({ ...b, read: true })));
+    setOrbitalDepositId(null);
     setLandingLat(15);
     setLandingLong(-30);
     setVehicleDestroyed(false);
@@ -4942,6 +4984,7 @@ function useGameInterfaceState() {
     ]);
     setUnsuitablePlanetsRecommendedCount(0);
     setRecommendedPlanets([]);
+    setLoggedTelemetryReadings({});
     setLoggedTelemetryPlanets([]);
     setShipName('');
     setEngineClass(1);
@@ -5577,19 +5620,26 @@ function useGameInterfaceState() {
     if (!p) return;
     const planetKey = `${currentStar.x}-${currentStar.y}-${p.orderIndex}`;
 
+    const scan = planetaryScanRef.current;
+    if (scan?.planetKey === scanPlanetKey(currentStar.id,p.slot) && scanReady(scan)) {
+      const raw = planetSensorSummary(p);
+      const analysis = planetAnalysisFields(p).map((field,i) => field.label + ': ' + analysisReading(field.value,scan,i)).join(' • ');
+      setLoggedTelemetryReadings(prev => scan.analysis || !prev[planetKey] ? {...prev,[planetKey]:raw + ' • ' + analysis} : prev);
+    }
     if (!loggedTelemetryPlanets.includes(planetKey)) {
       setLoggedTelemetryPlanets((prev) => [...prev, planetKey]);
     }
     setIsPromptingColonyRec(false);
     gameAudio.playDataChime();
-    addMessage(`Planet telemetry for ${p.name} logged to Captain's Log.`, 'Captain', 'info');
-  }, [orbitPlanetIndex, currentPlanets, currentStar, loggedTelemetryPlanets, addMessage]);
+    addMessage(`Planet telemetry for ${p.name} logged to the Captain's Log → Planetary Survey Registry.`, 'Captain', 'info');
+    handleSaveToSlot(activeSlot);
+  }, [orbitPlanetIndex, currentPlanets, currentStar, loggedTelemetryPlanets, addMessage,handleSaveToSlot,activeSlot]);
 
   // Execute Interstel Emergency Distress Tow
   const handleExecuteDistressTow = useCallback(() => {
     setIsPromptingDistress(false);
 
-    const fine = 15000;
+    const fine = DISTRESS_TOW_FEE;
     addBankTransaction('Interstel Emergency Subspace Towing Tariff (Form EXP-904-B)', -fine);
 
     // Tow Starship safely back to Starport Arth
@@ -5720,10 +5770,12 @@ function useGameInterfaceState() {
     const isQuestion=subject===14&&selected.line.subject===14&&!closes;
     if(isQuestion){setQuestionCountdownTimer(20);setQuestionTotalTime(20);setIsQuestionReminderActive(false);}
     setCommsTypewriterElapsed(0);
-    setAlienCommsState(prev=>({...prev,lastAlienSpeakerText:translatedText,lastGarbledAlienText:selected.formattedText,
+    setAlienCommsState(prev=>({...prev,
+      ...(requestedSubject<7 || requestedSubject>11 ? {lastCaptainText:''} : {}),
+      lastAlienSpeakerText:translatedText,lastGarbledAlienText:selected.formattedText,
       ...(closes?{active:false,connected:false,pendingAlienQuestion:null}:{}),
       ...(isQuestion?{pendingAlienQuestion:{id:selected.id,text:translatedText,remindersLeft:2,timer:20}}:{}),
-      dialogueHistory:[...prev.dialogueHistory,{race:group.race,subject:isQuestion?'Question':subject===6?'Waiting for response':'Transmission',text:translatedText,rawText:selected.formattedText,timestamp:formattedStardate}]}));
+      dialogueHistory:[...prev.dialogueHistory,{race:group.race,subject:commTopicLabel(requestedSubject),text:translatedText,rawText:selected.formattedText,timestamp:formattedStardate}]}));
     setCommLineUsage({...commLineUsageRef.current});
     safeStorageSet('starflight_comm_line_usage',JSON.stringify(commLineUsageRef.current));
     playAlienVoice(selected.id,garbledFraction,selected.line.race,selected.formattedText);
@@ -5742,11 +5794,12 @@ function useGameInterfaceState() {
     addMessage('The aliens have lost patience waiting for an answer.','Communications','alert');
   },[activeEncounterGroup,alienCommsState.pendingAlienQuestion,updateEncounterMood,diplomaticStrengthDifference,addMessage]);
 
-  const resolveDroneOrbit = useCallback((granted:boolean) => {
+  const resolveDroneOrbit = useCallback((granted:boolean, reason:DroneDenial='hostile') => {
     const group=activeEncounterGroup;
     if(group?.race!=='Veloxi Drone')return;
     if(!granted) {
       group.droneChallenge??=newDroneChallenge();denyDroneOrbit(group.droneChallenge);
+      group.droneChallenge.debrief=reason;
     }
     const text=granted?'Permission to orbit granted.':'Permission to orbit denied.';
     group.currentMood=granted?0:100;group.posture=granted?'Friendly':'Hostile';
@@ -5755,7 +5808,8 @@ function useGameInterfaceState() {
     setQuestionCountdownTimer(0);
     setAlienCommsState(prev=>({...prev,pendingAlienQuestion:null,active:granted,connected:granted,alienMood:group.currentMood,alienPosture:group.posture,lastAlienSpeakerText:text,lastGarbledAlienText:text,dialogueHistory:[...prev.dialogueHistory,{race:group.race,subject:granted?'Orbit granted':'Orbit denied',text,rawText:text,timestamp:formattedStardate}]}));
     stopAlienVoice();addMessage(text,undefined,granted?'info':'alert',group.race);
-  },[activeEncounterGroup,addMessage,formattedStardate]);
+    handleSaveToSlot(activeSlot);
+  },[activeEncounterGroup,addMessage,formattedStardate,handleSaveToSlot,activeSlot]);
 
   const openAlienConnection=useCallback((captainText='')=>{
     if(!activeEncounterGroup)return;
@@ -5774,7 +5828,7 @@ function useGameInterfaceState() {
       // 1. Thrynn Priority
       if (race === 'Thrynn') {
         // A. If player has Elowan crew member
-        const hasElowanCrew = getCrewAboard().some((c) => c.alive && c.race === 'Elowan');
+        const hasElowanCrew = diplomaticCrewConflict(race,getCrewAboard());
         if (hasElowanCrew) {
           setAlienCommsState((prev) => ({
             ...prev,
@@ -5855,7 +5909,7 @@ function useGameInterfaceState() {
 
       // 2. Elowan Priority
       if (race === 'Elowan') {
-        const hasThrynnCrew = getCrewAboard().some((c) => c.alive && c.race === 'Thrynn');
+        const hasThrynnCrew = diplomaticCrewConflict(race,getCrewAboard());
         if (hasThrynnCrew) {
           setAlienCommsState((prev) => ({
             ...prev,
@@ -5976,7 +6030,6 @@ function useGameInterfaceState() {
       if(activeEncounterGroup.attackedByPlayer || activeEncounterGroup.droneChallenge?.status==='denied') {
         resolveDroneOrbit(false);return;
       }
-      activeEncounterGroup.droneChallenge??=newDroneChallenge();
       isCombatActiveRef.current=false;
       setCommsTypewriterElapsed(0);
       setAlienCommsState(prev=>({...prev,active:true,connected:true,alienMood:25,alienPosture:'Neutral',lastAlienSpeakerText:'Respond',lastGarbledAlienText:'Respond'}));
@@ -6214,7 +6267,7 @@ function useGameInterfaceState() {
 
   const handleSelectPosture = useCallback((posture:DiplomaticPosture)=>{
     const group=activeEncounterGroup;
-    if(!group||['Minstrels','Nomad','Mysterions','Derelict'].includes(group.race)||!alienCommsState.connected||alienCommsState.pendingAlienQuestion||alienCommsState.pendingPriorityBusiness)return;
+    if(!group||['Minstrels','Nomad','Mysterions','Derelict'].includes(group.race)||!alienCommsState.connected||group.conversation?.pendingSubject!==undefined||alienCommsState.pendingAlienQuestion||alienCommsState.pendingPriorityBusiness)return;
     if(checkMalfunction('Comms'))return;
     const captain=crewRoster.find(c=>c.id===assignedPosts.Captain)?.name||'Commander';
     const line=selectPlayerCommLine(13,posture,commLineUsageRef.current,captain,shipName||'Arth Vessel');
@@ -6231,7 +6284,7 @@ function useGameInterfaceState() {
 
   const handleAskSubject = useCallback((subject:DialogueSubject)=>{
     const group=activeEncounterGroup;
-    if(!group||['Minstrels','Nomad','Mysterions','Derelict'].includes(group.race)||!alienCommsState.connected||alienCommsState.pendingAlienQuestion||alienCommsState.pendingPriorityBusiness)return;
+    if(!group||['Minstrels','Nomad','Mysterions','Derelict'].includes(group.race)||!alienCommsState.connected||group.conversation?.pendingSubject!==undefined||alienCommsState.pendingAlienQuestion||alienCommsState.pendingPriorityBusiness)return;
     if(checkMalfunction('Comms'))return;
     const captain=crewRoster.find(c=>c.id===assignedPosts.Captain)?.name||'Commander';
     const line=selectPlayerCommLine(14,alienCommsState.playerPosture,commLineUsageRef.current,captain,shipName||'Arth Vessel',String(subject));
@@ -6268,15 +6321,19 @@ function useGameInterfaceState() {
       safeStorageSet('starflight_comm_line_usage', JSON.stringify(commLineUsageRef.current));
 
       // Display captain's line first
-      addMessage(playerLine.formattedText, 'Captain', 'info');
+      const droneAnswer = activeEncounterGroup.race === 'Veloxi Drone' ? `${question.text} — ${answer ? 'YES' : 'NO'}` : undefined;
+      addMessage(droneAnswer ?? playerLine.formattedText, 'Captain', 'info');
       playAlienVoice(playerLine.id, 0, 16, playerLine.formattedText);
 
       if(activeEncounterGroup.race==='Veloxi Drone' && activeEncounterGroup.droneChallenge) {
         const test=activeEncounterGroup.droneChallenge;
         const accepted=answerDroneNumber(test,answer,!!activeEncounterGroup.attackedByPlayer);
-        setAlienCommsState(prev=>({...prev,pendingAlienQuestion:null,lastCaptainText:playerLine.formattedText}));
-        if(!accepted)resolveDroneOrbit(false);
+        setAlienCommsState(prev=>({...prev,pendingAlienQuestion:null,lastCaptainText:droneAnswer!,
+          dialogueHistory:prev.dialogueHistory.map((entry,i) => i===prev.dialogueHistory.length-1 && entry.race==='Veloxi Drone' && entry.text===question.text
+            ? {...entry,subject:'Classification '+question.text,text:droneAnswer!} : entry)}));
+        if(!accepted)resolveDroneOrbit(false,activeEncounterGroup.attackedByPlayer?'hostile':'incorrect');
         else if(test.status==='granted')resolveDroneOrbit(true);
+        else handleSaveToSlot(activeSlot);
         return;
       }
 
@@ -6345,7 +6402,7 @@ function useGameInterfaceState() {
 
   const handlePlanetAnalysis = useCallback(()=>{
     const scan=planetaryScanRef.current;
-    if(!scanReady(scan)) {setScienceReading('Analysis requires a completed sensor reading. Select Sensors first.');return;}
+    if(!scanReady(scan)) {setScienceReading('Analysis requires a completed sensor reading. Select Scan planet first.');return;}
     if(scan?.analysis) {setScienceReading('This reading has already been analyzed. Select Sensors for a fresh reading.');return;}
     const next=analyzePlanetScan(scan,scienceOfficer??undefined);
     if(!next) {setScienceReading('Assign a living, conscious Science Officer before analyzing a reading.');return;}
@@ -6354,7 +6411,7 @@ function useGameInterfaceState() {
     const surveyKey=planetKey(currentStar.x,currentStar.y,p.orderIndex);
     planetSurfacesRef.current[surveyKey]=surveyPlanet(planetSurfacesRef.current[surveyKey],currentStar.x,currentStar.y,p,landingLat,landingLong,scienceOfficer!.skills.science,hasRedCylinder,hasCrystalCone);
     updatePlanetaryScan(next);
-    const text=`PLANETARY ANALYSIS: Object Planet • Orbit ${p.slot} • ${planetAnalysisFields(p).map((field,i)=>field.label+': '+(next.analysis!.known[i]?field.value:'Not certain')).join(' • ')}`;
+    const text=`PLANETARY ANALYSIS: Object Planet • Orbital slot ${p.slot} • ${planetAnalysisFields(p).map((field,i)=>field.label+': '+(next.analysis!.known[i]?field.value:'Not certain')).join(' • ')}`;
     setScienceReading(text);gameAudio.playDataChime();addMessage(text,'Science Officer','info');
   },[scienceOfficer,orbitPlanetIndex,currentPlanets,updatePlanetaryScan,addMessage,currentStar,landingLat,landingLong,hasRedCylinder,hasCrystalCone]);
 
@@ -6434,7 +6491,7 @@ function useGameInterfaceState() {
       isCombatActiveRef.current = markFleetAttacked(activeEncounterGroup);
       setAlienCommsState(prev=>({...prev,alienMood:100,alienPosture:activeEncounterGroup.posture}));
       triggerBanter('combat_miss');
-      addMessage('Laser shot went wide!', 'Navigator', 'info');
+      addMessage(`Tactical: Target is ${dist.toFixed(1)} cells away; lasers reach 10.0 cells. Close range or use missiles.`, 'Navigator', 'info');
       return;
     }
 
@@ -6721,7 +6778,7 @@ function useGameInterfaceState() {
 
             setGameOverModal({
               title: 'STARSHIP DESTROYED',
-              desc: `Your vessel hull was completely obliterated by hostile fire. All telemetry lost.`,
+              desc: 'Hostile fire destroyed your ship. Your saved missions are still available.',
               poignantLine,
             });
           }
@@ -6793,7 +6850,7 @@ function useGameInterfaceState() {
       setDisplayPanelMode('tactical_status');
       // Milestone check: First Alien Contact
       if (!bulletins.some((b) => b.id === MILESTONE_MEMOS.first_alien_contact.id)) {
-        setBulletins((prev) => [{ ...MILESTONE_MEMOS.first_alien_contact, read: false }, ...prev]);
+        setBulletins((prev) => [{ ...MILESTONE_MEMOS.first_alien_contact, date:formattedStardate, read: false }, ...prev]);
         addMessage('Operations: New Memo #801-C logged in Starport Notices (Milestone: First Alien Contact).', 'Communications', 'info');
       }
 
@@ -6811,7 +6868,7 @@ function useGameInterfaceState() {
       }
       handleSaveToSlot(activeSlot);
     },
-    [gameLocation, uhlekSilenced, elowanHostile, hasGivenEllipsoid, speciesBaseMoods, bulletins, triggerBanter, addMessage, handleSaveToSlot, activeSlot,mechan9Unlocked,shieldsRaised,weaponsArmed,diplomaticStrengthDifference,crewRoster,assignedPosts],
+    [gameLocation, uhlekSilenced, elowanHostile, hasGivenEllipsoid, speciesBaseMoods, bulletins, formattedStardate, triggerBanter, addMessage, handleSaveToSlot, activeSlot,mechan9Unlocked,shieldsRaised,weaponsArmed,diplomaticStrengthDifference,crewRoster,assignedPosts],
   );
 
   useEffect(()=>{
@@ -6982,6 +7039,7 @@ function useGameInterfaceState() {
       if (!p) return;
 
       setGameLocation('In Orbit');
+      setOrbitalDepositId(null);
       setOrbitPlanetIndex(planetIdx);
       setOrbitTransitionProgress(0.0); // start zoom-in
       setActiveConsoleMenu('Bridge');
@@ -7001,6 +7059,7 @@ function useGameInterfaceState() {
     if (orbitPlanetIndex === null) return;
     const p = currentPlanets[orbitPlanetIndex];
 
+    setOrbitalDepositId(null);
     const surfaceKey=planetKey(currentStar.x,currentStar.y,p.orderIndex);
     const previousSurface=planetSurfacesRef.current[surfaceKey];
     if(previousSurface && !destroyedPlanetKeys.includes(surfaceKey)) {
@@ -7186,7 +7245,7 @@ function useGameInterfaceState() {
 
     // 1. Unread evaluation exists
     if (evaluations.some((e) => !e.read)) {
-      warnings.push('Report to Operations for evaluation.');
+      warnings.push('Acknowledge the outstanding report in Operations → Colony Evaluations → Accept / Read.');
     }
 
     // 2. Any of the 6 posts is unassigned or held by a dead crew member
@@ -7766,7 +7825,7 @@ function useGameInterfaceState() {
 
       const nearR = currentSurfaceState.ruins.filter((r) => Math.hypot(r.x - vehicleX, r.y - vehicleY) <= 15);
       if (nearR.length > 0) {
-        pois.push(`Archaeology: ${nearR.map((r) => `${r.name} at ${Math.hypot(r.x - vehicleX, r.y - vehicleY).toFixed(2)} km (${r.explored ? 'Explored' : 'Uncharted'})`).join(', ')}`);
+        pois.push(`Nearby sites: ${nearR.map((r) => `${r.name} (${surfaceSiteKind(r)}) at ${Math.hypot(r.x - vehicleX, r.y - vehicleY).toFixed(2)} km, bearing ${compassBearing(r.x-vehicleX,r.y-vehicleY)} (${r.explored ? 'Explored' : 'Uncharted'}). Examine ${surfaceSiteKind(r)} within 2.5 km`).join(', ')}`);
       }
 
       const nearL = currentSurfaceState.lifeforms.filter((l) => !l.captured && Math.hypot(l.x - vehicleX, l.y - vehicleY) <= 10);
@@ -7805,8 +7864,10 @@ function useGameInterfaceState() {
     if (currentSurfaceState) {
       const nearbyMin = currentSurfaceState.minerals.filter((m) => !m.taken && m.volume > 0 && Math.hypot(m.x - vehicleX, m.y - vehicleY) <= 15).length;
       const nearbyLife = currentSurfaceState.lifeforms.filter((l) => !l.captured && Math.hypot(l.x - vehicleX, l.y - vehicleY) <= 15).length;
-      const nearbyRuin = currentSurfaceState.ruins.filter((r) => Math.hypot(r.x - vehicleX, r.y - vehicleY) <= 15).length;
-      addMessage(`Sonar Scan: Detected ${nearbyMin} mineral deposits, ${nearbyLife} lifeforms, ${nearbyRuin} ruins within 15 km.`, 'Science Officer', 'info');
+      const sites = currentSurfaceState.ruins.filter(r => Math.hypot(r.x-vehicleX,r.y-vehicleY) <= 15);
+      const installations = sites.filter(r => surfaceSiteKind(r) === 'installation').length;
+      const ruins = sites.length-installations;
+      addMessage(`Sonar Scan: Detected ${nearbyMin} mineral deposits, ${nearbyLife} lifeforms, ${ruins} ruin${ruins===1?'':'s'}, ${installations} installation${installations===1?'':'s'} within 15 km.`, 'Science Officer', 'info');
     }
   }, [checkMalfunction, vehicleX, vehicleY, currentSurfaceState, addMessage]);
 
@@ -7897,7 +7958,7 @@ function useGameInterfaceState() {
   }, [currentSurfaceState, vehicleWeapon, vehicleX, vehicleY, vehicleHeading, vehicleHold, triggerBanter, addMessage,startMining]);
 
   // Collect Nearest Entity (Minerals, Artifacts/Ruins, Stunned Lifeforms, Cargo)
-  const handlePickUpNearby = useCallback(() => {
+  const handlePickUpNearby = useCallback((ruinsOnly = false) => {
     const vehicleHold = vehicleHoldFrameRef.current;
     if (!currentSurfaceState) return;
 
@@ -7954,7 +8015,9 @@ function useGameInterfaceState() {
       }
     }
 
-    if (candidates.length === 0) {
+    const examination = ruinsOnly ? nextSurfaceSite(currentSurfaceState.ruins,vehicleX,vehicleY) : undefined;
+    const eligible = ruinsOnly ? candidates.filter(c => c.item === examination) : candidates;
+    if (eligible.length === 0) {
       if (surveyedRuins.length) {
         surveyedRuins.sort((a,b) => Math.hypot(a.x-vehicleX,a.y-vehicleY)-Math.hypot(b.x-vehicleX,b.y-vehicleY));
         setSurfaceRuinModal(surveyedRuins[0]);
@@ -7967,8 +8030,8 @@ function useGameInterfaceState() {
     }
 
     // Sort by Euclidean distance to pick up the closest candidate
-    candidates.sort((a, b) => a.dist - b.dist);
-    const best = candidates[0];
+    eligible.sort((a, b) => a.dist - b.dist);
+    const best = eligible[0];
 
     if (best.kind === 'mineral') {
       const m = best.item;
@@ -8042,16 +8105,18 @@ function useGameInterfaceState() {
           value:artData.basePrice, artifactRef:artData,
         }]);
         if (!bulletins.some(b => b.id === MILESTONE_MEMOS.first_artifact.id)) {
-          setBulletins(prev => [{...MILESTONE_MEMOS.first_artifact,read:false},...prev]);
+          setBulletins(prev => [{...MILESTONE_MEMOS.first_artifact,date:formattedStardate,read:false},...prev]);
           addMessage('Operations: New Memo #404-Relic logged in Starport Notices (Milestone: First Precursor Relic).', 'Science Officer', 'info');
         }
       } else if (artData && r.artifactRecovered === false) {
-        addMessage(`Relic remains at the ruin: free ${artData.volume.toFixed(1)} m³ in the rover hold and return to collect it.`, 'Captain', 'alert');
+        addMessage(artData.volume > 50
+          ? `Relic remains at the ruin: its ${artData.volume.toFixed(1)} m³ exceeds the rover's total 50 m³ hold. This rover cannot carry it.`
+          : `Relic remains at the ruin: free ${artData.volume.toFixed(1)} m³ in the rover hold and return to collect it.`, 'Captain', 'alert');
       }
-      setSurfaceRuinModal(r);
+      setSurfaceRuinModal({...r,recoveredThisVisit:recovered});
       gameAudio.playPowerupChime();
       if (r.isControlNexus && !bulletins.some((b) => b.id === MILESTONE_MEMOS.nexus_found.id)) {
-        setBulletins((prev) => [{ ...MILESTONE_MEMOS.nexus_found, read: false }, ...prev]);
+        setBulletins((prev) => [{ ...MILESTONE_MEMOS.nexus_found, date:formattedStardate, read: false }, ...prev]);
         addMessage('Operations: URGENT MEMO #001-Omega logged in Starport Notices (Milestone: Control Nexus Located).', 'Captain', 'alert');
       }
       handleSaveToSlot(activeSlot);
@@ -8079,7 +8144,7 @@ function useGameInterfaceState() {
       handleSaveToSlot(activeSlot);
       return;
     }
-  }, [currentSurfaceState, vehicleHold, vehicleX, vehicleY, bulletins, triggerBanter, addMessage, currentStar, currentPlanets, orbitPlanetIndex, handleSaveToSlot, activeSlot, handleRecordNearbyLifeform]);
+  }, [currentSurfaceState, vehicleHold, vehicleX, vehicleY, bulletins, formattedStardate, triggerBanter, addMessage, currentStar, currentPlanets, orbitPlanetIndex, handleSaveToSlot, activeSlot, handleRecordNearbyLifeform]);
 
   const [roverCargoSubmenuOpen, setRoverCargoSubmenuOpen] = useState<boolean>(false);
 
@@ -10824,7 +10889,8 @@ function useGameInterfaceState() {
   },[gameLocation]);
   // Blocking surface dialogs freeze hazards and reject background driving/actions.
   const isSurfaceDialogOpen = isSurfaceMapOpen || !!surfaceRuinModal || roverCargoModalOpen || !!roverLookData;
-  const isSimulationPaused = isGameMenuOpen || isStarmapOpen || !!gameOverModal || !!victorySequenceModal ||
+  const droneDebriefOpen = gameLocation==='Encounter' && !!activeEncounterGroup?.droneChallenge?.debrief;
+  const isSimulationPaused = droneDebriefOpen || isGameMenuOpen || isStarmapOpen || !!gameOverModal || !!victorySequenceModal ||
     isDevPanelOpen || isShipsLogOpen || isImportModalOpen || isExportModalOpen || introPage !== 0 || isSurfaceDialogOpen || isPromptingDistress || !!replacementMission;
   launchPreludePausedRef.current = gameState.status !== 'PLAYING' || isSimulationPaused;
   useEffect(() => {
@@ -11460,7 +11526,8 @@ function useGameInterfaceState() {
           } else {
             clock.alienPhrases++;
             if(clock.pendingSubject!==undefined) {
-              const subject=clock.pendingSubject;clock.pendingSubject=undefined;emitOriginalComm(group,subject);
+              const subject=clock.pendingSubject;clock.pendingSubject=undefined;
+              if(!emitOriginalComm(group,subject))setAlienCommsState(prev=>({...prev,lastAlienSpeakerText:'No reply received.'}));
             } else {
               const likelihood=group.race==='Mechans'?(hasHuman||mechan9Unlocked?70:0):30;
               const questions=originalCommCandidates(group,14,alienCommsState.alienPosture);
@@ -11478,11 +11545,12 @@ function useGameInterfaceState() {
       if(test.status==='asking')setQuestionCountdownTimer(test.remaining);
       if(event==='ask') {
         const text=`${test.number}?`;
+        addMessage(text,undefined,'info','Veloxi Drone');
         setQuestionCountdownTimer(15);setQuestionTotalTime(15);setIsQuestionReminderActive(false);
         setCommsTypewriterElapsed(0);
         setAlienCommsState(prev=>({...prev,pendingAlienQuestion:{text,remindersLeft:0,timer:15},lastAlienSpeakerText:text,lastGarbledAlienText:text,dialogueHistory:[...prev.dialogueHistory,{race:'Veloxi Drone',subject:'Number',text,rawText:text,timestamp:formattedStardate}]}));
         gameAudio.playRadarPing();
-      } else if(event==='deny')resolveDroneOrbit(false);
+      } else if(event==='deny')resolveDroneOrbit(false,activeEncounterGroup.attackedByPlayer?'hostile':alienCommsState.connected?'timeout':'closed');
       else if(event==='return') {
         stopAlienVoice();setProjectiles([]);isCombatActiveRef.current=false;
         setAlienCommsState(prev=>({...prev,active:false,connected:false,pendingAlienQuestion:null}));
@@ -11490,6 +11558,7 @@ function useGameInterfaceState() {
         setGameLocation(prevGameLocation);setActiveConsoleMenu('Bridge');setDisplayPanelMode('system_map');
         addMessage('Drone clearance confirmed. Resuming approach.', 'Navigator','info');
       }
+      if(event==='ask'||event==='return')handleSaveToSlot(activeSlot);
     } else if (alienCommsState.pendingPriorityBusiness || alienCommsState.pendingAlienQuestion) {
       const remaining=Math.max(0,questionCountdownTimerFrameRef.current-dt);
       setQuestionCountdownTimer(remaining);
@@ -12746,12 +12815,8 @@ function useGameInterfaceState() {
         }
       }
 
-      const allBeyond22 = activeEncounterGroup.ships.every((ship) => {
-        const dx = Math.abs(ship.x - encounterShipPos.x);
-        const dy = Math.abs(ship.y - encounterShipPos.y);
-        const dist = Math.hypot(ship.x - encounterShipPos.x, ship.y - encounterShipPos.y);
-        return dx > 22 || dy > 22 || dist > 22;
-      });
+      const allBeyond22 = activeEncounterGroup.ships.every((ship) =>
+        Math.hypot(ship.x - encounterShipPos.x, ship.y - encounterShipPos.y) > ENCOUNTER_ESCAPE_DISTANCE);
 
       if (allBeyond22 && activeConsoleMenu !== 'Combat') {
         terminateEncounter();
@@ -15957,8 +16022,8 @@ function useGameInterfaceState() {
       const reading=planetaryScanRef.current;
       const statsSegments = scanReady(reading) ? [
         `Bio: ${p.bioDensity}%`,`Minerals: ${p.mineralDensity}%`,
-        ...(reading?.analysis?planetAnalysisFields(p).map((f,i)=>f.label+': '+(reading.analysis!.known[i]?f.value:'Not certain')):['Science → Analysis for conclusions']),
-      ] : [reading?'Sensor sweep in progress':'Science → Sensors to scan this planet'];
+        ...(reading?.analysis?planetAnalysisFields(p).map((f,i)=>f.label+': '+(reading.analysis!.known[i]?f.value:'Not certain')):['Science → Analyze reading']),
+      ] : [reading?'Sensor sweep in progress':'Science → Scan planet'];
 
       const maxAllowedBoxW = Math.max(280, canvasWidth - 32);
       const padX = 18;
@@ -16731,9 +16796,10 @@ function useGameInterfaceState() {
   const tacticalContext=gameLocation==='Encounter'&&!!activeEncounterGroup;
   const liveTargets=tacticalContext?activeEncounterGroup!.ships.filter(s=>!s.isWreck):[];
   const landingPlanet=orbitPlanetIndex===null?null:currentPlanets[orbitPlanetIndex];
-  const landingScreenAvailable=cinematicState==='none'&&!!landingPlanet&&landingPlanet.type!=='Gas Giant'&&!(currentStar.x===192&&currentStar.y===152&&orbitPlanetIndex===0&&!hasCrystalOrb);
+  const thermalDescentBlocked=currentStar.x===192&&currentStar.y===152&&orbitPlanetIndex===0&&!hasCrystalOrb;
+  const landingScreenAvailable=cinematicState==='none'&&!!landingPlanet&&landingPlanet.type!=='Gas Giant'&&!thermalDescentBlocked;
   const departureWarnings=[
-    ...(evaluations.some(e=>!e.read)?['Report to Operations for evaluation.']:[]),
+    ...(evaluations.some(e=>!e.read)?['Acknowledge the outstanding report in Operations → Colony Evaluations → Accept / Read.']:[]),
     ...(certifiedCrewCount<CREW_POSTS.length?['Report to Crew Assignment.']:[]),
     ...(!shipName.trim()?['Report to Ship Configuration to christen ship.']:[]),
     ...(engineClass<=0?['Report to Ship Configuration to purchase engines.']:[]),
@@ -16741,6 +16807,8 @@ function useGameInterfaceState() {
   ];
   const buttonActions={
     dock:!isArthDestroyed&&cinematicState==='none',
+    thermalDescentBlocked,
+    landingReason:thermalDescentBlocked ? 'Descent blocked by crystalline thermal radiation. Thermal protection required.' : landingPlanet?.type==='Gas Giant' ? 'Gas giants have no landing surface.' : undefined,
     landingScreen:landingScreenAvailable,
     descent:landingScreenAvailable&&!calculatedLandingFuelData.isCrush&&!calculatedLandingFuelData.isInsufficient,
     ascent:cinematicState==='none'&&!detonationSequence&&enduriumFuel>=calculatedLandingFuel,
@@ -16753,7 +16821,7 @@ function useGameInterfaceState() {
     roverPickup:!vehicleDestroyed&&surfacePickupAvailable(currentSurfaceState,vehicleX,vehicleY,vehicleHold.reduce((v,i)=>v+i.volume,0)),
     treat:doctorSkill>0,
     recommend:!!landingPlanet&&!recommendedPlanets.includes(`${currentStar.x}-${currentStar.y}-${landingPlanet.orderIndex}`),
-    dialogue:tacticalContext&&usableSystem('Comms')&&alienCommsState.connected&&!alienCommsState.pendingAlienQuestion&&!alienCommsState.pendingPriorityBusiness,
+    dialogue:tacticalContext&&usableSystem('Comms')&&activeEncounterGroup?.conversation?.pendingSubject===undefined&&alienCommsState.connected&&!alienCommsState.pendingAlienQuestion&&!alienCommsState.pendingPriorityBusiness,
   };
   const spaceActions={
     combat:liveTargets.length>0,
@@ -16955,6 +17023,7 @@ function useGameInterfaceState() {
     depotSale,
     describedCargoItem,
     destroyedPlanetKeys,
+    detonationSequence,
     devActiveTab,
     devAlienRace,
     devAlienShipCount,
@@ -16998,7 +17067,7 @@ function useGameInterfaceState() {
     diplomaticStrengthDifference,
     dockWithStarport,
     dockingBayCanvasRef,
-    dockingBayWarnings,
+    departureWarnings,
     drawSurveyContacts,
     elowanHostile,
     encounterShipPos,
@@ -17194,6 +17263,8 @@ function useGameInterfaceState() {
     questionCountdownTimer,
     questionTotalTime,
     recommendedPlanets,
+    loggedTelemetryReadings,
+    loggedTelemetryPlanets,
     renderGantryShipCanvas,
     repairBreakdown,
     repairPercentageRate,
@@ -17326,8 +17397,8 @@ function useGameInterfaceState() {
     setIsStarmapOpen,
     setIsSurfaceMapOpen,
     setIsTrainingSkillModal,
-    setLandingLat,
-    setLandingLong,
+    chooseLandingSite,
+    orbitalDepositId,
     setLaserClass,
     setMedicalMode,
     setMiningMessage,

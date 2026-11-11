@@ -28,6 +28,10 @@ export function validPlanetScan(value:unknown, expectedKey:string|null):value is
     && (s.analysis===null || s.elapsed===PLANET_SCAN_SECONDS && !!s.analysis && typeof s.analysis==='object'
       && Array.isArray(s.analysis.known) && s.analysis.known.length===5 && s.analysis.known.every(v=>typeof v==='boolean'));
 }
+export function analysisReading(value:string, scan:PlanetaryScanState|null, index:number) {
+  if (!scan?.analysis) return 'Awaiting analysis';
+  return scan.analysis.known[index] ? value : 'Not certain';
+}
 export function planetMassTons(mass:number) {
   if(!Number.isFinite(mass)||mass<=0)return 'Unknown';
   const exponent=Math.floor(Math.log10(mass));
